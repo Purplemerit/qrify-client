@@ -1032,17 +1032,20 @@ function Discover() {
     {
       title: "Business cards",
       description: "Turn your card into an interactive tool by adding a QR code that connects clients and employers with your work, social networks and contact information.",
-      image: "/business-card.jpg"
+      image: "/qrs-on-cards-2x-4t0A1eJG.webp",
+      link: "/qr-codes-on/business-cards"
     },
     {
       title: "Pamphlets",
       description: "Expand the printed information on your pamphlets with a QR code, offering interactive content and measuring its reach in real time.",
-      image: "/pamphlet.jpg"
+      image: "/qrs-on-flyers-2x-BPWiaElX.webp",
+      link: "/qr-codes-on/pamphlets"
     },
     {
       title: "Brochures",
       description: "Complement the content of your brochures by adding a QR code that provides access to multimedia content such as videos and online documents.",
-      image: "/brochure.jpg"
+      image: "/qrs-on-brochures-2x-DQaxf5W3.webp",
+      link: "/qr-codes-on/brochures"
     }
   ];
 
@@ -1057,24 +1060,42 @@ function Discover() {
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
         {cards.map((card, index) => (
-          <div key={index} className="bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-            <div className="w-full h-48 bg-gradient-to-br from-blue-50 to-purple-50 flex items-center justify-center">
-              <img
-                src={card.image}
-                alt={card.title}
-                className="w-full h-full object-cover"
-                onError={(e) => {
-                  e.currentTarget.style.display = 'none';
-                }}
-              />
+          <div
+            key={index}
+            className="group bg-white rounded-lg overflow-hidden"
+          >
+            <div className="bg-white" style={{ padding: '6px' }}>
+              <div className="flex items-center justify-center bg-[#F7F7F7]" style={{ height: '258px' }}>
+                <img
+                  src={card.image}
+                  alt="make a free qr code"
+                  loading="lazy"
+                  className="max-w-full max-h-full object-contain"
+                />
+              </div>
             </div>
-            <div className="p-6 text-left">
-              <h3 className="text-xl font-semibold text-gray-900 mb-3">
+            <div className="p-6">
+              <p className="text-lg font-semibold text-gray-900 mb-3">
                 {card.title}
-              </h3>
-              <p className="text-gray-600 text-sm leading-relaxed">
+              </p>
+              <p className="text-sm text-gray-600 leading-relaxed mb-4">
                 {card.description}
               </p>
+              <a
+                href={card.link}
+                className="inline-flex items-center gap-2 text-blue-600 text-sm font-medium opacity-0 group-hover:opacity-100 transition-opacity duration-200"
+              >
+                <span>More Info</span>
+                <svg
+                  className="w-4 h-4"
+                  focusable="false"
+                  aria-hidden="true"
+                  viewBox="0 0 16 16"
+                  fill="currentColor"
+                >
+                  <path d="M13.92,8.38a1,1,0,0,0,0-.76,1,1,0,0,0-.21-.33l-4-4A1,1,0,0,0,8.29,4.71L10.59,7H3A1,1,0,0,0,3,9h7.59l-2.3,2.29a1,1,0,0,0,0,1.42,1,1,0,0,0,1.42,0l4-4A1,1,0,0,0,13.92,8.38Z"></path>
+                </svg>
+              </a>
             </div>
           </div>
         ))}
@@ -1094,14 +1115,25 @@ function Collections() {
         all.
       </p>
 
-      <div className="bg-gradient-to-r from-purple-900 to-transparent rounded-xl p-8 text-left text-white flex items-center gap-8">
-        <div className="w-1/2">
-          <h3 className="text-2xl font-semibold mb-4">
-            Create a unique invitation for an unforgettable event.
+      <div className="overflow-hidden relative" style={{ height: '300px', borderRadius: '28px', backgroundImage: 'linear-gradient(90deg, rgb(34, 14, 39) 32%, rgba(34, 14, 39, 0.2) 60%, rgba(34, 14, 39, 0) 100%)' }}>
+        <div className="relative z-10 p-8 w-1/2 flex flex-col justify-center h-full text-left">
+          <h3 className="text-4xl font-semibold mb-4 text-white">
+            Create a unique<br />invitation for an<br />unforgettable event.
           </h3>
-          <button className="mt-4 px-4 py-2 border rounded">See more</button>
+          <button className="px-4 py-2 border text-white" style={{ borderRadius: '28px', width: 'fit-content' }}>See more</button>
         </div>
-        <div className="w-1/2 opacity-90">Image mock</div>
+        <div className="absolute top-0 right-0 h-full" style={{ width: 'calc(65%)' }}>
+          <img
+            src="/qrs-for-events-x2-B_KNjck6.webp"
+            alt="qr codes"
+            width="711"
+            height="353"
+            srcSet="/qrs-for-events-x2-B_KNjck6.webp 1422w"
+            sizes="711px"
+            loading="lazy"
+            className="w-full h-full object-cover"
+          />
+        </div>
       </div>
 
       <div className="mt-8 flex justify-center gap-6">
