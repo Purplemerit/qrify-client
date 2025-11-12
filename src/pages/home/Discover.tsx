@@ -24,7 +24,10 @@ export function Discover() {
   ];
 
   return (
-    <section className="text-center py-16">
+    <section
+      className="w-full text-center py-16 px-4 md:px-8 lg:px-16"
+      style={{ backgroundColor: "#F3F3FF" }}
+    >
       <p className="text-blue-600 font-semibold text-sm mb-3 uppercase tracking-wide">
         QR CODES ON
       </p>
@@ -32,7 +35,7 @@ export function Discover() {
         Discover how to use QR codes to boost your marketing strategy
       </h2>
 
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-7xl mx-auto">
         {cards.map((card, index) => (
           <div
             key={index}
