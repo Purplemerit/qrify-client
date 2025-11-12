@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { GoogleAuthSection } from "../../components/GoogleAuthSection";
 
 export function Hero() {
   const tabs = ["Website", "Text", "PDF", "Images", "vCard Plus", "Video"];
@@ -813,7 +814,7 @@ export function Hero() {
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex items-center gap-1 px-2 py-1.5 rounded text-xs font-medium transition-all whitespace-nowrap ${
+              className={`flex items-center gap-1 px-4 py-1.5 rounded text-xs font-medium transition-all whitespace-nowrap flex-1 justify-center ${
                 activeTab === tab
                   ? "bg-gray-100 text-blue-600"
                   : "text-blue-600 hover:bg-gray-50"
@@ -965,6 +966,14 @@ export function Hero() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* Google Auth Section */}
+      <div
+        className="flex justify-center"
+        style={{ marginTop: "160px", marginBottom: "8px" }}
+      >
+        <GoogleAuthSection />
       </div>
     </section>
   );
