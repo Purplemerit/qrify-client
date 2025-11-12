@@ -1,3 +1,4 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button"
 import {
   Card,
@@ -21,8 +22,117 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select"
+import { authService } from "../services/auth";
 
 const Settings = () => {
+  // User data state
+  const [user, setUser] = useState<{ email: string; emailVerified: boolean } | null>(null);
+
+  // Change password state
+  const [currentPassword, setCurrentPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmNewPassword, setConfirmNewPassword] = useState("");
+  const [passwordLoading, setPasswordLoading] = useState(false);
+  const [passwordError, setPasswordError] = useState<string | null>(null);
+  const [passwordSuccess, setPasswordSuccess] = useState(false);
+
+  // Change email state
+  const [newEmail, setNewEmail] = useState("");
+  const [emailPassword, setEmailPassword] = useState("");
+  const [emailLoading, setEmailLoading] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [emailSuccess, setEmailSuccess] = useState(false);
+
+  useEffect(() => {
+    // Load current user data
+    const loadUser = async () => {
+      try {
+        const response = await authService.getCurrentUser();
+        setUser(response.user);
+      } catch (error) {
+        console.error("Failed to load user:", error);
+      }
+    };
+    loadUser();
+  }, []);
+
+  const handleChangePassword = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setPasswordError(null);
+    setPasswordSuccess(false);
+
+    if (newPassword !== confirmNewPassword) {
+      setPasswordError("New passwords don't match!");
+      return;
+    }
+
+    if (newPassword.length < 8) {
+      setPasswordError("Password must be at least 8 characters long");
+      return;
+    }
+
+    setPasswordLoading(true);
+
+    try {
+      await authService.changePassword({
+        currentPassword,
+        newPassword,
+      });
+      setPasswordSuccess(true);
+      setCurrentPassword("");
+      setNewPassword("");
+      setConfirmNewPassword("");
+
+      // Clear success message after 3 seconds
+      setTimeout(() => setPasswordSuccess(false), 3000);
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && 'response' in err) {
+        const error = err as { response?: { data?: { error?: string } } };
+        setPasswordError(error.response?.data?.error || "Failed to change password");
+      } else {
+        setPasswordError("An unexpected error occurred");
+      }
+    } finally {
+      setPasswordLoading(false);
+    }
+  };
+
+  const handleChangeEmail = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setEmailError(null);
+    setEmailSuccess(false);
+
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(newEmail)) {
+      setEmailError("Invalid email format");
+      return;
+    }
+
+    setEmailLoading(true);
+
+    try {
+      await authService.changeEmail({
+        newEmail,
+        password: emailPassword,
+      });
+      setEmailSuccess(true);
+      setNewEmail("");
+      setEmailPassword("");
+
+      // Clear success message after 5 seconds
+      setTimeout(() => setEmailSuccess(false), 5000);
+    } catch (err: unknown) {
+      if (err && typeof err === 'object' && 'response' in err) {
+        const error = err as { response?: { data?: { error?: string } } };
+        setEmailError(error.response?.data?.error || "Failed to change email");
+      } else {
+        setEmailError("An unexpected error occurred");
+      }
+    } finally {
+      setEmailLoading(false);
+    }
+  };
+
   return (
     <div className="max-w-7xl transform scale-[1.1] origin-top-left space-y-8">
       <div className="mb-6">
@@ -52,22 +162,63 @@ const Settings = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="w-3/4 space-y-4">
-                <div className="space-y-2 py-6">
-                  <Label htmlFor="name">Name</Label>
-                  <Input id="name" placeholder="Enter your name" className="w-full h-14" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="surname">Surname</Label>
-                  <Input id="surname" placeholder="Enter your surname" className="w-full h-14" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="email">Email</Label>
-                  <Input id="email" type="email" placeholder="Enter your email" className="w-full h-14" />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="telephone">Telephone</Label>
-                  <Input id="telephone" type="tel" placeholder="Enter your phone number" className="w-full h-14" />
-                </div>
+                <form onSubmit={handleChangeEmail} className="space-y-4">
+                  <div className="space-y-2 py-6">
+                    <Label htmlFor="current-email">Current Email</Label>
+                    <Input
+                      id="current-email"
+                      type="email"
+                      value={user?.email || ""}
+                      className="w-full h-14 bg-gray-50"
+                      disabled
+                    />
+                    {user && !user.emailVerified && (
+                      <p className="text-sm text-yellow-600">Email not verified</p>
+                    )}
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="new-email">New Email</Label>
+                    <Input
+                      id="new-email"
+                      type="email"
+                      placeholder="Enter new email address"
+                      className="w-full h-14"
+                      value={newEmail}
+                      onChange={(e) => setNewEmail(e.target.value)}
+                      disabled={emailLoading}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email-password">Current Password</Label>
+                    <Input
+                      id="email-password"
+                      type="password"
+                      placeholder="Enter your current password"
+                      className="w-full h-14"
+                      value={emailPassword}
+                      onChange={(e) => setEmailPassword(e.target.value)}
+                      disabled={emailLoading}
+                    />
+                    <p className="text-xs text-gray-500">
+                      Enter your password to confirm email change
+                    </p>
+                  </div>
+                  {emailError && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-sm text-red-600">{emailError}</p>
+                    </div>
+                  )}
+                  {emailSuccess && (
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm text-green-600">
+                        Verification email sent to your new email address. Please check your inbox.
+                      </p>
+                    </div>
+                  )}
+                  <Button type="submit" disabled={emailLoading || !newEmail || !emailPassword}>
+                    {emailLoading ? "Sending..." : "Change Email"}
+                  </Button>
+                </form>
               </CardContent>
             </div>
           </Card>
@@ -82,11 +233,61 @@ const Settings = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent className="w-3/4 space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="password">Password</Label>
-                  <Input id="password" type="password" placeholder="Enter new password" className="w-full h-14" />
-                </div>
-                <Button>Save</Button>
+                <form onSubmit={handleChangePassword} className="space-y-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="current-password">Current Password</Label>
+                    <Input
+                      id="current-password"
+                      type="password"
+                      placeholder="Enter current password"
+                      className="w-full h-14"
+                      value={currentPassword}
+                      onChange={(e) => setCurrentPassword(e.target.value)}
+                      disabled={passwordLoading}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="new-password">New Password</Label>
+                    <Input
+                      id="new-password"
+                      type="password"
+                      placeholder="Enter new password (min. 8 characters)"
+                      className="w-full h-14"
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      disabled={passwordLoading}
+                      minLength={8}
+                      required
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="confirm-password">Confirm New Password</Label>
+                    <Input
+                      id="confirm-password"
+                      type="password"
+                      placeholder="Confirm new password"
+                      className="w-full h-14"
+                      value={confirmNewPassword}
+                      onChange={(e) => setConfirmNewPassword(e.target.value)}
+                      disabled={passwordLoading}
+                      required
+                    />
+                  </div>
+                  {passwordError && (
+                    <div className="p-3 bg-red-50 border border-red-200 rounded-lg">
+                      <p className="text-sm text-red-600">{passwordError}</p>
+                    </div>
+                  )}
+                  {passwordSuccess && (
+                    <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
+                      <p className="text-sm text-green-600">Password changed successfully!</p>
+                    </div>
+                  )}
+                  <Button type="submit" disabled={passwordLoading}>
+                    {passwordLoading ? "Changing..." : "Change Password"}
+                  </Button>
+                </form>
               </CardContent>
             </div>
           </Card>
