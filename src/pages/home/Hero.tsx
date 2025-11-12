@@ -249,7 +249,7 @@ export function Hero() {
     if (selectedFrameData?.id === 1) {
       // No Frame
       return (
-        <div className="relative w-40 h-40 bg-white border-4 border-gray-300 rounded-lg flex items-center justify-center p-4">
+        <div className="relative z-0 w-40 h-40 bg-white border-4 border-gray-300 rounded-lg flex items-center justify-center p-4">
           {qrCode}
           {logoOverlay}
         </div>
@@ -257,7 +257,7 @@ export function Hero() {
     } else if (selectedFrameData?.id === 2) {
       // Email Frame
       return (
-        <div className="relative w-48 h-48 flex items-center justify-center">
+        <div className="relative z-0 w-48 h-48 flex items-center justify-center">
           <svg viewBox="0 0 200 180" className="w-full h-full">
             {/* Envelope */}
             <rect
@@ -290,7 +290,7 @@ export function Hero() {
     } else if (selectedFrameData?.id === 3) {
       // Scanner Frame
       return (
-        <div className="relative w-48 h-48 flex items-center justify-center">
+        <div className="relative z-0 w-48 h-48 flex items-center justify-center">
           <svg viewBox="0 0 200 200" className="w-full h-full">
             {/* Monitor/Screen */}
             <rect
@@ -320,7 +320,7 @@ export function Hero() {
     } else if (selectedFrameData?.id === 4) {
       // Document Frame
       return (
-        <div className="relative w-48 h-48 flex items-center justify-center">
+        <div className="relative z-0 w-48 h-48 flex items-center justify-center">
           <svg viewBox="0 0 200 200" className="w-full h-full">
             {/* Paper */}
             <path
@@ -365,7 +365,7 @@ export function Hero() {
     } else if (selectedFrameData?.id === 5) {
       // Truck Frame
       return (
-        <div className="relative w-48 h-48 flex items-center justify-center">
+        <div className="relative z-0 w-48 h-48 flex items-center justify-center">
           <svg viewBox="0 0 200 200" className="w-full h-full">
             {/* Truck body */}
             <rect
@@ -420,7 +420,7 @@ export function Hero() {
     } else if (selectedFrameData?.id === 6) {
       // Mobile Frame
       return (
-        <div className="relative w-48 h-48 flex items-center justify-center">
+        <div className="relative z-0 w-48 h-48 flex items-center justify-center">
           <svg viewBox="0 0 200 200" className="w-full h-full">
             {/* Phone */}
             <rect
@@ -449,7 +449,7 @@ export function Hero() {
     } else if (selectedFrameData?.id === 7) {
       // Scooter Frame
       return (
-        <div className="relative w-48 h-48 flex items-center justify-center">
+        <div className="relative z-0 w-48 h-48 flex items-center justify-center">
           <svg viewBox="0 0 200 200" className="w-full h-full">
             {/* Scooter body */}
             <path
@@ -505,7 +505,7 @@ export function Hero() {
     } else if (selectedFrameData?.id === 8) {
       // Coffee Frame
       return (
-        <div className="relative w-48 h-48 flex items-center justify-center">
+        <div className="relative z-0 w-48 h-48 flex items-center justify-center">
           <svg viewBox="0 0 200 200" className="w-full h-full">
             {/* Cup */}
             <path
@@ -565,7 +565,7 @@ export function Hero() {
     }
 
     return (
-      <div className="relative w-40 h-40 bg-white border-4 border-gray-300 rounded-lg flex items-center justify-center p-4">
+      <div className="relative z-0 w-40 h-40 bg-white border-4 border-gray-300 rounded-lg flex items-center justify-center p-4">
         {qrCode}
         {logoOverlay}
       </div>
