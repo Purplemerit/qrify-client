@@ -1,100 +1,43 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
+import { toDataURL } from "qrcode";
 import { GoogleAuthSection } from "../../components/GoogleAuthSection";
+import { api, tokenStorage } from "../../lib/api";
+
+// SVG asset paths for frames
+const CardIcon = "/assets/card.svg";
+const ScooterIcon = "/assets/scooter.svg";
+const JuiceIcon = "/assets/juice.svg";
+const GiftWrapperIcon = "/assets/gift-wrapper.svg";
+const CupIcon = "/assets/cup.svg";
+const TextThenTabIcon = "/assets/text-then-tab.svg";
+const TabIcon = "/assets/tab.svg";
+const ClipboardIcon = "/assets/clipboard.svg";
+const ClippedTextIcon = "/assets/clipped-text.svg";
+
+// SVG asset paths for logos
+const WhatsappIcon = "/assets/whatsapp.svg";
+const LocationIcon = "/assets/location.svg";
+const LinkIcon = "/assets/link.svg";
+const ScanIcon = "/assets/scan.svg";
+const WifiIcon = "/assets/wifi.svg";
+const EmailIcon = "/assets/email.svg";
 
 export function Hero() {
   const tabs = ["Website", "Text", "PDF", "Images", "vCard Plus", "Video"];
   const designTabs = ["Frame", "Shape", "Logo", "Level"];
 
-  const contentMap = {
-    Website: (
-      <>
-        <label className="block text-xs font-medium text-gray-700 mb-1">
-          Enter your Website
-        </label>
-        <input
-          className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-          placeholder="E.g. https://www.myweb.com/"
-        />
-      </>
-    ),
-    Text: (
-      <>
-        <label className="block text-xs font-medium text-gray-700 mb-1">
-          Enter your text
-        </label>
-        <textarea
-          className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-          placeholder="Write your message here..."
-          rows={1}
-        />
-      </>
-    ),
-    PDF: (
-      <>
-        <label className="block text-xs font-medium text-gray-700 mb-1">
-          Upload your PDF
-        </label>
-        <input
-          type="file"
-          accept="application/pdf"
-          className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs"
-        />
-      </>
-    ),
-    Images: (
-      <>
-        <label className="block text-xs font-medium text-gray-700 mb-1">
-          Upload your image
-        </label>
-        <input
-          type="file"
-          accept="image/*"
-          className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs"
-        />
-      </>
-    ),
-    "vCard Plus": (
-      <>
-        <label className="block text-xs font-medium text-gray-700 mb-0.5">
-          Fill in your contact details
-        </label>
-        <input
-          className="w-full border border-gray-300 rounded px-2 py-0.5 text-xs mb-0.5 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          placeholder="Name"
-        />
-        <input
-          className="w-full border border-gray-300 rounded px-2 py-0.5 text-xs mb-0.5 focus:outline-none focus:ring-1 focus:ring-blue-500"
-          placeholder="Phone"
-        />
-        <input
-          className="w-full border border-gray-300 rounded px-2 py-0.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-          placeholder="Email"
-        />
-      </>
-    ),
-    Video: (
-      <>
-        <label className="block text-xs font-medium text-gray-700 mb-1">
-          Paste your video link
-        </label>
-        <input
-          className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
-          placeholder="E.g. https://youtube.com/..."
-        />
-      </>
-    ),
-  };
-
-  // Frame options with placeholder QR codes
+  // Frame options with SVG icons
   const frameOptions = [
-    { id: 1, name: "No Frame", icon: "⊘" },
-    { id: 2, name: "Email", icon: "✉" },
-    { id: 3, name: "Scanner", icon: "📱" },
-    { id: 4, name: "Document", icon: "📄" },
-    { id: 5, name: "Truck", icon: "🚚" },
-    { id: 6, name: "Mobile", icon: "📱" },
-    { id: 7, name: "Scooter", icon: "🛵" },
-    { id: 8, name: "Coffee", icon: "☕" },
+    { id: 1, name: "No Frame", icon: null },
+    { id: 2, name: "Card", icon: CardIcon },
+    { id: 3, name: "Scooter", icon: ScooterIcon },
+    { id: 4, name: "Juice", icon: JuiceIcon },
+    { id: 5, name: "Gift Wrapper", icon: GiftWrapperIcon },
+    { id: 6, name: "Cup", icon: CupIcon },
+    { id: 7, name: "Text Tab", icon: TextThenTabIcon },
+    { id: 8, name: "Tab", icon: TabIcon },
+    { id: 9, name: "Clipboard", icon: ClipboardIcon },
+    { id: 10, name: "Clipped Text", icon: ClippedTextIcon },
   ];
 
   const shapeOptions = [
@@ -105,10 +48,13 @@ export function Hero() {
   ];
 
   const logoOptions = [
-    { id: 1, name: "No Logo" },
-    { id: 2, name: "Custom Logo" },
-    { id: 3, name: "Brand Logo" },
-    { id: 4, name: "Icon" },
+    { id: 0, name: "None", icon: null },
+    { id: 1, name: "WhatsApp", icon: WhatsappIcon },
+    { id: 2, name: "Location", icon: LocationIcon },
+    { id: 3, name: "Link", icon: LinkIcon },
+    { id: 4, name: "Scan", icon: ScanIcon },
+    { id: 5, name: "WiFi", icon: WifiIcon },
+    { id: 6, name: "Email", icon: EmailIcon },
   ];
 
   const levelOptions = [
@@ -122,8 +68,226 @@ export function Hero() {
   const [activeDesignTab, setActiveDesignTab] = useState("Frame");
   const [selectedFrame, setSelectedFrame] = useState(1);
   const [selectedShape, setSelectedShape] = useState(1);
-  const [selectedLogo, setSelectedLogo] = useState(1);
+  const [selectedLogo, setSelectedLogo] = useState(0);
   const [selectedLevel, setSelectedLevel] = useState(2);
+
+  // State for input values
+  const [websiteUrl, setWebsiteUrl] = useState("");
+  const [textContent, setTextContent] = useState("");
+
+  // State for generated QR
+  const [generatedQR, setGeneratedQR] = useState<string | null>(null);
+  const [isGenerating, setIsGenerating] = useState(false);
+
+  // Debounce timer ref
+  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+
+  // Download QR code function
+  const downloadQRCode = () => {
+    if (!generatedQR) return;
+
+    const link = document.createElement("a");
+    link.href = generatedQR;
+    link.download = `qr-code-${activeTab.toLowerCase()}-${Date.now()}.png`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  // Auto-generate QR when content changes (with debounce)
+  useEffect(() => {
+    // Clear existing timer
+    if (debounceTimer.current) {
+      clearTimeout(debounceTimer.current);
+    }
+
+    // Check if there's content to generate
+    const hasContent =
+      (activeTab === "Website" && websiteUrl.trim()) ||
+      (activeTab === "Text" && textContent.trim());
+
+    if (hasContent) {
+      // Set new timer to generate after 500ms of no typing
+      debounceTimer.current = setTimeout(() => {
+        generateQRCode();
+      }, 500);
+    } else {
+      // Clear QR if no content
+      setGeneratedQR(null);
+    }
+
+    // Cleanup
+    return () => {
+      if (debounceTimer.current) {
+        clearTimeout(debounceTimer.current);
+      }
+    };
+  }, [websiteUrl, textContent, activeTab, selectedLevel]);
+
+  const generateLocalQRCode = async (value: string, level: "L" | "M" | "Q" | "H") => {
+    try {
+      const dataUrl = await toDataURL(value, {
+        errorCorrectionLevel: level,
+        type: "image/png",
+        margin: 1,
+        scale: 6,
+      });
+      setGeneratedQR(dataUrl);
+    } catch (localError) {
+      console.error("Local QR generation failed:", localError);
+      setGeneratedQR(null);
+    }
+  };
+
+  // Generate QR code function
+  const generateQRCode = async () => {
+    let content = "";
+
+    if (activeTab === "Website") {
+      if (!websiteUrl) {
+        setGeneratedQR(null);
+        return;
+      }
+      content = websiteUrl;
+    } else if (activeTab === "Text") {
+      if (!textContent) {
+        setGeneratedQR(null);
+        return;
+      }
+      content = textContent;
+    } else {
+      // Other types not implemented yet
+      setGeneratedQR(null);
+      return;
+    }
+
+    setIsGenerating(true);
+
+    const levelData = levelOptions.find((l) => l.id === selectedLevel);
+    const errorCorrection = (levelData?.value || "M") as "L" | "M" | "Q" | "H";
+    const runLocalGeneration = async () => generateLocalQRCode(content, errorCorrection);
+
+    try {
+      if (!tokenStorage.getAccessToken()) {
+        await runLocalGeneration();
+        return;
+      }
+
+      const response = await api.post("/qr/url", {
+        url: content,
+        name: `${activeTab} QR`,
+        errorCorrection,
+        format: "PNG",
+      });
+
+      const imageResponse = await api.get(`/qr/${response.data.id}/image`);
+      setGeneratedQR(imageResponse.data.image);
+    } catch (error: any) {
+      if (error?.response?.status === 401 || error?.response?.status === 403) {
+        await runLocalGeneration();
+        return;
+      }
+
+      console.error("Error generating QR code:", error);
+      await runLocalGeneration();
+    } finally {
+      setIsGenerating(false);
+    }
+  };
+
+  const renderContent = () => {
+    switch (activeTab) {
+      case "Website":
+        return (
+          <>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              Enter your Website
+            </label>
+            <input
+              className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="E.g. https://www.myweb.com/"
+              value={websiteUrl}
+              onChange={(e) => setWebsiteUrl(e.target.value)}
+            />
+          </>
+        );
+      case "Text":
+        return (
+          <>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              Enter your text
+            </label>
+            <textarea
+              className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="Write your message here..."
+              rows={1}
+              value={textContent}
+              onChange={(e) => setTextContent(e.target.value)}
+            />
+          </>
+        );
+      case "PDF":
+        return (
+          <>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              Upload your PDF
+            </label>
+            <input
+              type="file"
+              accept="application/pdf"
+              className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs"
+            />
+          </>
+        );
+      case "Images":
+        return (
+          <>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              Upload your image
+            </label>
+            <input
+              type="file"
+              accept="image/*"
+              className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs"
+            />
+          </>
+        );
+      case "vCard Plus":
+        return (
+          <>
+            <label className="block text-xs font-medium text-gray-700 mb-0.5">
+              Fill in your contact details
+            </label>
+            <input
+              className="w-full border border-gray-300 rounded px-2 py-0.5 text-xs mb-0.5 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="Name"
+            />
+            <input
+              className="w-full border border-gray-300 rounded px-2 py-0.5 text-xs mb-0.5 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="Phone"
+            />
+            <input
+              className="w-full border border-gray-300 rounded px-2 py-0.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="Email"
+            />
+          </>
+        );
+      case "Video":
+        return (
+          <>
+            <label className="block text-xs font-medium text-gray-700 mb-1">
+              Paste your video link
+            </label>
+            <input
+              className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              placeholder="E.g. https://youtube.com/..."
+            />
+          </>
+        );
+      default:
+        return null;
+    }
+  };
 
   // QR Code rendering based on shape - Professional realistic pattern
   const renderQRPattern = () => {
@@ -220,7 +384,14 @@ export function Hero() {
         ? "blur-[0.2px]"
         : "";
 
-    const qrCode = (
+    // Use generated QR if available, otherwise show mock pattern
+    const qrCode = generatedQR ? (
+      <img
+        src={generatedQR}
+        alt="Generated QR Code"
+        className={`w-32 h-32 ${blurAmount}`}
+      />
+    ) : (
       <div
         className={`grid grid-cols-21 gap-[1px] ${blurAmount}`}
         style={{ gridTemplateColumns: "repeat(21, minmax(0, 1fr))" }}
@@ -230,345 +401,84 @@ export function Hero() {
     );
 
     // Logo overlay
-    const logoOverlay = selectedLogoData?.id !== 1 && (
-      <div className="absolute inset-0 flex items-center justify-center">
-        <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-gray-200">
-          {selectedLogoData?.name === "Custom Logo" && (
-            <span className="text-xs font-bold text-blue-600">L</span>
-          )}
-          {selectedLogoData?.name === "Brand Logo" && (
-            <span className="text-xs">🏢</span>
-          )}
-          {selectedLogoData?.name === "Icon" && (
-            <span className="text-xs">⭐</span>
-          )}
+    const logoOverlay = selectedLogoData?.icon && (
+      <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-gray-200 p-2">
+          <img src={selectedLogoData.icon} alt={selectedLogoData.name} className="w-full h-full" />
         </div>
       </div>
     );
 
-    // Different frame styles
-    if (selectedFrameData?.id === 1) {
-      // No Frame
+    // No Frame - just QR (don't show logo overlay when 'No Frame' selected)
+    if (selectedFrameData?.id === 1 || !selectedFrameData?.icon) {
       return (
-        <div className="relative z-0 w-40 h-40 bg-white rounded-lg shadow-lg flex items-center justify-center p-4">
+        <div className="relative w-48 h-48 bg-white rounded-lg shadow-lg flex items-center justify-center p-4">
           {qrCode}
-          {logoOverlay}
-        </div>
-      );
-    } else if (selectedFrameData?.id === 2) {
-      // Email Frame
-      return (
-        <div className="relative z-0 w-48 h-48 flex items-center justify-center">
-          <svg viewBox="0 0 200 180" className="w-full h-full">
-            {/* Envelope */}
-            <rect
-              x="20"
-              y="40"
-              width="160"
-              height="100"
-              fill="#e5e7eb"
-              stroke="#9ca3af"
-              strokeWidth="2"
-              rx="4"
-            />
-            <path
-              d="M 20 40 L 100 100 L 180 40"
-              fill="none"
-              stroke="#9ca3af"
-              strokeWidth="2"
-            />
-            <path d="M 20 40 L 100 100 L 180 40" fill="#f3f4f6" />
-            {/* QR inside envelope */}
-            <foreignObject x="60" y="60" width="80" height="80">
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="scale-75">{qrCode}</div>
-              </div>
-            </foreignObject>
-          </svg>
-          {logoOverlay}
-        </div>
-      );
-    } else if (selectedFrameData?.id === 3) {
-      // Scanner Frame
-      return (
-        <div className="relative z-0 w-48 h-48 flex items-center justify-center">
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            {/* Monitor/Screen */}
-            <rect
-              x="30"
-              y="30"
-              width="140"
-              height="110"
-              fill="#1f2937"
-              stroke="#374151"
-              strokeWidth="3"
-              rx="6"
-            />
-            <rect x="40" y="40" width="120" height="90" fill="#f3f4f6" />
-            {/* Stand */}
-            <rect x="85" y="140" width="30" height="20" fill="#374151" />
-            <rect x="60" y="160" width="80" height="8" fill="#4b5563" rx="4" />
-            {/* QR on screen */}
-            <foreignObject x="60" y="55" width="80" height="80">
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="scale-75">{qrCode}</div>
-              </div>
-            </foreignObject>
-          </svg>
-          {logoOverlay}
-        </div>
-      );
-    } else if (selectedFrameData?.id === 4) {
-      // Document Frame
-      return (
-        <div className="relative z-0 w-48 h-48 flex items-center justify-center">
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            {/* Paper */}
-            <path
-              d="M 50 20 L 130 20 L 150 40 L 150 180 L 50 180 Z"
-              fill="white"
-              stroke="#9ca3af"
-              strokeWidth="2"
-            />
-            <path
-              d="M 130 20 L 130 40 L 150 40"
-              fill="#e5e7eb"
-              stroke="#9ca3af"
-              strokeWidth="2"
-            />
-            {/* Lines */}
-            <line
-              x1="65"
-              y1="60"
-              x2="135"
-              y2="60"
-              stroke="#d1d5db"
-              strokeWidth="2"
-            />
-            <line
-              x1="65"
-              y1="75"
-              x2="135"
-              y2="75"
-              stroke="#d1d5db"
-              strokeWidth="2"
-            />
-            {/* QR on document */}
-            <foreignObject x="60" y="90" width="80" height="80">
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="scale-75">{qrCode}</div>
-              </div>
-            </foreignObject>
-          </svg>
-          {logoOverlay}
-        </div>
-      );
-    } else if (selectedFrameData?.id === 5) {
-      // Truck Frame
-      return (
-        <div className="relative z-0 w-48 h-48 flex items-center justify-center">
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            {/* Truck body */}
-            <rect
-              x="40"
-              y="80"
-              width="80"
-              height="50"
-              fill="#3b82f6"
-              stroke="#2563eb"
-              strokeWidth="2"
-              rx="4"
-            />
-            <rect
-              x="120"
-              y="95"
-              width="40"
-              height="35"
-              fill="#60a5fa"
-              stroke="#2563eb"
-              strokeWidth="2"
-              rx="2"
-            />
-            {/* Wheels */}
-            <circle
-              cx="65"
-              cy="135"
-              r="12"
-              fill="#1f2937"
-              stroke="#000"
-              strokeWidth="2"
-            />
-            <circle
-              cx="135"
-              cy="135"
-              r="12"
-              fill="#1f2937"
-              stroke="#000"
-              strokeWidth="2"
-            />
-            <circle cx="65" cy="135" r="6" fill="#6b7280" />
-            <circle cx="135" cy="135" r="6" fill="#6b7280" />
-            {/* QR on truck */}
-            <foreignObject x="50" y="85" width="60" height="60">
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="scale-50">{qrCode}</div>
-              </div>
-            </foreignObject>
-          </svg>
-          {logoOverlay}
-        </div>
-      );
-    } else if (selectedFrameData?.id === 6) {
-      // Mobile Frame
-      return (
-        <div className="relative z-0 w-48 h-48 flex items-center justify-center">
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            {/* Phone */}
-            <rect
-              x="60"
-              y="30"
-              width="80"
-              height="140"
-              fill="#1f2937"
-              stroke="#000"
-              strokeWidth="3"
-              rx="12"
-            />
-            <rect x="65" y="40" width="70" height="110" fill="#f3f4f6" />
-            {/* Home button */}
-            <circle cx="100" cy="160" r="8" fill="#374151" />
-            {/* QR on phone screen */}
-            <foreignObject x="70" y="50" width="60" height="60">
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="scale-75">{qrCode}</div>
-              </div>
-            </foreignObject>
-          </svg>
-          {logoOverlay}
-        </div>
-      );
-    } else if (selectedFrameData?.id === 7) {
-      // Scooter Frame
-      return (
-        <div className="relative z-0 w-48 h-48 flex items-center justify-center">
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            {/* Scooter body */}
-            <path
-              d="M 80 90 L 120 90 L 130 110 L 70 110 Z"
-              fill="#6b7280"
-              stroke="#374151"
-              strokeWidth="2"
-            />
-            {/* Handles */}
-            <line
-              x1="85"
-              y1="90"
-              x2="85"
-              y2="70"
-              stroke="#374151"
-              strokeWidth="3"
-            />
-            <line
-              x1="75"
-              y1="70"
-              x2="95"
-              y2="70"
-              stroke="#374151"
-              strokeWidth="3"
-            />
-            {/* Wheels */}
-            <circle
-              cx="75"
-              cy="130"
-              r="15"
-              fill="#1f2937"
-              stroke="#000"
-              strokeWidth="2"
-            />
-            <circle
-              cx="125"
-              cy="130"
-              r="15"
-              fill="#1f2937"
-              stroke="#000"
-              strokeWidth="2"
-            />
-            {/* QR on scooter */}
-            <foreignObject x="75" y="85" width="50" height="50">
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="scale-50">{qrCode}</div>
-              </div>
-            </foreignObject>
-          </svg>
-          {logoOverlay}
-        </div>
-      );
-    } else if (selectedFrameData?.id === 8) {
-      // Coffee Frame
-      return (
-        <div className="relative z-0 w-48 h-48 flex items-center justify-center">
-          <svg viewBox="0 0 200 200" className="w-full h-full">
-            {/* Cup */}
-            <path
-              d="M 60 70 L 70 140 L 130 140 L 140 70 Z"
-              fill="#f3f4f6"
-              stroke="#9ca3af"
-              strokeWidth="2"
-            />
-            <ellipse
-              cx="100"
-              cy="70"
-              rx="40"
-              ry="10"
-              fill="#e5e7eb"
-              stroke="#9ca3af"
-              strokeWidth="2"
-            />
-            {/* Handle */}
-            <path
-              d="M 140 90 Q 160 100 160 110 Q 160 120 140 130"
-              fill="none"
-              stroke="#9ca3af"
-              strokeWidth="3"
-            />
-            {/* Steam */}
-            <path
-              d="M 85 50 Q 85 40 90 35"
-              fill="none"
-              stroke="#d1d5db"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-            <path
-              d="M 100 50 Q 100 35 105 30"
-              fill="none"
-              stroke="#d1d5db"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-            <path
-              d="M 115 50 Q 115 40 110 35"
-              fill="none"
-              stroke="#d1d5db"
-              strokeWidth="2"
-              strokeLinecap="round"
-            />
-            {/* QR on cup */}
-            <foreignObject x="70" y="80" width="60" height="60">
-              <div className="w-full h-full flex items-center justify-center">
-                <div className="scale-75">{qrCode}</div>
-              </div>
-            </foreignObject>
-          </svg>
-          {logoOverlay}
         </div>
       );
     }
 
+    // With Frame - position QR based on frame type
+    // Each frame has a specific area where the QR should be positioned
+    const getQRPosition = () => {
+      switch (selectedFrameData?.id) {
+        case 2: // Card
+          return { top: '40%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.25 };
+        case 3: // Scooter
+          return { top: '27%', left: '27%', transform: 'translate(-50%, -50%)', scale: 1.2 };
+        case 4: // Juice
+          return { top: '60%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.5 };
+        case 5: // Gift Wrapper
+          return { top: '41%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.52 };
+        case 6: // Cup
+          return { top: '49%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.18 };
+        case 7: // Text Tab
+          return { top: '62%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.58 };
+        case 8: // Tab
+          return { top: '39%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.73 };
+        case 9: // Clipboard
+          return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', scale: 0.7 };
+        case 10: // Clipped Text
+          return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', scale: 0.7 };
+        default:
+          return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1 };
+      }
+    };
+
+    const qrPosition = getQRPosition();
+
     return (
-      <div className="relative z-0 w-40 h-40 bg-white rounded-lg shadow-lg flex items-center justify-center p-4">
-        {qrCode}
-        {logoOverlay}
+      <div className="relative w-64 h-64 flex items-center justify-center">
+        {/* Frame SVG as background */}
+        <img
+          src={selectedFrameData.icon}
+          alt={selectedFrameData.name}
+          className="absolute inset-0 w-full h-full object-contain"
+        />
+        {/* QR Code overlaid on frame */}
+        <div 
+          className="absolute z-10"
+          style={{
+            top: qrPosition.top,
+            left: qrPosition.left,
+            transform: `${qrPosition.transform} scale(${qrPosition.scale})`,
+          }}
+        >
+          {qrCode}
+        </div>
+        {/* Logo overlay */}
+        {logoOverlay && (
+          <div 
+            className="absolute"
+            style={{
+              top: qrPosition.top,
+              left: qrPosition.left,
+              transform: `${qrPosition.transform} scale(${qrPosition.scale})`,
+            }}
+          >
+            {logoOverlay}
+          </div>
+        )}
       </div>
     );
   };
@@ -602,26 +512,35 @@ export function Hero() {
                 }`}
               >
                 <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gray-100 rounded flex items-center justify-center mb-1 sm:mb-2">
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 bg-white border border-gray-300 rounded flex items-center justify-center p-1">
-                    <div
-                      className="grid gap-[1px]"
-                      style={{
-                        gridTemplateColumns: "repeat(9, minmax(0, 1fr))",
-                      }}
-                    >
-                      {miniQRPattern.flat().map((cell, i) => (
-                        <div
-                          key={i}
-                          className={`w-[2px] sm:w-[3px] h-[2px] sm:h-[3px] ${
-                            cell ? "bg-gray-900" : "bg-white"
-                          }`}
-                        ></div>
-                      ))}
+                  {frame.icon ? (
+                    <img
+                      src={frame.icon}
+                      alt={frame.name}
+                      className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12"
+                      style={{ filter: "invert(46%) sepia(0%) saturate(0%) hue-rotate(212deg) brightness(94%) contrast(88%)" }}
+                    />
+                  ) : (
+                    <div className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 bg-white border border-gray-300 rounded flex items-center justify-center p-1">
+                      <div
+                        className="grid gap-[1px]"
+                        style={{
+                          gridTemplateColumns: "repeat(9, minmax(0, 1fr))",
+                        }}
+                      >
+                        {miniQRPattern.flat().map((cell, i) => (
+                          <div
+                            key={i}
+                            className={`w-[2px] sm:w-[3px] h-[2px] sm:h-[3px] ${
+                              cell ? "bg-gray-900" : "bg-white"
+                            }`}
+                          ></div>
+                        ))}
+                      </div>
                     </div>
-                  </div>
+                  )}
                 </div>
                 <span className="text-[10px] sm:text-xs text-gray-600">
-                  {frame.icon}
+                  {frame.name}
                 </span>
               </button>
             ))}
@@ -706,34 +625,15 @@ export function Hero() {
                 }`}
               >
                 <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gray-100 rounded flex items-center justify-center mb-1 sm:mb-2">
-                  <div className="relative w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 bg-white border border-gray-300 rounded flex items-center justify-center p-1">
-                    <div
-                      className="grid gap-[1px]"
-                      style={{
-                        gridTemplateColumns: "repeat(9, minmax(0, 1fr))",
-                      }}
-                    >
-                      {miniQRPattern.flat().map((cell, i) => (
-                        <div
-                          key={i}
-                          className={`w-[2px] sm:w-[3px] h-[2px] sm:h-[3px] ${
-                            cell ? "bg-gray-900" : "bg-white"
-                          }`}
-                        ></div>
-                      ))}
-                    </div>
-                    {logo.id !== 1 && (
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <div className="w-3 h-3 sm:w-4 sm:h-4 bg-white rounded-full border border-gray-300 flex items-center justify-center text-[6px] sm:text-[8px]">
-                          {logo.id === 2 && (
-                            <span className="text-blue-600 font-bold">L</span>
-                          )}
-                          {logo.id === 3 && <span>🏢</span>}
-                          {logo.id === 4 && <span>⭐</span>}
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  {logo.icon ? (
+                    <img
+                      src={logo.icon}
+                      alt={logo.name}
+                      className="w-8 h-8 sm:w-10 sm:h-10"
+                    />
+                  ) : (
+                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white border border-gray-300" />
+                  )}
                 </div>
                 <span className="text-[10px] sm:text-xs text-gray-600">
                   {logo.name}
@@ -895,7 +795,7 @@ export function Hero() {
                 </span>
                 Complete the content
               </h3>
-              {contentMap[activeTab]}
+              {renderContent()}
             </div>
 
             {/* Step 2: Design your QR */}
@@ -945,9 +845,13 @@ export function Hero() {
               {renderQRWithFrame()}
             </div>
 
-            {/* Download Button - Always visible */}
+            {/* Download Button */}
             <div className="flex-shrink-0">
-              <button className="w-full px-6 py-3 bg-transparent border border-gray-300 hover:border-gray-400 text-gray-700 font-medium rounded-full transition-all flex items-center justify-center gap-1 text-xs">
+              <button
+                onClick={downloadQRCode}
+                disabled={!generatedQR}
+                className="w-full px-6 py-3 bg-transparent border border-gray-300 hover:border-gray-400 disabled:border-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-gray-700 font-medium rounded-full transition-all flex items-center justify-center gap-1 text-xs"
+              >
                 Download QR
                 <svg
                   className="w-3 h-3"

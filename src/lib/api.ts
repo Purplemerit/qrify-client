@@ -96,9 +96,17 @@ api.interceptors.response.use(
       const refreshToken = tokenStorage.getRefreshToken();
 
       if (!refreshToken) {
-        // No refresh token available, redirect to login
+        // No refresh token available
+        // Don't redirect to login from home page or public pages
+        const currentPath = window.location.pathname;
+        const publicPaths = ['/', '/home'];
+
         tokenStorage.clearTokens();
-        window.location.href = '/login';
+
+        if (!publicPaths.includes(currentPath)) {
+          window.location.href = '/login';
+        }
+
         return Promise.reject(error);
       }
 
@@ -120,10 +128,18 @@ api.interceptors.response.use(
         processQueue(null, accessToken);
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh failed, clear tokens and redirect to login
+        // Refresh failed, clear tokens
         processQueue(refreshError, null);
         tokenStorage.clearTokens();
-        window.location.href = '/login';
+
+        // Don't redirect to login from home page or public pages
+        const currentPath = window.location.pathname;
+        const publicPaths = ['/', '/home'];
+
+        if (!publicPaths.includes(currentPath)) {
+          window.location.href = '/login';
+        }
+
         return Promise.reject(refreshError);
       } finally {
         isRefreshing = false;
