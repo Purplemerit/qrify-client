@@ -19,8 +19,8 @@ export default function App() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
       <Header />
+      <Hero />
       <main className="max-w-6xl mx-auto px-6 py-16 space-y-24">
-        <Hero />
         <HowToCreate />
         <TypesSection
           onTypeSelect={setActiveShowcaseType}
