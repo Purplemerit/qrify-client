@@ -44,8 +44,6 @@ const App = () => (
           <Route path="/verify-email" element={<EmailVerification />} />
           <Route path="/verify-email-change" element={<EmailVerification />} />
 
-          {/* Protected routes with Layout */}
-          <Route element={<ProtectedRoute />}>
             <Route element={<Layout><Index /></Layout>} path="/dashboard" />
             <Route element={<Layout><NewQR /></Layout>} path="/new-qr" />
             <Route element={<Layout><BulkQR /></Layout>} path="/bulk-qr" />
@@ -59,7 +57,6 @@ const App = () => (
             <Route element={<Layout><Contact /></Layout>} path="/contact" />
             <Route element={<Layout><HelpCenter /></Layout>} path="/help" />
             <Route element={<Layout><Developers /></Layout>} path="/developers" />
-          </Route>
 
           {/* 404 */}
           <Route path="*" element={<NotFound />} />
