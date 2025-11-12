@@ -7,77 +7,77 @@ export function Hero() {
   const contentMap = {
     Website: (
       <>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
           Enter your Website
         </label>
         <input
-          className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
           placeholder="E.g. https://www.myweb.com/"
         />
       </>
     ),
     Text: (
       <>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
           Enter your text
         </label>
         <textarea
-          className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
           placeholder="Write your message here..."
-          rows={4}
+          rows={1}
         />
       </>
     ),
     PDF: (
       <>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
           Upload your PDF
         </label>
         <input
           type="file"
           accept="application/pdf"
-          className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm"
+          className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs"
         />
       </>
     ),
     Images: (
       <>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
           Upload your image
         </label>
         <input
           type="file"
           accept="image/*"
-          className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm"
+          className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs"
         />
       </>
     ),
     "vCard Plus": (
       <>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-xs font-medium text-gray-700 mb-0.5">
           Fill in your contact details
         </label>
         <input
-          className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded px-2 py-0.5 text-xs mb-0.5 focus:outline-none focus:ring-1 focus:ring-blue-500"
           placeholder="Name"
         />
         <input
-          className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm mb-3 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded px-2 py-0.5 text-xs mb-0.5 focus:outline-none focus:ring-1 focus:ring-blue-500"
           placeholder="Phone"
         />
         <input
-          className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded px-2 py-0.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
           placeholder="Email"
         />
       </>
     ),
     Video: (
       <>
-        <label className="block text-sm font-medium text-gray-700 mb-2">
+        <label className="block text-xs font-medium text-gray-700 mb-1">
           Paste your video link
         </label>
         <input
-          className="w-full border border-gray-300 rounded-md px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500"
+          className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
           placeholder="E.g. https://youtube.com/..."
         />
       </>
@@ -249,7 +249,7 @@ export function Hero() {
     if (selectedFrameData?.id === 1) {
       // No Frame
       return (
-        <div className="relative z-0 w-40 h-40 bg-white border-4 border-gray-300 rounded-lg flex items-center justify-center p-4">
+        <div className="relative z-0 w-40 h-40 bg-white rounded-lg shadow-lg flex items-center justify-center p-4">
           {qrCode}
           {logoOverlay}
         </div>
@@ -565,7 +565,7 @@ export function Hero() {
     }
 
     return (
-      <div className="relative z-0 w-40 h-40 bg-white border-4 border-gray-300 rounded-lg flex items-center justify-center p-4">
+      <div className="relative z-0 w-40 h-40 bg-white rounded-lg shadow-lg flex items-center justify-center p-4">
         {qrCode}
         {logoOverlay}
       </div>
@@ -794,22 +794,33 @@ export function Hero() {
   };
 
   return (
-    <section className="bg-gradient-to-b from-white to-gray-50 rounded-lg p-6">
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
+    <section
+      className="w-full px-4 md:px-8 lg:px-16 py-16"
+      style={{ backgroundColor: "#F3F3FF" }}
+    >
+      <div
+        className="mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-3 overflow-hidden"
+        style={{
+          width: "880px",
+          height: "490px",
+          flexShrink: 0,
+          aspectRatio: "88/49",
+        }}
+      >
         {/* Main Tabs */}
-        <div className="flex flex-nowrap gap-3 mb-8 pb-6 border-b border-gray-200 overflow-x-auto">
+        <div className="flex flex-nowrap gap-2 mb-4 pb-3 border-b border-gray-200 overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex items-center gap-2 px-4 py-2.5 rounded-lg text-sm font-medium transition-all whitespace-nowrap border ${
+              className={`flex items-center gap-1 px-2 py-1.5 rounded text-xs font-medium transition-all whitespace-nowrap ${
                 activeTab === tab
-                  ? "bg-blue-50 text-blue-600 border-blue-200"
-                  : "bg-white text-gray-600 border-gray-200 hover:bg-gray-50"
+                  ? "bg-gray-100 text-blue-600"
+                  : "text-blue-600 hover:bg-gray-50"
               }`}
             >
               <svg
-                className="w-5 h-5"
+                className="w-3 h-3"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -869,13 +880,16 @@ export function Hero() {
         </div>
 
         {/* Content area with Step 1 & 2 on left, Step 3 on right */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div
+          className="grid grid-cols-1 lg:grid-cols-3 gap-3"
+          style={{ height: "calc(100% - 60px)" }}
+        >
           {/* Left Column - Step 1 and Step 2 */}
-          <div className="lg:col-span-2 space-y-8">
+          <div className="lg:col-span-2 space-y-2">
             {/* Step 1: Complete the content */}
             <div>
-              <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-4">
-                <span className="flex items-center justify-center w-7 h-7 bg-gray-900 text-white rounded text-sm font-bold">
+              <h3 className="flex items-center gap-1 text-sm font-semibold text-gray-900 mb-1">
+                <span className="flex items-center justify-center w-5 h-5 bg-gray-900 text-white rounded text-xs font-bold">
                   1
                 </span>
                 Complete the content
@@ -885,20 +899,20 @@ export function Hero() {
 
             {/* Step 2: Design your QR */}
             <div>
-              <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-900 mb-4">
-                <span className="flex items-center justify-center w-7 h-7 bg-gray-900 text-white rounded text-sm font-bold">
+              <h3 className="flex items-center gap-1 text-sm font-semibold text-gray-900 mb-1">
+                <span className="flex items-center justify-center w-5 h-5 bg-gray-900 text-white rounded text-xs font-bold">
                   2
                 </span>
                 Design your QR
               </h3>
 
               {/* Design Sub-tabs */}
-              <div className="flex gap-2 mb-6 overflow-x-auto pb-2">
+              <div className="flex gap-1 mb-2 overflow-x-auto">
                 {designTabs.map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveDesignTab(tab)}
-                    className={`px-4 py-2 text-sm font-medium rounded-lg transition-all whitespace-nowrap ${
+                    className={`px-2 py-1 text-xs font-medium rounded transition-all whitespace-nowrap ${
                       activeDesignTab === tab
                         ? "bg-blue-50 text-blue-600"
                         : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
@@ -910,43 +924,45 @@ export function Hero() {
               </div>
 
               {/* Design Options Grid */}
-              <div className="bg-gray-50 rounded-lg p-6">
+              <div className="bg-gray-50 rounded p-2">
                 {renderDesignOptions()}
               </div>
             </div>
           </div>
 
           {/* Right Column - Step 3: Download your QR */}
-          <div className="lg:col-span-1">
-            <h3 className="flex items-center gap-2 text-lg font-semibold text-gray-600 mb-6">
-              <span className="flex items-center justify-center w-7 h-7 bg-gray-500 text-white rounded text-sm font-bold">
+          <div className="lg:col-span-1 flex flex-col overflow-hidden">
+            <h3 className="flex items-center gap-1 text-sm font-semibold text-gray-600 mb-2 flex-shrink-0">
+              <span className="flex items-center justify-center w-5 h-5 bg-gray-500 text-white rounded text-xs font-bold">
                 3
               </span>
               Download your QR
             </h3>
 
             {/* QR Code Preview */}
-            <div className="flex items-center justify-center bg-gray-50 rounded-lg p-6 mb-4">
+            <div className="flex items-center justify-center bg-gray-50 rounded p-2 mb-2 flex-1 min-h-0 overflow-hidden">
               {renderQRWithFrame()}
             </div>
 
-            {/* Download Button */}
-            <button className="w-full px-6 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition-all flex items-center justify-center gap-2 text-sm">
-              Download QR
-              <svg
-                className="w-4 h-4"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M19 9l-7 7-7-7"
-                />
-              </svg>
-            </button>
+            {/* Download Button - Always visible */}
+            <div className="flex-shrink-0">
+              <button className="w-full px-6 py-3 bg-transparent border border-gray-300 hover:border-gray-400 text-gray-700 font-medium rounded-full transition-all flex items-center justify-center gap-1 text-xs">
+                Download QR
+                <svg
+                  className="w-3 h-3"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M19 9l-7 7-7-7"
+                  />
+                </svg>
+              </button>
+            </div>
           </div>
         </div>
       </div>
