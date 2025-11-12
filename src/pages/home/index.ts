@@ -1,0 +1,11 @@
+export { Header } from './Header';
+export { Hero } from './Hero';
+export { HowToCreate } from './HowToCreate';
+export { TypesSection } from './TypesSection';
+export { Showcase } from './Showcase';
+export { MarketingGrid } from './MarketingGrid';
+export { Discover } from './Discover';
+export { Collections } from './Collections';
+export { FaqAndIllustration } from './FaqAndIllustration';
+export { Reviews } from './Reviews';
+export { FooterCta } from './FooterCta';
