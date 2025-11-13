@@ -132,9 +132,9 @@ const NewQR = () => {
   )
 
   const renderStep1 = () => (
-    <div className="flex justify-between w-full ml-10">
+    <div className="flex gap-8 w-full px-10 justify-center">
       {/* Main Content */}
-      <div className="flex-1 max-w-4xl">
+      <div className="flex-1 max-w-3xl">
         {/* Dynamic QRs Section */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
@@ -147,7 +147,7 @@ const NewQR = () => {
         </div>
 
         {/* QR Types Grid */}
-        <div className="grid grid-cols-2 gap-4 position-fixed hover:border">
+        <div className="grid grid-cols-2 gap-4 hover:border">
           {qrTypes.map((type, index) => (
             <Card 
               key={index} 
@@ -182,39 +182,23 @@ const NewQR = () => {
       </div>
 
       {/* Phone Mockup */}
-      <div className="w-90 flex flex-col items-center mt-36 pr-[60px]">
+      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit">
         <div className="mb-4">
           <h3 className="text-lg font-semibold text-center">Example</h3>
         </div>
         <div className="relative">
-          <div className="w-64 h-[520px] bg-black rounded-[3rem] p-2">
-            <div className="w-full h-full bg-white rounded-[2.5rem] relative overflow-hidden">
-              {/* Phone Screen Content */}
-              <div className="absolute top-1 left-0 right-0 h-6 bg-white flex items-center justify-right px-6 text-xs">
-                <span className="font-medium">12:01</span>
-                <div className="flex items-center space-x-1">
-                  <div className="w-12 h-4 mx-12 bg-black rounded-3xl"></div>
-                </div>
-              </div>
-              
-              {/* Phone Content Area */}
-              <div className="pt-8 px-6 h-full bg-gray-50">
-                <div className="w-full h-40 bg-white rounded-lg shadow-sm mb-4"></div>
-                <div className="space-y-3">
-                  <div className="h-4 bg-white rounded"></div>
-                  <div className="h-4 bg-white rounded w-3/4"></div>
-                  <div className="h-4 bg-white rounded w-1/2"></div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <img 
+            src="/iphone15.png" 
+            alt="iPhone 15 Mockup" 
+            className="w-72 h-auto object-contain"
+          />
         </div>
       </div>
     </div>
   )
 
   const renderStep2 = () => (
-     <div className="flex justify-between w-full ml-10">
+     <div className="flex gap-8 w-full px-10 justify-center">
       {/* Main Content */}
       <div className="flex-1 max-w-2xl">
         <div className="space-y-6">
@@ -273,43 +257,27 @@ const NewQR = () => {
       </div>
 
       {/* Phone Mockup */}
-      <div className="w-90 flex flex-col items-center mt-36 pr-[60px]">
+      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit">
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-center">Example</h3>
+          <h3 className="text-lg font-semibold text-center">Preview</h3>
         </div>
         <div className="relative">
-          <div className="w-64 h-[520px] bg-black rounded-[3rem] p-2">
-            <div className="w-full h-full bg-white rounded-[2.5rem] relative overflow-hidden">
-              {/* Phone Screen Content */}
-              <div className="absolute top-1 left-0 right-0 h-6 bg-white flex items-center justify-right px-6 text-xs">
-                <span className="font-medium">12:01</span>
-                <div className="flex items-center space-x-1">
-                  <div className="w-12 h-4 mx-12 bg-black rounded-3xl"></div>
-                </div>
-              </div>
-              
-              {/* Phone Content Area */}
-              <div className="pt-8 px-6 h-full bg-gray-50">
-                {generatedQR && (
-              <div className="mt-8 flex flex-col items-center">
-                <h3 className="text-lg font-semibold mb-2">Generated QR Code</h3>
-                <img 
-                  src={generatedQR.qr_image} 
-                  alt="Generated QR" 
-                  className="border rounded-lg shadow-md"
-                  style={{ maxWidth: '250px', height: 'auto' }}
-                />
-              </div>
-            )}
-                <div className="w-full h-40 bg-white rounded-lg shadow-sm mb-4"></div>
-                <div className="space-y-3">
-                  <div className="h-4 bg-white rounded"></div>
-                  <div className="h-4 bg-white rounded w-3/4"></div>
-                  <div className="h-4 bg-white rounded w-1/2"></div>
-                </div>
-              </div>
+          <img 
+            src="/iphone15.png" 
+            alt="iPhone 15 Mockup" 
+            className="w-72 h-auto object-contain"
+          />
+          {/* QR Code overlay on phone screen */}
+          {generatedQR && (
+            <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+              <img 
+                src={generatedQR.qr_image} 
+                alt="Generated QR" 
+                className="rounded-lg shadow-md"
+                style={{ maxWidth: '180px', height: 'auto' }}
+              />
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
