@@ -4,6 +4,7 @@ export interface User {
   id: string;
   email: string;
   emailVerified: boolean;
+  role: string;
   createdAt?: string;
   updatedAt?: string;
 }
