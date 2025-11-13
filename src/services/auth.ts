@@ -4,6 +4,7 @@ export interface User {
   id: string;
   email: string;
   emailVerified: boolean;
+  role: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -15,6 +16,8 @@ export interface SignupRequest {
 
 export interface SignupResponse {
   message: string;
+  accessToken: string;
+  refreshToken: string;
   user: User;
 }
 
@@ -82,6 +85,12 @@ class AuthService {
    */
   async signup(data: SignupRequest): Promise<SignupResponse> {
     const response = await api.post<SignupResponse>('/auth/signup', data);
+    const { accessToken, refreshToken } = response.data;
+
+    // Store tokens for immediate login
+    tokenStorage.setAccessToken(accessToken);
+    tokenStorage.setRefreshToken(refreshToken);
+
     return response.data;
   }
 

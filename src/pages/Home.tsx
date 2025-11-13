@@ -34,8 +34,8 @@ export default function App() {
       <Reviews />
       <main className="max-w-6xl mx-auto px-6 py-16 space-y-24">
         <Collections />
-        <FooterCta />
       </main>
+      <FooterCta />
     </div>
   );
 }
