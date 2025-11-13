@@ -10,7 +10,6 @@ export default function Signup() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,11 +43,8 @@ export default function Signup() {
         password: formData.password,
       });
 
-      setSuccess(true);
-      // Show success message for a moment before redirecting
-      setTimeout(() => {
-        navigate("/login");
-      }, 3000);
+      // Navigate directly to NewQR page after successful signup
+      navigate("/new-qr");
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
         const error = err as { response?: { data?: { error?: string } } };
@@ -62,44 +58,6 @@ export default function Signup() {
       setLoading(false);
     }
   };
-
-  if (success) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg
-                  className="w-8 h-8 text-green-600"
-                  fill="none"
-                  stroke="currentColor"
-                  viewBox="0 0 24 24"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M5 13l4 4L19 7"
-                  />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">
-                Account Created!
-              </h2>
-              <p className="text-gray-600 mb-4">
-                Please check your email to verify your account before logging
-                in.
-              </p>
-              <p className="text-sm text-gray-500">
-                Redirecting to login page...
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6 py-12">
