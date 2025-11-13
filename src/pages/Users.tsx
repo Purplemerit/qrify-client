@@ -1,57 +1,115 @@
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Search, Plus, MoreHorizontal, Mail, Phone } from "lucide-react"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Search, Plus, MoreHorizontal, Mail, Phone } from "lucide-react";
+import { useState, useEffect } from "react";
+import { authService } from "../services/auth";
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-
-const users = [
-  {
-    id: 1,
-    name: "John Doe",
-    email: "john.doe@company.com",
-    role: "Admin",
-    status: "Active",
-    lastActive: "2 hours ago",
-    qrCodes: 15,
-    avatar: null
-  },
-  {
-    id: 2,
-    name: "Sarah Wilson",
-    email: "sarah.wilson@company.com",
-    role: "Editor",
-    status: "Active",
-    lastActive: "1 day ago",
-    qrCodes: 8,
-    avatar: null
-  },
-  {
-    id: 3,
-    name: "Mike Johnson",
-    email: "mike.johnson@company.com",
-    role: "Viewer",
-    status: "Inactive",
-    lastActive: "1 week ago",
-    qrCodes: 3,
-    avatar: null
-  }
-]
+} from "@/components/ui/dropdown-menu";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 const Users = () => {
+  const [currentUser, setCurrentUser] = useState<{
+    id: string;
+    email: string;
+    role: string;
+    name?: string;
+  } | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchCurrentUser = async () => {
+      try {
+        if (authService.isAuthenticated()) {
+          const response = await authService.getCurrentUser();
+          setCurrentUser({
+            id: response.user.id,
+            email: response.user.email,
+            role: response.user.role,
+            name: response.user.email.split("@")[0], // Use email prefix as name
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching current user:", error);
+        // Fallback: if API fails but user has token, show basic info
+        if (authService.isAuthenticated()) {
+          setCurrentUser({
+            id: "current-user",
+            email: "Current User",
+            role: "admin",
+            name: "Admin User",
+          });
+        }
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCurrentUser();
+  }, []);
+
+  // Create users array with current user as admin
+  const users = currentUser
+    ? [
+        {
+          id: currentUser.id,
+          name: currentUser.name || currentUser.email.split("@")[0],
+          email: currentUser.email,
+          role:
+            currentUser.role.charAt(0).toUpperCase() +
+            currentUser.role.slice(1), // Capitalize role
+          status: "Active",
+          lastActive: "Now",
+          qrCodes: 0,
+          avatar: null,
+        },
+      ]
+    : [];
+
+  if (loading) {
+    return (
+      <div className="max-w-6xl">
+        <div className="mb-6">
+          <h1 className="text-2xl font-semibold">Users</h1>
+          <p className="text-muted-foreground mt-1">
+            Manage team members and their permissions
+          </p>
+        </div>
+        <div className="flex items-center justify-center py-8">
+          <div className="text-center">
+            <div className="w-8 h-8 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+            <p className="text-gray-600">Loading users...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
   return (
     <div className="max-w-6xl">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold">Users</h1>
-        <p className="text-muted-foreground mt-1">Manage team members and their permissions</p>
+        <p className="text-muted-foreground mt-1">
+          Manage team members and their permissions
+        </p>
       </div>
 
       {/* Header Actions */}
@@ -91,7 +149,10 @@ const Users = () => {
                   <Avatar className="h-12 w-12">
                     <AvatarImage src={user.avatar || undefined} />
                     <AvatarFallback>
-                      {user.name.split(' ').map(n => n[0]).join('')}
+                      {user.name
+                        .split(" ")
+                        .map((n) => n[0])
+                        .join("")}
                     </AvatarFallback>
                   </Avatar>
                   <div className="space-y-1">
@@ -108,10 +169,16 @@ const Users = () => {
                     <p className="text-sm font-medium">{user.qrCodes}</p>
                     <p className="text-xs text-muted-foreground">QR Codes</p>
                   </div>
-                  
+
                   <div className="text-center">
-                    <Badge 
-                      variant={user.role === "Admin" ? "default" : user.role === "Editor" ? "secondary" : "outline"}
+                    <Badge
+                      variant={
+                        user.role === "Admin"
+                          ? "default"
+                          : user.role === "Editor"
+                          ? "secondary"
+                          : "outline"
+                      }
                     >
                       {user.role}
                     </Badge>
@@ -119,12 +186,16 @@ const Users = () => {
                   </div>
 
                   <div className="text-center">
-                    <Badge 
-                      variant={user.status === "Active" ? "default" : "secondary"}
+                    <Badge
+                      variant={
+                        user.status === "Active" ? "default" : "secondary"
+                      }
                     >
                       {user.status}
                     </Badge>
-                    <p className="text-xs text-muted-foreground mt-1">{user.lastActive}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      {user.lastActive}
+                    </p>
                   </div>
 
                   <DropdownMenu>
@@ -138,12 +209,8 @@ const Users = () => {
                         <Mail className="w-4 h-4 mr-2" />
                         Send Message
                       </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        Edit Permissions
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>
-                        View Activity
-                      </DropdownMenuItem>
+                      <DropdownMenuItem>Edit Permissions</DropdownMenuItem>
+                      <DropdownMenuItem>View Activity</DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem className="text-red-600">
                         Remove User
@@ -161,7 +228,9 @@ const Users = () => {
       <Card className="mt-6">
         <CardHeader>
           <CardTitle>Invite New User</CardTitle>
-          <CardDescription>Send an invitation to join your team</CardDescription>
+          <CardDescription>
+            Send an invitation to join your team
+          </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -179,14 +248,22 @@ const Users = () => {
             <Button>Send Invitation</Button>
           </div>
           <div className="text-xs text-muted-foreground">
-            <p><strong>Admin:</strong> Full access to all features and settings</p>
-            <p><strong>Editor:</strong> Can create and manage QR codes, limited settings access</p>
-            <p><strong>Viewer:</strong> Read-only access to QR codes and analytics</p>
+            <p>
+              <strong>Admin:</strong> Full access to all features and settings
+            </p>
+            <p>
+              <strong>Editor:</strong> Can create and manage QR codes, limited
+              settings access
+            </p>
+            <p>
+              <strong>Viewer:</strong> Read-only access to QR codes and
+              analytics
+            </p>
           </div>
         </CardContent>
       </Card>
     </div>
-  )
-}
+  );
+};
 
-export default Users
+export default Users;

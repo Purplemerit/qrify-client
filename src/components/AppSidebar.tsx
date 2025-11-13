@@ -1,19 +1,19 @@
-import { useState } from "react"
-import { 
-  QrCode, 
-  Plus, 
-  BarChart3, 
-  Grid3X3, 
-  Globe, 
-  CreditCard, 
-  Settings, 
-  Users, 
-  HelpCircle, 
-  Phone, 
+import { useState } from "react";
+import {
+  QrCode,
+  Plus,
+  BarChart3,
+  Grid3X3,
+  Globe,
+  CreditCard,
+  Settings,
+  Users,
+  HelpCircle,
+  Phone,
   Code,
-  Layers
-} from "lucide-react"
-import { NavLink, useLocation } from "react-router-dom"
+  Layers,
+} from "lucide-react";
+import { NavLink, useLocation } from "react-router-dom";
 
 import {
   Sidebar,
@@ -24,7 +24,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
   useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
 
 const mainItems = [
   { title: "New QR", url: "/new-qr", icon: Plus },
@@ -36,72 +36,116 @@ const mainItems = [
   { title: "Plans and payments", url: "/plans", icon: CreditCard },
   { title: "Settings", url: "/settings", icon: Settings },
   { title: "Users", url: "/users", icon: Users },
-]
+];
 
 const bottomItems = [
   { title: "Contact", url: "/contact", icon: Phone },
   { title: "Help center", url: "/help", icon: HelpCircle },
   { title: "Developers", url: "/developers", icon: Code },
-]
+];
 
 export function AppSidebar() {
-  const { open } = useSidebar()
-  const location = useLocation()
-  const currentPath = location.pathname
+  const { open } = useSidebar();
+  const location = useLocation();
+  const currentPath = location.pathname;
 
-  const isActive = (path: string) => currentPath === path
+  const isActive = (path: string) => currentPath === path;
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
-    isActive ? "bg-primary text-primary-foreground font-medium" : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+    `flex items-center gap-3 px-3 py-3 rounded-lg transition-colors font-semibold text-base ${
+      isActive
+        ? "bg-primary text-primary-foreground shadow-sm"
+        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+    }`;
 
   return (
     <Sidebar collapsible="icon">
-      <SidebarContent className="flex flex-col">
+      <SidebarContent className="flex flex-col overflow-y-auto scrollbar-hide">
         {/* Logo */}
-        <div className="p-4 border-b">
-          <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-primary rounded flex items-center justify-center">
-              <QrCode className="w-5 h-5 text-primary-foreground" />
+        <div className="p-6 border-b">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-sm">
+              <QrCode className="w-6 h-6 text-primary-foreground" />
             </div>
-            {open && <span className="font-bold text-lg">Logo</span>}
+            {open && <span className="font-bold text-xl">QRify</span>}
           </div>
         </div>
 
         {/* Main Navigation */}
-        <SidebarGroup className="flex-1">
+        <SidebarGroup className="flex-1 px-3">
           <SidebarGroupContent>
-            <SidebarMenu>
-              {mainItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url} className={getNavCls}>
-                      <item.icon className="w-4 h-4 text-sidebar-foreground" />
-                      <span className="text-sidebar-foreground">{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+            <SidebarMenu className="space-y-2">
+              {mainItems.map((item) => {
+                const active = isActive(item.url);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild className="h-auto p-0">
+                      <NavLink
+                        to={item.url}
+                        className={getNavCls({ isActive: active })}
+                      >
+                        <item.icon
+                          className={`w-5 h-5 ${
+                            active
+                              ? "text-primary-foreground"
+                              : "text-sidebar-foreground"
+                          }`}
+                        />
+                        <span
+                          className={`font-semibold text-base ${
+                            active
+                              ? "text-primary-foreground"
+                              : "text-sidebar-foreground"
+                          }`}
+                        >
+                          {item.title}
+                        </span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
 
         {/* Bottom Navigation */}
-        <SidebarGroup>
+        <SidebarGroup className="px-3 border-t pt-4">
           <SidebarGroupContent>
-            <SidebarMenu>
-              {bottomItems.map((item) => (
-                <SidebarMenuItem key={item.title}>
-                  <SidebarMenuButton asChild>
-                    <NavLink to={item.url} className={getNavCls}>
-                      <item.icon className="w-4 h-4 text-sidebar-foreground" />
-                      <span className="text-sidebar-foreground">{item.title}</span>
-                    </NavLink>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              ))}
+            <SidebarMenu className="space-y-2">
+              {bottomItems.map((item) => {
+                const active = isActive(item.url);
+                return (
+                  <SidebarMenuItem key={item.title}>
+                    <SidebarMenuButton asChild className="h-auto p-0">
+                      <NavLink
+                        to={item.url}
+                        className={getNavCls({ isActive: active })}
+                      >
+                        <item.icon
+                          className={`w-5 h-5 ${
+                            active
+                              ? "text-primary-foreground"
+                              : "text-sidebar-foreground"
+                          }`}
+                        />
+                        <span
+                          className={`font-semibold text-base ${
+                            active
+                              ? "text-primary-foreground"
+                              : "text-sidebar-foreground"
+                          }`}
+                        >
+                          {item.title}
+                        </span>
+                      </NavLink>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                );
+              })}
             </SidebarMenu>
           </SidebarGroupContent>
         </SidebarGroup>
       </SidebarContent>
     </Sidebar>
-  )
+  );
 }
