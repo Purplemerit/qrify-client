@@ -2,10 +2,17 @@ import { useState } from "react"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
 import { Globe, FileText, Image, CreditCard, Play, Link, Users, Music, Building, Tag } from "lucide-react"
+import WebsiteQRForm from "@/components/qr-forms/WebsiteQRForm"
+import PDFQRForm from "@/components/qr-forms/PDFQRForm"
+import ImagesQRForm from "@/components/qr-forms/ImagesQRForm"
+import VCardQRForm from "@/components/qr-forms/VCardQRForm"
+import VideoQRForm from "@/components/qr-forms/VideoQRForm"
+import ListOfLinksQRForm from "@/components/qr-forms/ListOfLinksQRForm"
+import SocialMediaQRForm from "@/components/qr-forms/SocialMediaQRForm"
+import MP3QRForm from "@/components/qr-forms/MP3QRForm"
+import BusinessQRForm from "@/components/qr-forms/BusinessQRForm"
+import GenericQRForm from "@/components/qr-forms/GenericQRForm"
 
 const qrTypes = [
   { name: "Website", description: "Open a URL", icon: Globe },
@@ -27,9 +34,7 @@ const qrTypes = [
 const NewQR = () => {
   const [currentStep, setCurrentStep] = useState(1)
   const [selectedQRType, setSelectedQRType] = useState("")
-  const [url, setUrl] = useState("")
-  const [title, setTitle] = useState("")
-  const [description, setDescription] = useState("")
+  const [qrData, setQrData] = useState<any>(null)
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState("")
   const [generatedQR, setGeneratedQR] = useState<null | { qr_image: string }>(null)
@@ -40,22 +45,21 @@ const NewQR = () => {
     setCurrentStep(2)
   }
 
-  const handleGenerateQR = async () => {
+  const handleGenerateQR = async (formData: any) => {
     setLoading(true)
     setError("")
+    setQrData(formData)
 
     try {
       const res = await fetch("http://localhost:5000/api/qr/generate", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          // "Authorization": `Bearer ${localStorage.getItem("token")}`, 
+          // "Authorization": `Bearer ${localStorage.getItem("token")}`,
         },
         body: JSON.stringify({
           type: selectedQRType,
-          data: url,
-          title,
-          description,
+          data: formData,
         }),
       })
 
@@ -132,9 +136,9 @@ const NewQR = () => {
   )
 
   const renderStep1 = () => (
-    <div className="flex justify-between w-full ml-10">
+    <div className="flex gap-8 w-full px-10 justify-center">
       {/* Main Content */}
-      <div className="flex-1 max-w-4xl">
+      <div className="flex-1 max-w-3xl">
         {/* Dynamic QRs Section */}
         <div className="mb-8">
           <div className="flex items-center gap-3 mb-2">
@@ -147,7 +151,7 @@ const NewQR = () => {
         </div>
 
         {/* QR Types Grid */}
-        <div className="grid grid-cols-2 gap-4 position-fixed hover:border">
+        <div className="grid grid-cols-2 gap-4 hover:border">
           {qrTypes.map((type, index) => (
             <Card 
               key={index} 
@@ -182,134 +186,90 @@ const NewQR = () => {
       </div>
 
       {/* Phone Mockup */}
-      <div className="w-90 flex flex-col items-center mt-36 pr-[60px]">
+      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit">
         <div className="mb-4">
           <h3 className="text-lg font-semibold text-center">Example</h3>
         </div>
         <div className="relative">
-          <div className="w-64 h-[520px] bg-black rounded-[3rem] p-2">
-            <div className="w-full h-full bg-white rounded-[2.5rem] relative overflow-hidden">
-              {/* Phone Screen Content */}
-              <div className="absolute top-1 left-0 right-0 h-6 bg-white flex items-center justify-right px-6 text-xs">
-                <span className="font-medium">12:01</span>
-                <div className="flex items-center space-x-1">
-                  <div className="w-12 h-4 mx-12 bg-black rounded-3xl"></div>
-                </div>
-              </div>
-              
-              {/* Phone Content Area */}
-              <div className="pt-8 px-6 h-full bg-gray-50">
-                <div className="w-full h-40 bg-white rounded-lg shadow-sm mb-4"></div>
-                <div className="space-y-3">
-                  <div className="h-4 bg-white rounded"></div>
-                  <div className="h-4 bg-white rounded w-3/4"></div>
-                  <div className="h-4 bg-white rounded w-1/2"></div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <img 
+            src="/iphone15.png" 
+            alt="iPhone 15 Mockup" 
+            className="w-72 h-auto object-contain"
+          />
         </div>
       </div>
     </div>
   )
 
+  const renderQRForm = () => {
+    switch (selectedQRType) {
+      case "Website":
+        return <WebsiteQRForm onGenerate={handleGenerateQR} />
+      case "PDF":
+        return <PDFQRForm onGenerate={handleGenerateQR} />
+      case "Images":
+        return <ImagesQRForm onGenerate={handleGenerateQR} />
+      case "vCard Plus":
+        return <VCardQRForm onGenerate={handleGenerateQR} />
+      case "Video":
+        return <VideoQRForm onGenerate={handleGenerateQR} />
+      case "List of links":
+        return <ListOfLinksQRForm onGenerate={handleGenerateQR} />
+      case "Social Media":
+        return <SocialMediaQRForm onGenerate={handleGenerateQR} />
+      case "MP3":
+        return <MP3QRForm onGenerate={handleGenerateQR} />
+      case "Business":
+        return <BusinessQRForm onGenerate={handleGenerateQR} />
+      case "Coupon":
+      case "Apps":
+      case "Event":
+      case "Menu":
+      case "Feedback":
+        return <GenericQRForm qrType={selectedQRType} onGenerate={handleGenerateQR} />
+      default:
+        return <GenericQRForm qrType={selectedQRType} onGenerate={handleGenerateQR} />
+    }
+  }
+
   const renderStep2 = () => (
-     <div className="flex justify-between w-full ml-10">
+    <div className="flex gap-8 w-full px-10 justify-center">
       {/* Main Content */}
       <div className="flex-1 max-w-2xl">
         <div className="space-y-6">
           <div>
-            <h1 className="text-2xl font-semibold mb-2">Enter your website URL</h1>
-            <p className="text-muted-foreground">Add the link you want to share</p>
+            <h1 className="text-2xl font-semibold mb-2">{selectedQRType} QR Code</h1>
+            <p className="text-muted-foreground">Fill in the details to generate your QR code</p>
           </div>
 
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="website-url">Website URL *</Label>
-              <Input 
-                id="website-url" 
-                placeholder="https://example.com"
-                className="text-lg h-12"
-                value={url}
-                onChange={(e) => setUrl(e.target.value)}
-              />
-            </div>
+          {renderQRForm()}
 
-            <div className="space-y-2">
-              <Label htmlFor="title">Title</Label>
-              <Input 
-                id="title" 
-                placeholder="Enter a title for your QR code"
-                className="h-12"
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-              />
-            </div>
-
-            <Button 
-              onClick={handleGenerateQR} 
-              className="rounded-2xl px-8 py-6 text-lg mt-6 w-full"
-              disabled={loading}
-            >
-              {loading ? "Generating..." : "Generate QR"}
-            </Button>
-
-
-            {error && <p className="text-red-500 mt-2">{error}</p>}
-
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea 
-                id="description" 
-                placeholder="Enter a description (optional)"
-                rows={4}
-                value={description}
-                onChange={(e) => setDescription(e.target.value)}
-              />
-            </div>
-          </div>
+          {error && <p className="text-red-500 mt-2">{error}</p>}
         </div>
       </div>
 
       {/* Phone Mockup */}
-      <div className="w-90 flex flex-col items-center mt-36 pr-[60px]">
+      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit">
         <div className="mb-4">
-          <h3 className="text-lg font-semibold text-center">Example</h3>
+          <h3 className="text-lg font-semibold text-center">Preview</h3>
         </div>
         <div className="relative">
-          <div className="w-64 h-[520px] bg-black rounded-[3rem] p-2">
-            <div className="w-full h-full bg-white rounded-[2.5rem] relative overflow-hidden">
-              {/* Phone Screen Content */}
-              <div className="absolute top-1 left-0 right-0 h-6 bg-white flex items-center justify-right px-6 text-xs">
-                <span className="font-medium">12:01</span>
-                <div className="flex items-center space-x-1">
-                  <div className="w-12 h-4 mx-12 bg-black rounded-3xl"></div>
-                </div>
-              </div>
-              
-              {/* Phone Content Area */}
-              <div className="pt-8 px-6 h-full bg-gray-50">
-                {generatedQR && (
-              <div className="mt-8 flex flex-col items-center">
-                <h3 className="text-lg font-semibold mb-2">Generated QR Code</h3>
-                <img 
-                  src={generatedQR.qr_image} 
-                  alt="Generated QR" 
-                  className="border rounded-lg shadow-md"
-                  style={{ maxWidth: '250px', height: 'auto' }}
-                />
-              </div>
-            )}
-                <div className="w-full h-40 bg-white rounded-lg shadow-sm mb-4"></div>
-                <div className="space-y-3">
-                  <div className="h-4 bg-white rounded"></div>
-                  <div className="h-4 bg-white rounded w-3/4"></div>
-                  <div className="h-4 bg-white rounded w-1/2"></div>
-                </div>
-              </div>
+          <img
+            src="/iphone15.png"
+            alt="iPhone 15 Mockup"
+            className="w-72 h-auto object-contain"
+          />
+          {/* QR Code overlay on phone screen */}
+          {generatedQR && (
+            <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+              <img
+                src={generatedQR.qr_image}
+                alt="Generated QR"
+                className="rounded-lg shadow-md"
+                style={{ maxWidth: '180px', height: 'auto' }}
+              />
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
