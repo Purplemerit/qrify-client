@@ -7,6 +7,11 @@ import WebsiteQRForm from "@/components/qr-forms/WebsiteQRForm"
 import PDFQRForm from "@/components/qr-forms/PDFQRForm"
 import ImagesQRForm from "@/components/qr-forms/ImagesQRForm"
 import VCardQRForm from "@/components/qr-forms/VCardQRForm"
+import VideoQRForm from "@/components/qr-forms/VideoQRForm"
+import ListOfLinksQRForm from "@/components/qr-forms/ListOfLinksQRForm"
+import SocialMediaQRForm from "@/components/qr-forms/SocialMediaQRForm"
+import MP3QRForm from "@/components/qr-forms/MP3QRForm"
+import BusinessQRForm from "@/components/qr-forms/BusinessQRForm"
 import GenericQRForm from "@/components/qr-forms/GenericQRForm"
 
 const qrTypes = [
@@ -207,10 +212,15 @@ const NewQR = () => {
       case "vCard Plus":
         return <VCardQRForm onGenerate={handleGenerateQR} />
       case "Video":
+        return <VideoQRForm onGenerate={handleGenerateQR} />
       case "List of links":
+        return <ListOfLinksQRForm onGenerate={handleGenerateQR} />
       case "Social Media":
+        return <SocialMediaQRForm onGenerate={handleGenerateQR} />
       case "MP3":
+        return <MP3QRForm onGenerate={handleGenerateQR} />
       case "Business":
+        return <BusinessQRForm onGenerate={handleGenerateQR} />
       case "Coupon":
       case "Apps":
       case "Event":
