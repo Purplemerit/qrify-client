@@ -6,43 +6,22 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Eye } from "lucide-react"
 
-interface VCardQRFormProps {
+interface VideoQRFormProps {
   onGenerate: (data: any) => void
 }
 
-const VCardQRForm = ({ onGenerate }: VCardQRFormProps) => {
+const VideoQRForm = ({ onGenerate }: VideoQRFormProps) => {
   const [qrName, setQrName] = useState("")
 
   // Time Scheduling
   const [enableTimeRanges, setEnableTimeRanges] = useState(false)
 
   // Basic Information
-  const [firstName, setFirstName] = useState("")
-  const [lastName, setLastName] = useState("")
-  const [company, setCompany] = useState("")
-  const [position, setPosition] = useState("")
-  const [profileImage, setProfileImage] = useState<File | null>(null)
-
-  // About You
-  const [bio, setBio] = useState("")
-  const [summary, setSummary] = useState("")
-
-  // Contact Info
-  const [mobilePhone, setMobilePhone] = useState("")
-  const [workPhone, setWorkPhone] = useState("")
-  const [email, setEmail] = useState("")
-  const [website, setWebsite] = useState("")
-  const [linkedin, setLinkedin] = useState("")
-  const [twitter, setTwitter] = useState("")
-  const [facebook, setFacebook] = useState("")
-  const [instagram, setInstagram] = useState("")
-
-  // Location
-  const [address, setAddress] = useState("")
-  const [city, setCity] = useState("")
-  const [state, setState] = useState("")
-  const [country, setCountry] = useState("")
-  const [zipCode, setZipCode] = useState("")
+  const [videoFile, setVideoFile] = useState<File | null>(null)
+  const [videoURL, setVideoURL] = useState("")
+  const [useFile, setUseFile] = useState(true)
+  const [title, setTitle] = useState("")
+  const [description, setDescription] = useState("")
 
   // Content
   const [welcomeScreen, setWelcomeScreen] = useState("")
@@ -67,9 +46,9 @@ const VCardQRForm = ({ onGenerate }: VCardQRFormProps) => {
   const [domain, setDomain] = useState("")
   const [password, setPassword] = useState("")
 
-  const handleProfileImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleVideoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      setProfileImage(e.target.files[0])
+      setVideoFile(e.target.files[0])
     }
   }
 
@@ -80,9 +59,11 @@ const VCardQRForm = ({ onGenerate }: VCardQRFormProps) => {
   }
 
   const handlePreview = () => {
-    if (profileImage) {
-      const url = URL.createObjectURL(profileImage)
+    if (useFile && videoFile) {
+      const url = URL.createObjectURL(videoFile)
       window.open(url, '_blank')
+    } else if (!useFile && videoURL) {
+      window.open(videoURL, '_blank')
     }
   }
 
@@ -93,34 +74,11 @@ const VCardQRForm = ({ onGenerate }: VCardQRFormProps) => {
         enableTimeRanges
       },
       basicInformation: {
-        firstName,
-        lastName,
-        company,
-        position,
-        profileImage
-      },
-      aboutYou: {
-        bio,
-        summary
-      },
-      contactInfo: {
-        mobilePhone,
-        workPhone,
-        email,
-        website,
-        socialMedia: {
-          linkedin,
-          twitter,
-          facebook,
-          instagram
-        }
-      },
-      location: {
-        address,
-        city,
-        state,
-        country,
-        zipCode
+        useFile,
+        videoFile: useFile ? videoFile : null,
+        videoURL: !useFile ? videoURL : "",
+        title,
+        description
       },
       content: {
         welcomeScreen,
@@ -198,249 +156,81 @@ const VCardQRForm = ({ onGenerate }: VCardQRFormProps) => {
         <CardHeader>
           <CardTitle>Basic Information</CardTitle>
           <p className="text-sm text-muted-foreground">
-            Add essential information about yourself
+            Add your video content
           </p>
         </CardHeader>
         <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
+          <div className="flex gap-4">
+            <Button
+              variant={useFile ? "default" : "outline"}
+              onClick={() => setUseFile(true)}
+              className="flex-1"
+            >
+              Upload File
+            </Button>
+            <Button
+              variant={!useFile ? "default" : "outline"}
+              onClick={() => setUseFile(false)}
+              className="flex-1"
+            >
+              Video URL
+            </Button>
+          </div>
+
+          {useFile ? (
             <div className="space-y-2">
-              <Label htmlFor="first-name">First Name *</Label>
+              <Label htmlFor="video-file">Upload Video *</Label>
               <Input
-                id="first-name"
-                placeholder="John"
-                value={firstName}
-                onChange={(e) => setFirstName(e.target.value)}
+                id="video-file"
+                type="file"
+                accept="video/*"
+                onChange={handleVideoFileChange}
+              />
+              {videoFile && <p className="text-sm text-muted-foreground">Selected: {videoFile.name}</p>}
+            </div>
+          ) : (
+            <div className="space-y-2">
+              <Label htmlFor="video-url">Video URL *</Label>
+              <Input
+                id="video-url"
+                placeholder="https://youtube.com/watch?v=..."
+                value={videoURL}
+                onChange={(e) => setVideoURL(e.target.value)}
               />
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="last-name">Last Name *</Label>
-              <Input
-                id="last-name"
-                placeholder="Doe"
-                value={lastName}
-                onChange={(e) => setLastName(e.target.value)}
-              />
-            </div>
-          </div>
+          )}
 
           <div className="space-y-2">
-            <Label htmlFor="company">Company</Label>
+            <Label htmlFor="title">Title</Label>
             <Input
-              id="company"
-              placeholder="Company name"
-              value={company}
-              onChange={(e) => setCompany(e.target.value)}
+              id="title"
+              placeholder="Video title"
+              value={title}
+              onChange={(e) => setTitle(e.target.value)}
             />
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="position">Position</Label>
-            <Input
-              id="position"
-              placeholder="Job title"
-              value={position}
-              onChange={(e) => setPosition(e.target.value)}
+            <Label htmlFor="description">Description</Label>
+            <Textarea
+              id="description"
+              placeholder="Video description"
+              rows={3}
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
             />
           </div>
 
-          <div className="space-y-2">
-            <Label htmlFor="profile-image">Profile Image</Label>
-            <Input
-              id="profile-image"
-              type="file"
-              accept="image/*"
-              onChange={handleProfileImageChange}
-            />
-            {profileImage && <p className="text-sm text-muted-foreground">Selected: {profileImage.name}</p>}
-          </div>
-
-          {profileImage && (
+          {((useFile && videoFile) || (!useFile && videoURL)) && (
             <Button
               variant="outline"
               onClick={handlePreview}
               className="w-full"
             >
               <Eye className="h-4 w-4 mr-2" />
-              Preview Profile Image
+              Preview Video
             </Button>
           )}
-        </CardContent>
-      </Card>
-
-      {/* About You */}
-      <Card>
-        <CardHeader>
-          <CardTitle>About You</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Tell people more about yourself
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="bio">Bio</Label>
-            <Textarea
-              id="bio"
-              placeholder="Write a short bio about yourself"
-              rows={4}
-              value={bio}
-              onChange={(e) => setBio(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="summary">Summary</Label>
-            <Textarea
-              id="summary"
-              placeholder="Professional summary"
-              rows={3}
-              value={summary}
-              onChange={(e) => setSummary(e.target.value)}
-            />
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Contact Info */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Contact Info</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Add your contact details
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="mobile-phone">Mobile Phone *</Label>
-              <Input
-                id="mobile-phone"
-                type="tel"
-                placeholder="+1234567890"
-                value={mobilePhone}
-                onChange={(e) => setMobilePhone(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="work-phone">Work Phone</Label>
-              <Input
-                id="work-phone"
-                type="tel"
-                placeholder="+1234567890"
-                value={workPhone}
-                onChange={(e) => setWorkPhone(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="email">Email *</Label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="john@example.com"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-2">
-            <Label htmlFor="website">Website</Label>
-            <Input
-              id="website"
-              placeholder="https://example.com"
-              value={website}
-              onChange={(e) => setWebsite(e.target.value)}
-            />
-          </div>
-
-          <div className="space-y-3 mt-4">
-            <Label>Social Media</Label>
-            <div className="space-y-2">
-              <Input
-                placeholder="LinkedIn URL"
-                value={linkedin}
-                onChange={(e) => setLinkedin(e.target.value)}
-              />
-              <Input
-                placeholder="Twitter URL"
-                value={twitter}
-                onChange={(e) => setTwitter(e.target.value)}
-              />
-              <Input
-                placeholder="Facebook URL"
-                value={facebook}
-                onChange={(e) => setFacebook(e.target.value)}
-              />
-              <Input
-                placeholder="Instagram URL"
-                value={instagram}
-                onChange={(e) => setInstagram(e.target.value)}
-              />
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Location */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Location</CardTitle>
-          <p className="text-sm text-muted-foreground">
-            Add your address information
-          </p>
-        </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="address">Address</Label>
-            <Input
-              id="address"
-              placeholder="Street address"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-            />
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="city">City</Label>
-              <Input
-                id="city"
-                placeholder="City"
-                value={city}
-                onChange={(e) => setCity(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="state">State/Province</Label>
-              <Input
-                id="state"
-                placeholder="State"
-                value={state}
-                onChange={(e) => setState(e.target.value)}
-              />
-            </div>
-          </div>
-
-          <div className="grid grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="country">Country</Label>
-              <Input
-                id="country"
-                placeholder="Country"
-                value={country}
-                onChange={(e) => setCountry(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="zip-code">ZIP Code</Label>
-              <Input
-                id="zip-code"
-                placeholder="ZIP Code"
-                value={zipCode}
-                onChange={(e) => setZipCode(e.target.value)}
-              />
-            </div>
-          </div>
         </CardContent>
       </Card>
 
@@ -671,4 +461,4 @@ const VCardQRForm = ({ onGenerate }: VCardQRFormProps) => {
   )
 }
 
-export default VCardQRForm
+export default VideoQRForm
