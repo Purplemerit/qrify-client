@@ -43,8 +43,8 @@ export default function Signup() {
         password: formData.password,
       });
 
-      // Navigate directly to NewQR page after successful signup
-      navigate("/new-qr");
+      // Navigate directly to My QR Codes page after successful signup
+      navigate("/my-qr-codes");
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
         const error = err as { response?: { data?: { error?: string } } };

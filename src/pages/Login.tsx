@@ -16,8 +16,8 @@ export default function Login() {
 
     try {
       await authService.login({ email, password });
-      // Redirect to NewQR page after successful login
-      navigate("/new-qr");
+      // Redirect to My QR Codes page after successful login
+      navigate("/my-qr-codes");
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
         const error = err as { response?: { data?: { error?: string } } };
