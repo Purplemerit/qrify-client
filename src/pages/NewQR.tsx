@@ -674,16 +674,28 @@ const NewQR = () => {
               {/* Frame Selection Grid */}
               <div className="grid grid-cols-5 gap-3">
                 {[
-                  { id: 1, name: "No Frame", preview: "□" },
-                  { id: 2, name: "Card", preview: "▣" },
-                  { id: 3, name: "Scooter", preview: "🛴" },
-                  { id: 4, name: "Juice", preview: "🧃" },
-                  { id: 5, name: "Gift", preview: "🎁" },
-                  { id: 6, name: "Cup", preview: "☕" },
-                  { id: 7, name: "Text Tab", preview: "📝" },
-                  { id: 8, name: "Tab", preview: "📋" },
-                  { id: 9, name: "Clipboard", preview: "📎" },
-                  { id: 10, name: "Clipped", preview: "📌" },
+                  { id: 1, name: "No Frame", icon: null },
+                  { id: 2, name: "Card", icon: "/assets/card.svg" },
+                  { id: 3, name: "Scooter", icon: "/assets/scooter.svg" },
+                  { id: 4, name: "Juice", icon: "/assets/juice.svg" },
+                  {
+                    id: 5,
+                    name: "Gift Wrapper",
+                    icon: "/assets/gift-wrapper.svg",
+                  },
+                  { id: 6, name: "Cup", icon: "/assets/cup.svg" },
+                  {
+                    id: 7,
+                    name: "Text Tab",
+                    icon: "/assets/text-then-tab.svg",
+                  },
+                  { id: 8, name: "Tab", icon: "/assets/tab.svg" },
+                  { id: 9, name: "Clipboard", icon: "/assets/clipboard.svg" },
+                  {
+                    id: 10,
+                    name: "Clipped Text",
+                    icon: "/assets/clipped-text.svg",
+                  },
                 ].map((frame) => (
                   <button
                     key={frame.id}
@@ -699,7 +711,30 @@ const NewQR = () => {
                         : "border-gray-200 hover:border-blue-300 bg-white"
                     }`}
                   >
-                    <div className="text-2xl mb-1">{frame.preview}</div>
+                    <div className="w-12 h-12 mx-auto mb-2 flex items-center justify-center bg-gray-50 rounded">
+                      {frame.icon ? (
+                        <img
+                          src={frame.icon}
+                          alt={frame.name}
+                          className="w-10 h-10 object-contain"
+                          style={{
+                            filter:
+                              "invert(46%) sepia(0%) saturate(0%) hue-rotate(212deg) brightness(94%) contrast(88%)",
+                          }}
+                        />
+                      ) : (
+                        <div className="w-8 h-8 border border-gray-400 rounded flex items-center justify-center">
+                          <div className="w-6 h-6 grid grid-cols-3 gap-[1px]">
+                            {Array.from({ length: 9 }).map((_, i) => (
+                              <div
+                                key={i}
+                                className="w-1 h-1 bg-gray-600"
+                              ></div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
+                    </div>
                     <span className="text-xs text-gray-600">{frame.name}</span>
                   </button>
                 ))}
@@ -735,10 +770,10 @@ const NewQR = () => {
               {/* Shape Selection Grid */}
               <div className="grid grid-cols-4 gap-4">
                 {[
-                  { id: 1, name: "Square", preview: "■■■\n■■■\n■■■" },
-                  { id: 2, name: "Rounded", preview: "●●●\n●●●\n●●●" },
-                  { id: 3, name: "Dots", preview: "•••\n•••\n•••" },
-                  { id: 4, name: "Circle", preview: "○○○\n○○○\n○○○" },
+                  { id: 1, name: "Square", preview: "■" },
+                  { id: 2, name: "Rounded", preview: "●" },
+                  { id: 3, name: "Dots", preview: "•" },
+                  { id: 4, name: "Circle", preview: "◯" },
                 ].map((shape) => (
                   <button
                     key={shape.id}
@@ -754,8 +789,46 @@ const NewQR = () => {
                         : "border-gray-200 hover:border-green-300 bg-white"
                     }`}
                   >
-                    <div className="text-lg mb-2 font-mono leading-tight whitespace-pre">
-                      {shape.preview}
+                    <div className="mb-3">
+                      <div className="grid grid-cols-5 gap-1 mx-auto w-fit">
+                        {Array.from({ length: 25 }).map((_, i) => {
+                          const isPattern = [
+                            0, 1, 2, 3, 4, 5, 9, 10, 14, 15, 19, 20, 21, 22, 23,
+                            24,
+                          ].includes(i);
+                          if (!isPattern)
+                            return <div key={i} className="w-1.5 h-1.5"></div>;
+
+                          if (shape.id === 1)
+                            return (
+                              <div
+                                key={i}
+                                className="w-1.5 h-1.5 bg-gray-800"
+                              ></div>
+                            );
+                          if (shape.id === 2)
+                            return (
+                              <div
+                                key={i}
+                                className="w-1.5 h-1.5 bg-gray-800 rounded-sm"
+                              ></div>
+                            );
+                          if (shape.id === 3)
+                            return (
+                              <div
+                                key={i}
+                                className="w-1.5 h-1.5 bg-gray-800 rounded-full"
+                              ></div>
+                            );
+                          if (shape.id === 4)
+                            return (
+                              <div
+                                key={i}
+                                className="w-1.5 h-1.5 bg-gray-800 rounded-full border border-gray-600"
+                              ></div>
+                            );
+                        })}
+                      </div>
                     </div>
                     <span className="text-sm text-gray-600">{shape.name}</span>
                   </button>
@@ -789,13 +862,13 @@ const NewQR = () => {
               {/* Logo Selection Grid */}
               <div className="grid grid-cols-7 gap-3">
                 {[
-                  { id: 0, name: "None", icon: "⬜" },
-                  { id: 1, name: "WhatsApp", icon: "💬" },
-                  { id: 2, name: "Location", icon: "📍" },
-                  { id: 3, name: "Link", icon: "🔗" },
-                  { id: 4, name: "Scan", icon: "📱" },
-                  { id: 5, name: "WiFi", icon: "📶" },
-                  { id: 6, name: "Email", icon: "📧" },
+                  { id: 0, name: "None", icon: null },
+                  { id: 1, name: "WhatsApp", icon: "/assets/whatsapp.svg" },
+                  { id: 2, name: "Location", icon: "/assets/location.svg" },
+                  { id: 3, name: "Link", icon: "/assets/link.svg" },
+                  { id: 4, name: "Scan", icon: "/assets/scan.svg" },
+                  { id: 5, name: "WiFi", icon: "/assets/wifi.svg" },
+                  { id: 6, name: "Email", icon: "/assets/email.svg" },
                 ].map((logo) => (
                   <button
                     key={logo.id}
@@ -808,7 +881,25 @@ const NewQR = () => {
                         : "border-gray-200 hover:border-purple-300 bg-white"
                     }`}
                   >
-                    <div className="text-xl mb-1">{logo.icon}</div>
+                    <div className="w-8 h-8 mx-auto mb-2 flex items-center justify-center">
+                      {logo.icon ? (
+                        <img
+                          src={logo.icon}
+                          alt={logo.name}
+                          className="w-6 h-6 object-contain"
+                          style={{
+                            filter:
+                              qrDesignOptions.logo === logo.id
+                                ? "invert(48%) sepia(79%) saturate(2476%) hue-rotate(249deg) brightness(95%) contrast(98%)"
+                                : "invert(46%) sepia(0%) saturate(0%) hue-rotate(212deg) brightness(94%) contrast(88%)",
+                          }}
+                        />
+                      ) : (
+                        <div className="w-6 h-6 border border-dashed border-gray-400 rounded flex items-center justify-center">
+                          <span className="text-xs text-gray-400">×</span>
+                        </div>
+                      )}
+                    </div>
                     <span className="text-xs text-gray-600">{logo.name}</span>
                   </button>
                 ))}
