@@ -1,113 +1,189 @@
-import { useState } from "react"
-import { Badge } from "@/components/ui/badge"
-import { Card, CardContent } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Globe, FileText, Image, CreditCard, Play, Link, Users, Music, Building, Tag } from "lucide-react"
-import WebsiteQRForm from "@/components/qr-forms/WebsiteQRForm"
-import PDFQRForm from "@/components/qr-forms/PDFQRForm"
-import ImagesQRForm from "@/components/qr-forms/ImagesQRForm"
-import VCardQRForm from "@/components/qr-forms/VCardQRForm"
-import VideoQRForm from "@/components/qr-forms/VideoQRForm"
-import ListOfLinksQRForm from "@/components/qr-forms/ListOfLinksQRForm"
-import SocialMediaQRForm from "@/components/qr-forms/SocialMediaQRForm"
-import MP3QRForm from "@/components/qr-forms/MP3QRForm"
-import BusinessQRForm from "@/components/qr-forms/BusinessQRForm"
-import GenericQRForm from "@/components/qr-forms/GenericQRForm"
+import { useState } from "react";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import {
+  Globe,
+  FileText,
+  Image,
+  CreditCard,
+  Play,
+  Link,
+  Users,
+  Music,
+  Building,
+  Tag,
+} from "lucide-react";
+import WebsiteQRForm from "@/components/qr-forms/WebsiteQRForm";
+import PDFQRForm from "@/components/qr-forms/PDFQRForm";
+import ImagesQRForm from "@/components/qr-forms/ImagesQRForm";
+import VCardQRForm from "@/components/qr-forms/VCardQRForm";
+import VideoQRForm from "@/components/qr-forms/VideoQRForm";
+import ListOfLinksQRForm from "@/components/qr-forms/ListOfLinksQRForm";
+import SocialMediaQRForm from "@/components/qr-forms/SocialMediaQRForm";
+import MP3QRForm from "@/components/qr-forms/MP3QRForm";
+import BusinessQRForm from "@/components/qr-forms/BusinessQRForm";
+import GenericQRForm from "@/components/qr-forms/GenericQRForm";
+import api from "@/lib/api";
+import { authService } from "@/services/auth";
 
-const qrTypes = [
+const dynamicQrTypes = [
   { name: "Website", description: "Open a URL", icon: Globe },
+];
+
+const staticQrTypes = [
   { name: "PDF", description: "Show a PDF", icon: FileText },
   { name: "Images", description: "Show an image gallery", icon: Image },
-  { name: "vCard Plus", description: "Share contact details", icon: CreditCard },
+  {
+    name: "vCard Plus",
+    description: "Share contact details",
+    icon: CreditCard,
+  },
   { name: "Video", description: "Show a video", icon: Play },
   { name: "List of links", description: "Group links", icon: Link },
-  { name: "Social Media", description: "Share your social profiles", icon: Users },
+  {
+    name: "Social Media",
+    description: "Share your social profiles",
+    icon: Users,
+  },
   { name: "MP3", description: "Play an audio file", icon: Music },
-  { name: "Business", description: "Share information about your business", icon: Building },
+  {
+    name: "Business",
+    description: "Share information about your business",
+    icon: Building,
+  },
   { name: "Coupon", description: "Share a coupon", icon: Tag },
   { name: "Apps", description: "Redirect to app store", icon: Tag },
   { name: "Event", description: "Promote and share an Event", icon: Building },
-  { name: "Menu", description: "Display the menu of a resturant or bar", icon: Play},
-  { name: "Feedback", description: "Collect feedback and get rated", icon: Users}
-]
+  {
+    name: "Menu",
+    description: "Display the menu of a resturant or bar",
+    icon: Play,
+  },
+  {
+    name: "Feedback",
+    description: "Collect feedback and get rated",
+    icon: Users,
+  },
+];
 
 const NewQR = () => {
-  const [currentStep, setCurrentStep] = useState(1)
-  const [selectedQRType, setSelectedQRType] = useState("")
-  const [qrData, setQrData] = useState<any>(null)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState("")
-  const [generatedQR, setGeneratedQR] = useState<null | { qr_image: string }>(null)
-
+  const [currentStep, setCurrentStep] = useState(1);
+  const [selectedQRType, setSelectedQRType] = useState("");
+  const [qrData, setQrData] = useState<unknown>(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
+  const [generatedQR, setGeneratedQR] = useState<null | { qr_image: string }>(
+    null
+  );
 
   const handleQRTypeSelect = (typeName: string) => {
-    setSelectedQRType(typeName)
-    setCurrentStep(2)
+    setSelectedQRType(typeName);
+    setCurrentStep(2);
+  };
+
+  interface FormData {
+    qrName?: string;
+    basicInformation?: {
+      websiteURL?: string;
+    };
   }
 
-  const handleGenerateQR = async (formData: any) => {
-    setLoading(true)
-    setError("")
-    setQrData(formData)
+  const handleGenerateQR = async (formData: FormData) => {
+    setLoading(true);
+    setError("");
+    setQrData(formData);
 
     try {
-      const res = await fetch("http://localhost:5000/api/qr/generate", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          // "Authorization": `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          type: selectedQRType,
-          data: formData,
-        }),
-      })
+      // Check if user is authenticated using the cookie-based method
+      if (!authService.isAuthenticatedSync()) {
+        throw new Error("Please log in to generate QR codes");
+      }
 
-      const data = await res.json()
+      // Create QR code - cookies are sent automatically
+      const response = await api.post("/qr/url", {
+        name: formData.qrName || "Website QR",
+        url: formData.basicInformation?.websiteURL || "",
+        dynamic: true,
+      });
 
-      if (!res.ok) throw new Error(data.message || "Failed to generate QR")
+      const qrData = response.data;
+      console.log("QR created:", qrData);
 
-      console.log("QR created:", data)
-      setGeneratedQR(data)  // <-- Save the returned QR object here
-    } catch (err: any) {
-      setError(err.message || "Something went wrong")
+      // Get the QR image - cookies are sent automatically
+      const imageResponse = await api.get(`/qr/${qrData.id}/image`);
+      const imageData = imageResponse.data;
+
+      setGeneratedQR({ qr_image: imageData.image }); // Set the base64 image
+    } catch (err: unknown) {
+      let errorMessage = "Something went wrong";
+
+      if (err && typeof err === "object" && "response" in err) {
+        const error = err as { response?: { data?: { error?: string } } };
+        errorMessage = error.response?.data?.error || "Failed to generate QR";
+      } else if (err instanceof Error) {
+        errorMessage = err.message;
+      }
+
+      setError(errorMessage);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
-
-
+  };
 
   const handleStepClick = (step: number) => {
     if (step <= currentStep || step === 2) {
-      setCurrentStep(step)
+      setCurrentStep(step);
     }
-  }
+  };
 
   const renderStepIndicator = () => (
     <div className="flex items-center justify-between mb-8">
       {/* Step Indicator */}
       <div className="flex items-center justify-center flex-1">
         <div className="flex items-center space-x-8">
-          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => handleStepClick(1)}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-              currentStep === 1 ? 'bg-primary text-primary-foreground' : 
-              currentStep > 1 ? 'bg-green-500 text-white' : 'bg-muted text-muted-foreground'
-            }`}>
-              {currentStep > 1 ? '✓' : '1'}
+          <div
+            className="flex items-center space-x-2 cursor-pointer"
+            onClick={() => handleStepClick(1)}
+          >
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                currentStep === 1
+                  ? "bg-primary text-primary-foreground"
+                  : currentStep > 1
+                  ? "bg-green-500 text-white"
+                  : "bg-muted text-muted-foreground"
+              }`}
+            >
+              {currentStep > 1 ? "✓" : "1"}
             </div>
-            <span className={`text-sm ${currentStep >= 1 ? 'font-medium' : 'text-muted-foreground'}`}>
+            <span
+              className={`text-sm ${
+                currentStep >= 1 ? "font-medium" : "text-muted-foreground"
+              }`}
+            >
               Type of QR code
             </span>
           </div>
           <div className="h-px w-12 bg-muted"></div>
-          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => handleStepClick(2)}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
-              currentStep === 2 ? 'bg-primary text-primary-foreground' : 'bg-muted text-muted-foreground'
-            }`}>
+          <div
+            className="flex items-center space-x-2 cursor-pointer"
+            onClick={() => handleStepClick(2)}
+          >
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                currentStep === 2
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-muted text-muted-foreground"
+              }`}
+            >
               2
             </div>
-            <span className={`text-sm ${currentStep === 2 ? 'font-medium' : 'text-muted-foreground'}`}>
+            <span
+              className={`text-sm ${
+                currentStep === 2 ? "font-medium" : "text-muted-foreground"
+              }`}
+            >
               Content
             </span>
           </div>
@@ -124,16 +200,23 @@ const NewQR = () => {
       {/* Navigation Buttons */}
       {currentStep === 2 && (
         <div className="flex items-center space-x-3">
-          <Button variant="outline" onClick={() => setCurrentStep(1)} className="px-8 rounded-3xl mt-2">
+          <Button
+            variant="outline"
+            onClick={() => setCurrentStep(1)}
+            className="px-8 rounded-3xl mt-2"
+          >
             Back
           </Button>
-          <Button onClick={() => setCurrentStep(3)} className="px-6 rounded-3xl mt-2">
+          <Button
+            onClick={() => setCurrentStep(3)}
+            className="px-6 rounded-3xl mt-2"
+          >
             Next →
           </Button>
         </div>
       )}
     </div>
-  )
+  );
 
   const renderStep1 = () => (
     <div className="flex gap-8 w-full px-10 justify-center">
@@ -147,14 +230,16 @@ const NewQR = () => {
               WITH TRACKING
             </Badge>
           </div>
-          <p className="text-muted-foreground">Update content in real time, without changing your code</p>
+          <p className="text-muted-foreground">
+            Update content in real time, without changing your code
+          </p>
         </div>
 
         {/* QR Types Grid */}
         <div className="grid grid-cols-2 gap-4 hover:border">
-          {qrTypes.map((type, index) => (
-            <Card 
-              key={index} 
+          {dynamicQrTypes.map((type, index) => (
+            <Card
+              key={index}
               className="hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary/20 py-2 rounded-2xl"
               onClick={() => handleQRTypeSelect(type.name)}
             >
@@ -165,7 +250,9 @@ const NewQR = () => {
                   </div>
                   <div>
                     <h3 className="font-medium text-lg">{type.name}</h3>
-                    <p className="text-muted-foreground text-sm">{type.description}</p>
+                    <p className="text-muted-foreground text-sm">
+                      {type.description}
+                    </p>
                   </div>
                 </div>
               </CardContent>
@@ -174,14 +261,44 @@ const NewQR = () => {
         </div>
         <div className="mt-8">
           <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-semibold">Static QRs</h1>
-            <Badge variant="secondary" className="bg-orange-300 text-black pt-2">
-              NO TRACKING
-            </Badge>
+            <div className="flex items-center gap-3 mb-2">
+              <h1 className="text-2xl font-semibold">Static QRs</h1>
+              <Badge
+                variant="secondary"
+                className="bg-orange-300 text-black pt-2"
+              >
+                NO TRACKING
+              </Badge>
+            </div>
+            <p className="text-muted-foreground">
+              Content cannot be changed once created
+            </p>
           </div>
-          <p className="text-muted-foreground">Update content in real time, without changing your code</p>
-        </div>
+
+          {/* Static QR Types Grid */}
+          <div className="grid grid-cols-2 gap-4 hover:border">
+            {staticQrTypes.map((type, index) => (
+              <Card
+                key={index}
+                className="hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary/20 py-2 rounded-2xl"
+                onClick={() => handleQRTypeSelect(type.name)}
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-muted/50 rounded-lg flex items-center justify-center">
+                      <type.icon className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <h3 className="font-medium text-lg">{type.name}</h3>
+                      <p className="text-muted-foreground text-sm">
+                        {type.description}
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
         </div>
       </div>
 
@@ -191,46 +308,56 @@ const NewQR = () => {
           <h3 className="text-lg font-semibold text-center">Example</h3>
         </div>
         <div className="relative">
-          <img 
-            src="/iphone15.png" 
-            alt="iPhone 15 Mockup" 
+          <img
+            src="/iphone15.png"
+            alt="iPhone 15 Mockup"
             className="w-72 h-auto object-contain"
           />
         </div>
       </div>
     </div>
-  )
+  );
 
   const renderQRForm = () => {
     switch (selectedQRType) {
       case "Website":
-        return <WebsiteQRForm onGenerate={handleGenerateQR} />
+        return <WebsiteQRForm onGenerate={handleGenerateQR} />;
       case "PDF":
-        return <PDFQRForm onGenerate={handleGenerateQR} />
+        return <PDFQRForm onGenerate={handleGenerateQR} />;
       case "Images":
-        return <ImagesQRForm onGenerate={handleGenerateQR} />
+        return <ImagesQRForm onGenerate={handleGenerateQR} />;
       case "vCard Plus":
-        return <VCardQRForm onGenerate={handleGenerateQR} />
+        return <VCardQRForm onGenerate={handleGenerateQR} />;
       case "Video":
-        return <VideoQRForm onGenerate={handleGenerateQR} />
+        return <VideoQRForm onGenerate={handleGenerateQR} />;
       case "List of links":
-        return <ListOfLinksQRForm onGenerate={handleGenerateQR} />
+        return <ListOfLinksQRForm onGenerate={handleGenerateQR} />;
       case "Social Media":
-        return <SocialMediaQRForm onGenerate={handleGenerateQR} />
+        return <SocialMediaQRForm onGenerate={handleGenerateQR} />;
       case "MP3":
-        return <MP3QRForm onGenerate={handleGenerateQR} />
+        return <MP3QRForm onGenerate={handleGenerateQR} />;
       case "Business":
-        return <BusinessQRForm onGenerate={handleGenerateQR} />
+        return <BusinessQRForm onGenerate={handleGenerateQR} />;
       case "Coupon":
       case "Apps":
       case "Event":
       case "Menu":
       case "Feedback":
-        return <GenericQRForm qrType={selectedQRType} onGenerate={handleGenerateQR} />
+        return (
+          <GenericQRForm
+            qrType={selectedQRType}
+            onGenerate={handleGenerateQR}
+          />
+        );
       default:
-        return <GenericQRForm qrType={selectedQRType} onGenerate={handleGenerateQR} />
+        return (
+          <GenericQRForm
+            qrType={selectedQRType}
+            onGenerate={handleGenerateQR}
+          />
+        );
     }
-  }
+  };
 
   const renderStep2 = () => (
     <div className="flex gap-8 w-full px-10 justify-center">
@@ -238,8 +365,12 @@ const NewQR = () => {
       <div className="flex-1 max-w-2xl">
         <div className="space-y-6">
           <div>
-            <h1 className="text-2xl font-semibold mb-2">{selectedQRType} QR Code</h1>
-            <p className="text-muted-foreground">Fill in the details to generate your QR code</p>
+            <h1 className="text-2xl font-semibold mb-2">
+              {selectedQRType} QR Code
+            </h1>
+            <p className="text-muted-foreground">
+              Fill in the details to generate your QR code
+            </p>
           </div>
 
           {renderQRForm()}
@@ -260,20 +391,43 @@ const NewQR = () => {
             className="w-72 h-auto object-contain"
           />
           {/* QR Code overlay on phone screen */}
-          {generatedQR && (
+          {loading && (
+            <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+              <div
+                className="bg-white rounded-lg shadow-md p-8 flex flex-col items-center"
+                style={{ width: "180px" }}
+              >
+                <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+                <p className="mt-2 text-sm text-gray-600">Generating QR...</p>
+              </div>
+            </div>
+          )}
+          {generatedQR && !loading && (
             <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
               <img
                 src={generatedQR.qr_image}
                 alt="Generated QR"
                 className="rounded-lg shadow-md"
-                style={{ maxWidth: '180px', height: 'auto' }}
+                style={{ maxWidth: "180px", height: "auto" }}
               />
+            </div>
+          )}
+          {!generatedQR && !loading && (
+            <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+              <div
+                className="bg-gray-100 rounded-lg shadow-md p-8 flex flex-col items-center"
+                style={{ width: "180px", height: "180px" }}
+              >
+                <div className="text-gray-400 text-center">
+                  <p className="text-sm">QR Code will appear here</p>
+                </div>
+              </div>
             </div>
           )}
         </div>
       </div>
     </div>
-  )
+  );
 
   return (
     <div className="max-w-8xl bg-neutral-100">
@@ -281,7 +435,7 @@ const NewQR = () => {
       {currentStep === 1 && renderStep1()}
       {currentStep === 2 && renderStep2()}
     </div>
-  )
-}
+  );
+};
 
-export default NewQR
+export default NewQR;

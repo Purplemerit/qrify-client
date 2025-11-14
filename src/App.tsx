@@ -44,19 +44,113 @@ const App = () => (
           <Route path="/verify-email" element={<EmailVerification />} />
           <Route path="/verify-email-change" element={<EmailVerification />} />
 
-            <Route element={<Layout><Index /></Layout>} path="/dashboard" />
-            <Route element={<Layout><NewQR /></Layout>} path="/new-qr" />
-            <Route element={<Layout><BulkQR /></Layout>} path="/bulk-qr" />
-            <Route element={<Layout><MyQRCodes /></Layout>} path="/my-qr-codes" />
-            <Route element={<Layout><Stats /></Layout>} path="/stats" />
-            <Route element={<Layout><Templates /></Layout>} path="/templates" />
-            <Route element={<Layout><MyDomains /></Layout>} path="/my-domains" />
-            <Route element={<Layout><Plans /></Layout>} path="/plans" />
-            <Route element={<Layout><Settings /></Layout>} path="/settings" />
-            <Route element={<Layout><Users /></Layout>} path="/users" />
-            <Route element={<Layout><Contact /></Layout>} path="/contact" />
-            <Route element={<Layout><HelpCenter /></Layout>} path="/help" />
-            <Route element={<Layout><Developers /></Layout>} path="/developers" />
+          {/* Protected routes */}
+          <Route element={<ProtectedRoute />}>
+            <Route
+              element={
+                <Layout>
+                  <Index />
+                </Layout>
+              }
+              path="/dashboard"
+            />
+            <Route
+              element={
+                <Layout>
+                  <NewQR />
+                </Layout>
+              }
+              path="/new-qr"
+            />
+            <Route
+              element={
+                <Layout>
+                  <BulkQR />
+                </Layout>
+              }
+              path="/bulk-qr"
+            />
+            <Route
+              element={
+                <Layout>
+                  <MyQRCodes />
+                </Layout>
+              }
+              path="/my-qr-codes"
+            />
+            <Route
+              element={
+                <Layout>
+                  <Stats />
+                </Layout>
+              }
+              path="/stats"
+            />
+            <Route
+              element={
+                <Layout>
+                  <Templates />
+                </Layout>
+              }
+              path="/templates"
+            />
+            <Route
+              element={
+                <Layout>
+                  <MyDomains />
+                </Layout>
+              }
+              path="/my-domains"
+            />
+            <Route
+              element={
+                <Layout>
+                  <Plans />
+                </Layout>
+              }
+              path="/plans"
+            />
+            <Route
+              element={
+                <Layout>
+                  <Settings />
+                </Layout>
+              }
+              path="/settings"
+            />
+            <Route
+              element={
+                <Layout>
+                  <Users />
+                </Layout>
+              }
+              path="/users"
+            />
+            <Route
+              element={
+                <Layout>
+                  <Contact />
+                </Layout>
+              }
+              path="/contact"
+            />
+            <Route
+              element={
+                <Layout>
+                  <HelpCenter />
+                </Layout>
+              }
+              path="/help"
+            />
+            <Route
+              element={
+                <Layout>
+                  <Developers />
+                </Layout>
+              }
+              path="/developers"
+            />
+          </Route>
 
           {/* 404 */}
           <Route path="*" element={<NotFound />} />

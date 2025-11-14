@@ -9,16 +9,9 @@ export default function ProtectedRoute() {
   useEffect(() => {
     const checkAuth = async () => {
       try {
-        // Check if user has a token
-        if (!authService.isAuthenticated()) {
-          setIsAuthenticated(false);
-          setLoading(false);
-          return;
-        }
-
-        // Verify token is valid by fetching current user
-        await authService.getCurrentUser();
-        setIsAuthenticated(true);
+        // Use the async authentication check for cookie-based auth
+        const isAuth = await authService.isAuthenticated();
+        setIsAuthenticated(isAuth);
       } catch (error) {
         console.error("Authentication check failed:", error);
         setIsAuthenticated(false);

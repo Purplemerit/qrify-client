@@ -6,41 +6,49 @@ export const api: AxiosInstance = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  withCredentials: true, // Enable sending cookies
 });
 
-// Token storage utilities
+// Cookie utilities for client-side token management (fallback only)
 export const tokenStorage = {
   getAccessToken: (): string | null => {
-    return localStorage.getItem('accessToken');
+    // Cookies are handled automatically by the browser, this is just for client-side checks
+    const cookies = document.cookie.split(';');
+    const accessTokenCookie = cookies.find(cookie => cookie.trim().startsWith('accessToken='));
+    return accessTokenCookie ? accessTokenCookie.split('=')[1] : null;
   },
   setAccessToken: (token: string): void => {
-    localStorage.setItem('accessToken', token);
+    // This will be handled by the server setting httpOnly cookies
+    // This method is kept for compatibility but shouldn't be used
+    console.warn('Token should be set by server as httpOnly cookie');
   },
   removeAccessToken: (): void => {
-    localStorage.removeItem('accessToken');
+    // This will be handled by the server clearing cookies
+    document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; httpOnly; secure; sameSite=strict';
   },
   getRefreshToken: (): string | null => {
-    return localStorage.getItem('refreshToken');
+    // Refresh token should be httpOnly and not accessible from client
+    return null;
   },
   setRefreshToken: (token: string): void => {
-    localStorage.setItem('refreshToken', token);
+    // This will be handled by the server setting httpOnly cookies
+    console.warn('Refresh token should be set by server as httpOnly cookie');
   },
   removeRefreshToken: (): void => {
-    localStorage.removeItem('refreshToken');
+    // This will be handled by the server clearing cookies
+    document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/; httpOnly; secure; sameSite=strict';
   },
   clearTokens: (): void => {
-    localStorage.removeItem('accessToken');
-    localStorage.removeItem('refreshToken');
+    // Clear any client-accessible cookies (though tokens should be httpOnly)
+    document.cookie = 'accessToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
+    document.cookie = 'refreshToken=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
   },
 };
 
-// Request interceptor to add auth token
+// Request interceptor (cookies are sent automatically, no manual authorization needed)
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    const token = tokenStorage.getAccessToken();
-    if (token && config.headers) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
+    // Cookies are automatically included due to withCredentials: true
     return config;
   },
   (error) => {
@@ -79,10 +87,7 @@ api.interceptors.response.use(
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
-          .then((token) => {
-            if (originalRequest.headers) {
-              originalRequest.headers.Authorization = `Bearer ${token}`;
-            }
+          .then(() => {
             return api(originalRequest);
           })
           .catch((err) => {
@@ -93,48 +98,20 @@ api.interceptors.response.use(
       originalRequest._retry = true;
       isRefreshing = true;
 
-      const refreshToken = tokenStorage.getRefreshToken();
-
-      if (!refreshToken) {
-        // No refresh token available
-        // Don't redirect to login from home page or public pages
-        const currentPath = window.location.pathname;
-        const publicPaths = ['/', '/home'];
-
-        tokenStorage.clearTokens();
-
-        if (!publicPaths.includes(currentPath)) {
-          window.location.href = '/login';
-        }
-
-        return Promise.reject(error);
-      }
-
       try {
-        // Try to refresh the token
-        const response = await axios.post(
-          `${import.meta.env.VITE_API_URL || 'http://localhost:4000'}/auth/refresh`,
-          { refreshToken }
-        );
-
-        const { accessToken } = response.data;
-        tokenStorage.setAccessToken(accessToken);
-
-        // Update the authorization header
-        if (originalRequest.headers) {
-          originalRequest.headers.Authorization = `Bearer ${accessToken}`;
-        }
-
-        processQueue(null, accessToken);
+        // Try to refresh the token using cookie-based endpoint
+        await api.post('/auth/refresh');
+        
+        processQueue(null, 'refreshed');
         return api(originalRequest);
       } catch (refreshError) {
-        // Refresh failed, clear tokens
+        // Refresh failed, clear any client-side auth state
         processQueue(refreshError, null);
         tokenStorage.clearTokens();
 
         // Don't redirect to login from home page or public pages
         const currentPath = window.location.pathname;
-        const publicPaths = ['/', '/home'];
+        const publicPaths = ['/', '/home', '/login', '/signup', '/forgot-password'];
 
         if (!publicPaths.includes(currentPath)) {
           window.location.href = '/login';
