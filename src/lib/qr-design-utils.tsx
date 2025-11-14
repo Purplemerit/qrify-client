@@ -1,3 +1,5 @@
+import { QRCodeSVG } from "qrcode.react";
+
 // SVG asset paths for frames
 const frameAssets = {
   card: "/assets/card.svg",
@@ -136,65 +138,64 @@ const getQRPosition = (frameId: number) => {
 
 // Export the QR rendering function for use in other components
 export const renderQRWithDesign = (
-  qrImage: string | undefined,
+  qrData: string,
   options: QRDesignOptions,
-  size: { width: string; height: string } = { width: "w-32", height: "h-32" }
+  size: { width: number; height: number } = { width: 160, height: 160 }
 ) => {
   const selectedFrameData = frameOptions.find((f) => f.id === options.frame);
   const selectedLogoData = logoOptions.find((l) => l.id === options.logo);
   const selectedLevelData = levelOptions.find((l) => l.id === options.level);
 
-  // Blur effect based on level
-  const blurAmount =
-    selectedLevelData?.id === 1
-      ? "blur-[1px]"
-      : selectedLevelData?.id === 2
-      ? "blur-[0.5px]"
-      : selectedLevelData?.id === 3
-      ? "blur-[0.2px]"
-      : "";
+  // Get error correction level
+  const errorCorrectionLevel = selectedLevelData?.value || "M";
 
-  // Shape-specific classes for QR code
+  // Shape-specific classes for QR code container
   const getShapeClass = (shapeId: number) => {
     switch (shapeId) {
       case 2: // Rounded
-        return "rounded-md";
+        return "rounded-md overflow-hidden";
       case 3: // Dots
-        return "rounded-lg";
+        return "rounded-lg overflow-hidden";
       case 4: // Circle
-        return "rounded-full";
+        return "rounded-full overflow-hidden";
       default: // Square
         return "";
     }
   };
 
-  // Use provided QR image if available, otherwise show mock pattern
-  const qrCode = qrImage ? (
-    <img
-      src={qrImage}
-      alt="Generated QR Code"
-      className={`${size.width} ${size.height} ${blurAmount} ${getShapeClass(
-        options.shape
-      )}`}
-      style={{
-        imageRendering:
-          options.shape === 3 || options.shape === 4 ? "auto" : "pixelated",
-      }}
-    />
+  // Determine if qrData is a base64 image (from NewQR preview) or URL (from database)
+  const isBase64Image = qrData.startsWith("data:image/");
+
+  // Generate appropriate QR code element
+  const qrCode = isBase64Image ? (
+    // For base64 images (NewQR preview), use img tag
+    <div className={`${getShapeClass(options.shape)} bg-white`}>
+      <img
+        src={qrData}
+        alt="QR Code"
+        style={{
+          width: Math.min(size.width * 0.6, size.height * 0.6),
+          height: Math.min(size.width * 0.6, size.height * 0.6),
+        }}
+        className="object-contain"
+      />
+    </div>
   ) : (
-    <div
-      className={`w-40 h-40 bg-gray-200 ${getShapeClass(
-        options.shape
-      )} flex items-center justify-center`}
-    >
-      <span className="text-gray-400 text-xs">No QR</span>
+    // For URLs (MyQRCodes/QRDetail), generate QR with QRCodeSVG
+    <div className={`${getShapeClass(options.shape)} bg-white`}>
+      <QRCodeSVG
+        value={qrData}
+        size={Math.min(size.width * 0.6, size.height * 0.6)}
+        level={errorCorrectionLevel as "L" | "M" | "Q" | "H"}
+        includeMargin={false}
+      />
     </div>
   );
 
   // Logo overlay - positioned relative to QR code, not absolute position
   const logoOverlay = selectedLogoData?.icon && (
     <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
-      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-gray-200 p-2">
+      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg border border-gray-200 p-1">
         <img
           src={selectedLogoData.icon}
           alt={selectedLogoData.name}
@@ -208,8 +209,8 @@ export const renderQRWithDesign = (
   if (selectedFrameData?.id === 1 || !selectedFrameData?.icon) {
     return (
       <div
-        className="relative bg-white rounded-lg shadow-lg flex items-center justify-center p-6"
-        style={{ width: "240px", height: "240px" }}
+        className="relative bg-white rounded-lg shadow-lg flex items-center justify-center p-4"
+        style={{ width: `${size.width}px`, height: `${size.height}px` }}
       >
         <div className="relative">
           {qrCode}
@@ -225,7 +226,7 @@ export const renderQRWithDesign = (
   return (
     <div
       className="relative flex items-center justify-center"
-      style={{ width: "240px", height: "240px" }}
+      style={{ width: `${size.width}px`, height: `${size.height}px` }}
     >
       {/* Frame SVG as background */}
       <img

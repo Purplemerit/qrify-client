@@ -48,7 +48,7 @@ interface QRCodeData {
     shape: number;
     logo: number;
     level: number;
-  };
+  } | null;
 }
 
 const MyQRCodes = () => {
@@ -172,12 +172,24 @@ const MyQRCodes = () => {
                   className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 cursor-pointer"
                   onClick={() => handleQRClick(qr)}
                 >
-                  <QRCodeSVG
-                    value={qr.data}
-                    size={40}
-                    ref={(el) => (qrRefs.current[qr.id] = el)}
-                    level="M"
-                  />
+                  {qr.designOptions &&
+                  Object.values(qr.designOptions).some((val, i) =>
+                    i === 2 ? val !== 0 : val !== (i === 3 ? 2 : 1)
+                  ) ? (
+                    <div className="scale-50 origin-center w-[80px] h-[80px] flex items-center justify-center">
+                      {renderQRWithDesign(qr.data, qr.designOptions, {
+                        width: 80,
+                        height: 80,
+                      })}
+                    </div>
+                  ) : (
+                    <QRCodeSVG
+                      value={qr.data}
+                      size={40}
+                      ref={(el) => (qrRefs.current[qr.id] = el)}
+                      level="M"
+                    />
+                  )}
                 </div>
                 <div>
                   {editingId === qr.id ? (

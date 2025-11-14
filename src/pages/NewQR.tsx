@@ -114,11 +114,14 @@ const NewQR = () => {
   }
 
   const handleNextFromStep2 = async () => {
-    // Get the website URL from the form
+    // Get form data from the form inputs
     const websiteUrlInput = document.getElementById(
       "website-url"
     ) as HTMLInputElement;
+    const qrNameInput = document.getElementById("qr-name") as HTMLInputElement;
+
     const websiteURL = websiteUrlInput?.value || "";
+    const qrName = qrNameInput?.value || selectedQRType + " QR";
 
     if (!websiteURL.trim()) {
       setError("Please enter a website URL");
@@ -127,7 +130,7 @@ const NewQR = () => {
 
     // Create form data with the user's input
     const formData = {
-      qrName: selectedQRType + " QR",
+      qrName: qrName,
       basicInformation: {
         websiteURL: websiteURL,
       },
@@ -142,8 +145,21 @@ const NewQR = () => {
     setQrData(formData);
 
     try {
+      // Debug: Check authentication status
+      console.log("Checking authentication status...");
+      try {
+        const authStatus = await authService.getCurrentUser();
+        console.log("User authenticated:", authStatus.user);
+      } catch (authError) {
+        console.error("Authentication check failed:", authError);
+        setError("Authentication required. Please log in again.");
+        setLoading(false);
+        return;
+      }
+
       // Create QR code - cookies are sent automatically
       // Server will handle authentication check
+      console.log("Form data being sent:", formData);
       const response = await api.post("/qr/url", {
         name: formData.qrName || "Website QR",
         url: formData.basicInformation?.websiteURL || "",
@@ -202,6 +218,7 @@ const NewQR = () => {
     try {
       setLoading(true);
 
+      console.log("Completing QR with design options:", qrDesignOptions);
       // Update the QR code with the applied design options
       await api.put(`/qr/${generatedQR.id}`, {
         designOptions: qrDesignOptions,
@@ -655,7 +672,10 @@ const NewQR = () => {
           )}
           {generatedQR && !loading && (
             <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
-              {renderQRWithDesign(generatedQR.qr_image, qrDesignOptions)}
+              {renderQRWithDesign(generatedQR.qr_image, qrDesignOptions, {
+                width: 240,
+                height: 240,
+              })}
               {/* Link to scan endpoint (useful in development to open from phone) */}
               {generatedQR.scanUrl && (
                 <a
@@ -1069,7 +1089,10 @@ const NewQR = () => {
           {/* Final QR Code overlay on phone screen */}
           {generatedQR && (
             <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
-              {renderQRWithDesign(generatedQR.qr_image, qrDesignOptions)}
+              {renderQRWithDesign(generatedQR.qr_image, qrDesignOptions, {
+                width: 240,
+                height: 240,
+              })}
               {/* Link to scan endpoint (useful in development to open from phone) */}
               {generatedQR.scanUrl && (
                 <a
