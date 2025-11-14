@@ -336,8 +336,23 @@ const Stats = () => {
               data.topLocations.map((item, index) => (
                 <div key={index} className="flex items-center justify-between">
                   <div className="flex items-center gap-3">
-                    <span className="text-lg">{item.flag}</span>
-                    <span className="text-sm font-medium">{item.country}</span>
+                    {item.flag ? (
+                      <span className="text-lg">{item.flag}</span>
+                    ) : (
+                      <div className="w-6 h-6 bg-gray-200 rounded-sm flex items-center justify-center">
+                        <span className="text-xs text-gray-500">🌍</span>
+                      </div>
+                    )}
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium">
+                        {item.country}
+                      </span>
+                      {item.city && (
+                        <span className="text-xs text-muted-foreground">
+                          {item.city}
+                        </span>
+                      )}
+                    </div>
                   </div>
                   <span className="text-sm text-muted-foreground">
                     {item.scans} scans
@@ -376,9 +391,19 @@ const Stats = () => {
                     <p className="text-sm font-medium">{item.action}</p>
                     <p className="text-xs text-muted-foreground">{item.time}</p>
                   </div>
-                  <p className="text-xs text-muted-foreground">
-                    {item.qr} • {item.location}
-                  </p>
+                  <div className="text-xs text-muted-foreground">
+                    <span className="font-medium">{item.qr}</span>
+                    {item.location && <span> • {item.location}</span>}
+                    {item.city && item.country && (
+                      <span>
+                        {" "}
+                        • {item.city}, {item.country}
+                      </span>
+                    )}
+                    {!item.location && !item.city && (
+                      <span> • Location unknown</span>
+                    )}
+                  </div>
                 </div>
               ))
             ) : (

@@ -33,7 +33,8 @@ export interface DeviceAnalytic {
 export interface TopLocation {
   country: string;
   scans: number;
-  flag: string;
+  flag?: string;
+  city?: string;
 }
 
 export interface RecentActivity {
@@ -41,6 +42,8 @@ export interface RecentActivity {
   qr: string;
   time: string;
   location: string;
+  country?: string;
+  city?: string;
 }
 
 export interface StatsData {
