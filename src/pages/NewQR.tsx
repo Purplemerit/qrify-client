@@ -374,12 +374,12 @@ const NewQR = () => {
                 WITH TRACKING
               </Badge>
             </div>
-            <div className="transition-transform duration-300">
-              {isDynamicCollapsed ? (
-                <ChevronDown className="h-5 w-5 text-muted-foreground" />
-              ) : (
-                <ChevronUp className="h-5 w-5 text-muted-foreground" />
-              )}
+            <div
+              className={`transition-transform duration-700 ease-in-out ${
+                isDynamicCollapsed ? "rotate-0" : "rotate-180"
+              }`}
+            >
+              <ChevronDown className="h-5 w-5 text-muted-foreground" />
             </div>
           </div>
 
@@ -390,18 +390,19 @@ const NewQR = () => {
           )}
 
           <div
-            className={`transition-all duration-500 ease-in-out overflow-hidden ${
-              isDynamicCollapsed ? "max-h-0" : "max-h-96"
+            className={`transition-all duration-700 ease-in-out ${
+              isDynamicCollapsed ? "max-h-0 opacity-0" : "max-h-96 opacity-100"
             }`}
+            style={{ overflow: isDynamicCollapsed ? "hidden" : "visible" }}
           >
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-6 p-2">
               {dynamicQrTypes.map((type, index) => (
                 <Card
                   key={index}
-                  className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary/30 hover:scale-[1.02] py-2 rounded-2xl group bg-white hover-lift"
+                  className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-primary/40 hover:scale-105 rounded-2xl group bg-white overflow-hidden relative transform-gpu hover:-translate-y-1"
                   onClick={() => handleQRTypeSelect(type.name)}
                 >
-                  <CardContent className="p-6">
+                  <CardContent className="p-6 relative z-10">
                     <div className="flex items-start space-x-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-primary/10 to-primary/20 rounded-xl flex items-center justify-center group-hover:from-primary/20 group-hover:to-primary/30 transition-all duration-300 group-hover:scale-110">
                         <type.icon className="w-6 h-6 text-primary group-hover:scale-110 transition-transform duration-300" />
@@ -416,6 +417,10 @@ const NewQR = () => {
                       </div>
                     </div>
                   </CardContent>
+                  {/* Hover effect overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-primary/8 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none rounded-2xl"></div>
+                  {/* Subtle border glow effect */}
+                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none shadow-[inset_0_0_0_1px_rgba(59,130,246,0.1)]"></div>
                 </Card>
               ))}
             </div>
@@ -439,12 +444,12 @@ const NewQR = () => {
                 NO TRACKING
               </Badge>
             </div>
-            <div className="transition-transform duration-300">
-              {isStaticCollapsed ? (
-                <ChevronDown className="h-5 w-5 text-muted-foreground" />
-              ) : (
-                <ChevronUp className="h-5 w-5 text-muted-foreground" />
-              )}
+            <div
+              className={`transition-transform duration-700 ease-in-out ${
+                isStaticCollapsed ? "rotate-0" : "rotate-180"
+              }`}
+            >
+              <ChevronDown className="h-5 w-5 text-muted-foreground" />
             </div>
           </div>
 
@@ -455,18 +460,21 @@ const NewQR = () => {
           )}
 
           <div
-            className={`transition-all duration-500 ease-in-out overflow-hidden ${
-              isStaticCollapsed ? "max-h-0" : "max-h-[800px]"
+            className={`transition-all duration-700 ease-in-out ${
+              isStaticCollapsed
+                ? "max-h-0 opacity-0"
+                : "max-h-[900px] opacity-100"
             }`}
+            style={{ overflow: isStaticCollapsed ? "hidden" : "visible" }}
           >
-            <div className="grid grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 gap-6 p-2">
               {staticQrTypes.map((type, index) => (
                 <Card
                   key={index}
-                  className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary/30 hover:scale-[1.02] py-2 rounded-2xl group bg-white hover-lift"
+                  className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-primary/40 hover:scale-105 rounded-2xl group bg-white overflow-hidden relative transform-gpu hover:-translate-y-1"
                   onClick={() => handleQRTypeSelect(type.name)}
                 >
-                  <CardContent className="p-6">
+                  <CardContent className="p-6 relative z-10">
                     <div className="flex items-start space-x-4">
                       <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl flex items-center justify-center group-hover:from-orange-200 group-hover:to-orange-300 transition-all duration-300 group-hover:scale-110">
                         <type.icon className="w-6 h-6 text-orange-600 group-hover:scale-110 transition-transform duration-300" />
@@ -481,6 +489,10 @@ const NewQR = () => {
                       </div>
                     </div>
                   </CardContent>
+                  {/* Hover effect overlay */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-orange-50/50 to-orange-100/50 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none rounded-2xl"></div>
+                  {/* Subtle border glow effect */}
+                  <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none shadow-[inset_0_0_0_1px_rgba(251,146,60,0.1)]"></div>
                 </Card>
               ))}
             </div>
@@ -563,9 +575,9 @@ const NewQR = () => {
   };
 
   const renderStep2 = () => (
-    <div className="flex gap-12 w-full px-10 justify-between">
+    <div className="flex gap-12 w-full px-10 justify-between items-start">
       {/* Main Content */}
-      <div className="flex-1 max-w-3xl">
+      <div className="flex-1 max-w-3xl min-w-0">
         <div className="space-y-6">
           <div className="fade-in">
             <h1 className="text-2xl font-semibold mb-2">
@@ -576,7 +588,9 @@ const NewQR = () => {
             </p>
           </div>
 
-          <div className="animate-slide-up">{renderQRForm()}</div>
+          <div className="animate-slide-up overflow-hidden">
+            {renderQRForm()}
+          </div>
 
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-4 animate-slide-up">
@@ -587,7 +601,7 @@ const NewQR = () => {
       </div>
 
       {/* Phone Mockup */}
-      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80">
+      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80 min-w-[320px]">
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-center">Live Preview</h3>
           <p className="text-sm text-muted-foreground text-center mt-2">

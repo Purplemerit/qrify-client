@@ -318,13 +318,17 @@ const WebsiteQRForm = ({ onGenerate }: WebsiteQRFormProps) => {
               </p>
             </div>
             {isStatsExpanded ? (
-              <ChevronUp className="w-5 h-5" />
+              <ChevronUp className="w-5 h-5 transition-transform duration-300" />
             ) : (
-              <ChevronDown className="w-5 h-5" />
+              <ChevronDown className="w-5 h-5 transition-transform duration-300" />
             )}
           </div>
         </CardHeader>
-        {isStatsExpanded && (
+        <div
+          className={`transition-all duration-300 ease-in-out overflow-hidden ${
+            isStatsExpanded ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
+          }`}
+        >
           <CardContent className="space-y-6">
             {/* Schedule Section */}
             <div>
@@ -445,7 +449,7 @@ const WebsiteQRForm = ({ onGenerate }: WebsiteQRFormProps) => {
               </div>
             </div>
           </CardContent>
-        )}
+        </div>
       </Card>
 
       {/* Configuration */}
@@ -462,13 +466,19 @@ const WebsiteQRForm = ({ onGenerate }: WebsiteQRFormProps) => {
               </p>
             </div>
             {isConfigurationExpanded ? (
-              <ChevronUp className="w-5 h-5" />
+              <ChevronUp className="w-5 h-5 transition-transform duration-300" />
             ) : (
-              <ChevronDown className="w-5 h-5" />
+              <ChevronDown className="w-5 h-5 transition-transform duration-300" />
             )}
           </div>
         </CardHeader>
-        {isConfigurationExpanded && (
+        <div
+          className={`transition-all duration-300 ease-in-out overflow-hidden ${
+            isConfigurationExpanded
+              ? "max-h-[600px] opacity-100"
+              : "max-h-0 opacity-0"
+          }`}
+        >
           <CardContent className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="folder">Folder</Label>
@@ -501,7 +511,7 @@ const WebsiteQRForm = ({ onGenerate }: WebsiteQRFormProps) => {
               />
             </div>
           </CardContent>
-        )}
+        </div>
       </Card>
     </div>
   );
