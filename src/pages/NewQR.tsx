@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -75,6 +76,7 @@ const staticQrTypes = [
 ];
 
 const NewQR = () => {
+  const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedQRType, setSelectedQRType] = useState("");
   const [qrData, setQrData] = useState<unknown>(null);
@@ -191,6 +193,28 @@ const NewQR = () => {
       setCurrentStep(step);
     } else if (step === 3 && selectedQRType && generatedQR) {
       setCurrentStep(step);
+    }
+  };
+
+  const handleCompleteQR = async () => {
+    if (!generatedQR?.id) return;
+
+    try {
+      setLoading(true);
+
+      // Update the QR code with the applied design options
+      await api.put(`/qr/${generatedQR.id}`, {
+        designOptions: qrDesignOptions,
+        status: "active",
+      });
+
+      // Redirect to My QR Codes page
+      navigate("/my-qr-codes");
+    } catch (err) {
+      console.error("Failed to complete QR creation:", err);
+      setError("Failed to save QR code");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -342,10 +366,11 @@ const NewQR = () => {
               ← Back
             </Button>
             <Button
-              onClick={() => console.log("Download QR")}
-              className="px-8 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
+              onClick={handleCompleteQR}
+              disabled={loading || !generatedQR?.id}
+              className="px-8 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50"
             >
-              Download
+              {loading ? "Saving..." : "Complete"}
             </Button>
           </div>
         )}
