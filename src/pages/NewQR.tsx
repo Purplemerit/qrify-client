@@ -105,6 +105,19 @@ const NewQR = () => {
     };
   }
 
+  const handleNextFromStep2 = async () => {
+    // Get form data from the current QR form
+    const formData = {
+      qrName: selectedQRType + " QR",
+      basicInformation: {
+        websiteURL: "https://example.com", // This would come from the form
+      },
+    };
+
+    await handleGenerateQR(formData);
+    setCurrentStep(3);
+  };
+
   const handleGenerateQR = async (formData: FormData) => {
     setLoading(true);
     setError("");
@@ -256,11 +269,11 @@ const NewQR = () => {
             Back
           </Button>
           <Button
-            onClick={() => setCurrentStep(3)}
-            disabled={!generatedQR}
+            onClick={handleNextFromStep2}
+            disabled={loading}
             className="px-6 rounded-3xl mt-2"
           >
-            Next →
+            {loading ? "Generating..." : "Next →"}
           </Button>
         </div>
       )}
@@ -427,7 +440,7 @@ const NewQR = () => {
   };
 
   const renderStep2 = () => (
-    <div className="flex gap-8 w-full px-10 justify-center">
+    <div className="flex gap-12 w-full px-10 justify-center">
       {/* Main Content */}
       <div className="flex-1 max-w-2xl">
         <div className="space-y-6">
@@ -447,7 +460,7 @@ const NewQR = () => {
       </div>
 
       {/* Phone Mockup */}
-      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit">
+      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8">
         <div className="mb-4">
           <h3 className="text-lg font-semibold text-center">Preview</h3>
         </div>
@@ -459,7 +472,7 @@ const NewQR = () => {
           />
           {/* QR Code overlay on phone screen */}
           {loading && (
-            <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+            <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
               <div
                 className="bg-white rounded-lg shadow-md p-8 flex flex-col items-center"
                 style={{ width: "180px" }}
@@ -470,7 +483,7 @@ const NewQR = () => {
             </div>
           )}
           {generatedQR && !loading && (
-            <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+            <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
               {renderQRWithDesign(generatedQR.qr_image, qrDesignOptions)}
               {/* Link to scan endpoint (useful in development to open from phone) */}
               {generatedQR.scanUrl && (
@@ -486,7 +499,7 @@ const NewQR = () => {
             </div>
           )}
           {!generatedQR && !loading && (
-            <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+            <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
               <div
                 className="bg-gray-100 rounded-lg shadow-md p-8 flex flex-col items-center"
                 style={{ width: "180px", height: "180px" }}
@@ -503,7 +516,7 @@ const NewQR = () => {
   );
 
   const renderStep3 = () => (
-    <div className="flex gap-8 w-full px-10 justify-center">
+    <div className="flex gap-12 w-full px-10 justify-center">
       {/* Main Content */}
       <div className="flex-1 max-w-4xl">
         <div className="space-y-6">
@@ -540,7 +553,7 @@ const NewQR = () => {
       </div>
 
       {/* Phone Mockup */}
-      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit">
+      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8">
         <div className="mb-4">
           <h3 className="text-lg font-semibold text-center">Final Preview</h3>
         </div>
@@ -552,7 +565,7 @@ const NewQR = () => {
           />
           {/* Final QR Code overlay on phone screen */}
           {generatedQR && (
-            <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+            <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
               {renderQRWithDesign(generatedQR.qr_image, qrDesignOptions)}
               {/* Link to scan endpoint (useful in development to open from phone) */}
               {generatedQR.scanUrl && (
