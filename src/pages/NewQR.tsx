@@ -24,6 +24,11 @@ import SocialMediaQRForm from "@/components/qr-forms/SocialMediaQRForm";
 import MP3QRForm from "@/components/qr-forms/MP3QRForm";
 import BusinessQRForm from "@/components/qr-forms/BusinessQRForm";
 import GenericQRForm from "@/components/qr-forms/GenericQRForm";
+import QRDesignComponent from "@/components/QRDesignComponent";
+import {
+  type QRDesignOptions,
+  renderQRWithDesign,
+} from "@/lib/qr-design-utils";
 import api from "@/lib/api";
 import { authService } from "@/services/auth";
 
@@ -79,6 +84,14 @@ const NewQR = () => {
     slug?: string;
     id?: string;
   }>(null);
+
+  // QR Design options
+  const [qrDesignOptions, setQrDesignOptions] = useState<QRDesignOptions>({
+    frame: 1,
+    shape: 1,
+    logo: 0,
+    level: 2,
+  });
 
   const handleQRTypeSelect = (typeName: string) => {
     setSelectedQRType(typeName);
@@ -140,7 +153,11 @@ const NewQR = () => {
   };
 
   const handleStepClick = (step: number) => {
-    if (step <= currentStep || step === 2) {
+    if (step === 1) {
+      setCurrentStep(step);
+    } else if (step === 2 && selectedQRType) {
+      setCurrentStep(step);
+    } else if (step === 3 && selectedQRType && generatedQR) {
       setCurrentStep(step);
     }
   };
@@ -196,11 +213,34 @@ const NewQR = () => {
             </span>
           </div>
           <div className="h-px w-12 bg-muted"></div>
-          <div className="flex items-center space-x-2">
-            <div className="w-8 h-8 bg-muted text-muted-foreground rounded-full flex items-center justify-center text-sm font-medium">
-              3
+          <div
+            className="flex items-center space-x-2 cursor-pointer"
+            onClick={() => handleStepClick(3)}
+          >
+            <div
+              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+                currentStep === 3
+                  ? "bg-primary text-primary-foreground"
+                  : currentStep > 3
+                  ? "bg-green-500 text-white"
+                  : generatedQR
+                  ? "bg-muted text-foreground"
+                  : "bg-muted text-muted-foreground"
+              }`}
+            >
+              {currentStep > 3 ? "✓" : "3"}
             </div>
-            <span className="text-sm text-muted-foreground">QR Design</span>
+            <span
+              className={`text-sm ${
+                currentStep === 3
+                  ? "font-medium"
+                  : generatedQR
+                  ? "text-foreground"
+                  : "text-muted-foreground"
+              }`}
+            >
+              QR Design
+            </span>
           </div>
         </div>
       </div>
@@ -217,9 +257,28 @@ const NewQR = () => {
           </Button>
           <Button
             onClick={() => setCurrentStep(3)}
+            disabled={!generatedQR}
             className="px-6 rounded-3xl mt-2"
           >
             Next →
+          </Button>
+        </div>
+      )}
+
+      {currentStep === 3 && (
+        <div className="flex items-center space-x-3">
+          <Button
+            variant="outline"
+            onClick={() => setCurrentStep(2)}
+            className="px-8 rounded-3xl mt-2"
+          >
+            Back
+          </Button>
+          <Button
+            onClick={() => console.log("Download QR")}
+            className="px-6 rounded-3xl mt-2"
+          >
+            Download
           </Button>
         </div>
       )}
@@ -412,12 +471,7 @@ const NewQR = () => {
           )}
           {generatedQR && !loading && (
             <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
-              <img
-                src={generatedQR.qr_image}
-                alt="Generated QR"
-                className="rounded-lg shadow-md"
-                style={{ maxWidth: "180px", height: "auto" }}
-              />
+              {renderQRWithDesign(generatedQR.qr_image, qrDesignOptions)}
               {/* Link to scan endpoint (useful in development to open from phone) */}
               {generatedQR.scanUrl && (
                 <a
@@ -448,11 +502,82 @@ const NewQR = () => {
     </div>
   );
 
+  const renderStep3 = () => (
+    <div className="flex gap-8 w-full px-10 justify-center">
+      {/* Main Content */}
+      <div className="flex-1 max-w-4xl">
+        <div className="space-y-6">
+          <div>
+            <h1 className="text-2xl font-semibold mb-2">Design Your QR Code</h1>
+            <p className="text-muted-foreground">
+              Customize the appearance of your QR code with frames, shapes,
+              logos, and quality levels
+            </p>
+          </div>
+
+          <QRDesignComponent
+            qrImage={generatedQR?.qr_image}
+            options={qrDesignOptions}
+            onOptionsChange={setQrDesignOptions}
+            className="w-full"
+            showPreview={false}
+          />
+
+          {generatedQR?.scanUrl && (
+            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
+              <p className="text-sm text-blue-700 mb-2">Test your QR code:</p>
+              <a
+                href={generatedQR.scanUrl}
+                target="_blank"
+                rel="noreferrer"
+                className="text-sm text-blue-600 underline hover:text-blue-800"
+              >
+                Open scan URL →
+              </a>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Phone Mockup */}
+      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit">
+        <div className="mb-4">
+          <h3 className="text-lg font-semibold text-center">Final Preview</h3>
+        </div>
+        <div className="relative">
+          <img
+            src="/iphone15.png"
+            alt="iPhone 15 Mockup"
+            className="w-72 h-auto object-contain"
+          />
+          {/* Final QR Code overlay on phone screen */}
+          {generatedQR && (
+            <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+              {renderQRWithDesign(generatedQR.qr_image, qrDesignOptions)}
+              {/* Link to scan endpoint (useful in development to open from phone) */}
+              {generatedQR.scanUrl && (
+                <a
+                  href={generatedQR.scanUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-2 text-xs text-primary underline"
+                >
+                  Open scan URL
+                </a>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="max-w-8xl bg-neutral-100">
       {renderStepIndicator()}
       {currentStep === 1 && renderStep1()}
       {currentStep === 2 && renderStep2()}
+      {currentStep === 3 && renderStep3()}
     </div>
   );
 };
