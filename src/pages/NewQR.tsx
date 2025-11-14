@@ -13,6 +13,8 @@ import {
   Music,
   Building,
   Tag,
+  ChevronDown,
+  ChevronUp,
 } from "lucide-react";
 import WebsiteQRForm from "@/components/qr-forms/WebsiteQRForm";
 import PDFQRForm from "@/components/qr-forms/PDFQRForm";
@@ -84,6 +86,10 @@ const NewQR = () => {
     slug?: string;
     id?: string;
   }>(null);
+
+  // Collapsible sections state
+  const [isDynamicCollapsed, setIsDynamicCollapsed] = useState(false);
+  const [isStaticCollapsed, setIsStaticCollapsed] = useState(false);
 
   // QR Design options
   const [qrDesignOptions, setQrDesignOptions] = useState<QRDesignOptions>({
@@ -176,18 +182,19 @@ const NewQR = () => {
   };
 
   const renderStepIndicator = () => (
-    <div className="flex items-center justify-between mb-8">
+    <div className="mb-12 px-10">
       {/* Step Indicator */}
-      <div className="flex items-center justify-center flex-1">
-        <div className="flex items-center space-x-8">
+      <div className="flex items-center justify-center mb-8 mt-8">
+        <div className="flex items-center space-x-4 relative">
+          {/* Step 1 */}
           <div
-            className="flex items-center space-x-2 cursor-pointer"
+            className="flex items-center space-x-3 cursor-pointer transition-all duration-300"
             onClick={() => handleStepClick(1)}
           >
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
                 currentStep === 1
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-primary text-primary-foreground shadow-lg"
                   : currentStep > 1
                   ? "bg-green-500 text-white"
                   : "bg-muted text-muted-foreground"
@@ -196,57 +203,83 @@ const NewQR = () => {
               {currentStep > 1 ? "✓" : "1"}
             </div>
             <span
-              className={`text-sm ${
-                currentStep >= 1 ? "font-medium" : "text-muted-foreground"
+              className={`text-sm transition-colors duration-300 ${
+                currentStep >= 1
+                  ? "font-medium text-foreground"
+                  : "text-muted-foreground"
               }`}
             >
               Type of QR code
             </span>
           </div>
-          <div className="h-px w-12 bg-muted"></div>
+
+          {/* Connecting line 1 */}
           <div
-            className="flex items-center space-x-2 cursor-pointer"
+            className={`h-px w-16 transition-colors duration-500 ${
+              currentStep > 1 ? "bg-green-500" : "bg-muted"
+            }`}
+          ></div>
+
+          {/* Step 2 */}
+          <div
+            className="flex items-center space-x-3 cursor-pointer transition-all duration-300"
             onClick={() => handleStepClick(2)}
           >
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
                 currentStep === 2
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted text-muted-foreground"
+                  ? "bg-primary text-primary-foreground shadow-lg"
+                  : currentStep > 2
+                  ? "bg-green-500 text-white"
+                  : selectedQRType
+                  ? "bg-muted text-foreground cursor-pointer"
+                  : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
             >
-              2
+              {currentStep > 2 ? "✓" : "2"}
             </div>
             <span
-              className={`text-sm ${
-                currentStep === 2 ? "font-medium" : "text-muted-foreground"
+              className={`text-sm transition-colors duration-300 ${
+                currentStep === 2
+                  ? "font-medium text-foreground"
+                  : selectedQRType
+                  ? "text-foreground"
+                  : "text-muted-foreground"
               }`}
             >
               Content
             </span>
           </div>
-          <div className="h-px w-12 bg-muted"></div>
+
+          {/* Connecting line 2 */}
           <div
-            className="flex items-center space-x-2 cursor-pointer"
+            className={`h-px w-16 transition-colors duration-500 ${
+              currentStep > 2 ? "bg-green-500" : "bg-muted"
+            }`}
+          ></div>
+
+          {/* Step 3 */}
+          <div
+            className="flex items-center space-x-3 cursor-pointer transition-all duration-300"
             onClick={() => handleStepClick(3)}
           >
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-medium ${
+              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
                 currentStep === 3
-                  ? "bg-primary text-primary-foreground"
+                  ? "bg-primary text-primary-foreground shadow-lg"
                   : currentStep > 3
                   ? "bg-green-500 text-white"
                   : generatedQR
-                  ? "bg-muted text-foreground"
-                  : "bg-muted text-muted-foreground"
+                  ? "bg-muted text-foreground cursor-pointer"
+                  : "bg-muted text-muted-foreground cursor-not-allowed"
               }`}
             >
               {currentStep > 3 ? "✓" : "3"}
             </div>
             <span
-              className={`text-sm ${
+              className={`text-sm transition-colors duration-300 ${
                 currentStep === 3
-                  ? "font-medium"
+                  ? "font-medium text-foreground"
                   : generatedQR
                   ? "text-foreground"
                   : "text-muted-foreground"
@@ -259,140 +292,217 @@ const NewQR = () => {
       </div>
 
       {/* Navigation Buttons */}
-      {currentStep === 2 && (
-        <div className="flex items-center space-x-3">
-          <Button
-            variant="outline"
-            onClick={() => setCurrentStep(1)}
-            className="px-8 rounded-3xl mt-2"
-          >
-            Back
-          </Button>
-          <Button
-            onClick={handleNextFromStep2}
-            disabled={loading}
-            className="px-6 rounded-3xl mt-2"
-          >
-            {loading ? "Generating..." : "Next →"}
-          </Button>
-        </div>
-      )}
+      <div className="flex justify-center">
+        {currentStep === 2 && (
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentStep(1)}
+              className="px-8 py-2 rounded-full border-2 hover:border-primary/50 transition-all duration-300"
+            >
+              ← Back
+            </Button>
+            <Button
+              onClick={handleNextFromStep2}
+              disabled={loading}
+              className="px-8 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
+            >
+              {loading ? (
+                <div className="flex items-center space-x-2">
+                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                  <span>Generating...</span>
+                </div>
+              ) : (
+                "Next →"
+              )}
+            </Button>
+          </div>
+        )}
 
-      {currentStep === 3 && (
-        <div className="flex items-center space-x-3">
-          <Button
-            variant="outline"
-            onClick={() => setCurrentStep(2)}
-            className="px-8 rounded-3xl mt-2"
-          >
-            Back
-          </Button>
-          <Button
-            onClick={() => console.log("Download QR")}
-            className="px-6 rounded-3xl mt-2"
-          >
-            Download
-          </Button>
-        </div>
-      )}
+        {currentStep === 3 && (
+          <div className="flex items-center space-x-4">
+            <Button
+              variant="outline"
+              onClick={() => setCurrentStep(2)}
+              className="px-8 py-2 rounded-full border-2 hover:border-primary/50 transition-all duration-300"
+            >
+              ← Back
+            </Button>
+            <Button
+              onClick={() => console.log("Download QR")}
+              className="px-8 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
+            >
+              Download
+            </Button>
+          </div>
+        )}
+      </div>
     </div>
   );
 
   const renderStep1 = () => (
-    <div className="flex gap-8 w-full px-10 justify-center">
+    <div className="flex gap-12 w-full px-10 justify-between">
       {/* Main Content */}
-      <div className="flex-1 max-w-3xl">
+      <div className="flex-1 max-w-4xl">
         {/* Dynamic QRs Section */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-semibold">Dynamic QRs</h1>
-            <Badge variant="secondary" className="bg-green-300 text-black pt-2">
-              WITH TRACKING
-            </Badge>
-          </div>
-          <p className="text-muted-foreground">
-            Update content in real time, without changing your code
-          </p>
-        </div>
-
-        {/* QR Types Grid */}
-        <div className="grid grid-cols-2 gap-4 hover:border">
-          {dynamicQrTypes.map((type, index) => (
-            <Card
-              key={index}
-              className="hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary/20 py-2 rounded-2xl"
-              onClick={() => handleQRTypeSelect(type.name)}
-            >
-              <CardContent className="p-6">
-                <div className="flex items-start space-x-4">
-                  <div className="w-12 h-12 bg-muted/50 rounded-lg flex items-center justify-center">
-                    <type.icon className="w-6 h-6 text-muted-foreground" />
-                  </div>
-                  <div>
-                    <h3 className="font-medium text-lg">{type.name}</h3>
-                    <p className="text-muted-foreground text-sm">
-                      {type.description}
-                    </p>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-        <div className="mt-8">
-          <div className="mb-8">
-            <div className="flex items-center gap-3 mb-2">
-              <h1 className="text-2xl font-semibold">Static QRs</h1>
+          <div
+            className="flex items-center justify-between cursor-pointer group mb-4"
+            onClick={() => setIsDynamicCollapsed(!isDynamicCollapsed)}
+          >
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-semibold group-hover:text-primary transition-colors duration-300">
+                Dynamic QRs
+              </h1>
               <Badge
                 variant="secondary"
-                className="bg-orange-300 text-black pt-2"
+                className="bg-green-100 text-green-800 border-green-200"
+              >
+                WITH TRACKING
+              </Badge>
+            </div>
+            <div className="transition-transform duration-300">
+              {isDynamicCollapsed ? (
+                <ChevronDown className="h-5 w-5 text-muted-foreground" />
+              ) : (
+                <ChevronUp className="h-5 w-5 text-muted-foreground" />
+              )}
+            </div>
+          </div>
+
+          {!isDynamicCollapsed && (
+            <p className="text-muted-foreground mb-6">
+              Update content in real time, without changing your code
+            </p>
+          )}
+
+          <div
+            className={`transition-all duration-500 ease-in-out overflow-hidden ${
+              isDynamicCollapsed ? "max-h-0" : "max-h-96"
+            }`}
+          >
+            <div className="grid grid-cols-2 gap-4">
+              {dynamicQrTypes.map((type, index) => (
+                <Card
+                  key={index}
+                  className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary/30 hover:scale-[1.02] py-2 rounded-2xl group bg-white hover-lift"
+                  onClick={() => handleQRTypeSelect(type.name)}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-primary/10 to-primary/20 rounded-xl flex items-center justify-center group-hover:from-primary/20 group-hover:to-primary/30 transition-all duration-300 group-hover:scale-110">
+                        <type.icon className="w-6 h-6 text-primary group-hover:scale-110 transition-transform duration-300" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg group-hover:text-primary transition-colors duration-300">
+                          {type.name}
+                        </h3>
+                        <p className="text-muted-foreground text-sm leading-relaxed">
+                          {type.description}
+                        </p>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Static QRs Section */}
+        <div className="mt-12">
+          <div
+            className="flex items-center justify-between cursor-pointer group mb-4"
+            onClick={() => setIsStaticCollapsed(!isStaticCollapsed)}
+          >
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-semibold group-hover:text-primary transition-colors duration-300">
+                Static QRs
+              </h1>
+              <Badge
+                variant="secondary"
+                className="bg-orange-100 text-orange-800 border-orange-200"
               >
                 NO TRACKING
               </Badge>
             </div>
-            <p className="text-muted-foreground">
-              Content cannot be changed once created
-            </p>
+            <div className="transition-transform duration-300">
+              {isStaticCollapsed ? (
+                <ChevronDown className="h-5 w-5 text-muted-foreground" />
+              ) : (
+                <ChevronUp className="h-5 w-5 text-muted-foreground" />
+              )}
+            </div>
           </div>
 
-          {/* Static QR Types Grid */}
-          <div className="grid grid-cols-2 gap-4 hover:border">
-            {staticQrTypes.map((type, index) => (
-              <Card
-                key={index}
-                className="hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary/20 py-2 rounded-2xl"
-                onClick={() => handleQRTypeSelect(type.name)}
-              >
-                <CardContent className="p-6">
-                  <div className="flex items-start space-x-4">
-                    <div className="w-12 h-12 bg-muted/50 rounded-lg flex items-center justify-center">
-                      <type.icon className="w-6 h-6 text-muted-foreground" />
+          {!isStaticCollapsed && (
+            <p className="text-muted-foreground mb-6">
+              Content cannot be changed once created
+            </p>
+          )}
+
+          <div
+            className={`transition-all duration-500 ease-in-out overflow-hidden ${
+              isStaticCollapsed ? "max-h-0" : "max-h-[800px]"
+            }`}
+          >
+            <div className="grid grid-cols-2 gap-4">
+              {staticQrTypes.map((type, index) => (
+                <Card
+                  key={index}
+                  className="hover:shadow-xl transition-all duration-300 cursor-pointer border-2 hover:border-primary/30 hover:scale-[1.02] py-2 rounded-2xl group bg-white hover-lift"
+                  onClick={() => handleQRTypeSelect(type.name)}
+                >
+                  <CardContent className="p-6">
+                    <div className="flex items-start space-x-4">
+                      <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl flex items-center justify-center group-hover:from-orange-200 group-hover:to-orange-300 transition-all duration-300 group-hover:scale-110">
+                        <type.icon className="w-6 h-6 text-orange-600 group-hover:scale-110 transition-transform duration-300" />
+                      </div>
+                      <div className="flex-1">
+                        <h3 className="font-semibold text-lg group-hover:text-primary transition-colors duration-300">
+                          {type.name}
+                        </h3>
+                        <p className="text-muted-foreground text-sm leading-relaxed">
+                          {type.description}
+                        </p>
+                      </div>
                     </div>
-                    <div>
-                      <h3 className="font-medium text-lg">{type.name}</h3>
-                      <p className="text-muted-foreground text-sm">
-                        {type.description}
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
-      {/* Phone Mockup */}
-      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit">
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold text-center">Example</h3>
+      {/* Phone Mockup - Moved to right */}
+      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80">
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold text-center">Preview Example</h3>
+          <p className="text-sm text-muted-foreground text-center mt-2">
+            See how your QR code will look
+          </p>
         </div>
         <div className="relative">
           <img
             src="/iphone15.png"
             alt="iPhone 15 Mockup"
-            className="w-72 h-auto object-contain"
+            className="w-72 h-auto object-contain drop-shadow-lg"
           />
+          {/* Sample content inside phone */}
+          <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 w-[200px]">
+            <div className="bg-white rounded-lg p-4 shadow-inner border">
+              <div className="text-center space-y-2">
+                <div className="w-16 h-16 bg-gray-200 rounded-lg mx-auto flex items-center justify-center">
+                  <div className="w-8 h-8 bg-gray-400 rounded"></div>
+                </div>
+                <h4 className="text-sm font-medium">QR Code Preview</h4>
+                <p className="text-xs text-gray-500">
+                  Choose a QR type to see a real preview
+                </p>
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -440,11 +550,11 @@ const NewQR = () => {
   };
 
   const renderStep2 = () => (
-    <div className="flex gap-12 w-full px-10 justify-center">
+    <div className="flex gap-12 w-full px-10 justify-between">
       {/* Main Content */}
-      <div className="flex-1 max-w-2xl">
+      <div className="flex-1 max-w-3xl">
         <div className="space-y-6">
-          <div>
+          <div className="fade-in">
             <h1 className="text-2xl font-semibold mb-2">
               {selectedQRType} QR Code
             </h1>
@@ -453,37 +563,46 @@ const NewQR = () => {
             </p>
           </div>
 
-          {renderQRForm()}
+          <div className="animate-slide-up">{renderQRForm()}</div>
 
-          {error && <p className="text-red-500 mt-2">{error}</p>}
+          {error && (
+            <div className="bg-red-50 border border-red-200 rounded-lg p-4 animate-slide-up">
+              <p className="text-red-600 text-sm">{error}</p>
+            </div>
+          )}
         </div>
       </div>
 
       {/* Phone Mockup */}
-      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8">
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold text-center">Preview</h3>
+      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80">
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold text-center">Live Preview</h3>
+          <p className="text-sm text-muted-foreground text-center mt-2">
+            See your QR code as you create it
+          </p>
         </div>
         <div className="relative">
           <img
             src="/iphone15.png"
             alt="iPhone 15 Mockup"
-            className="w-72 h-auto object-contain"
+            className="w-72 h-auto object-contain drop-shadow-lg"
           />
           {/* QR Code overlay on phone screen */}
           {loading && (
-            <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+            <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
               <div
-                className="bg-white rounded-lg shadow-md p-8 flex flex-col items-center"
+                className="bg-white rounded-lg shadow-md p-8 flex flex-col items-center border"
                 style={{ width: "180px" }}
               >
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
-                <p className="mt-2 text-sm text-gray-600">Generating QR...</p>
+                <p className="mt-3 text-sm text-gray-600 font-medium">
+                  Generating QR...
+                </p>
               </div>
             </div>
           )}
           {generatedQR && !loading && (
-            <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+            <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
               {renderQRWithDesign(generatedQR.qr_image, qrDesignOptions)}
               {/* Link to scan endpoint (useful in development to open from phone) */}
               {generatedQR.scanUrl && (
@@ -491,9 +610,9 @@ const NewQR = () => {
                   href={generatedQR.scanUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-2 text-xs text-primary underline"
+                  className="mt-3 text-xs text-primary underline hover:text-primary/80 transition-colors duration-300"
                 >
-                  Open scan URL
+                  Test scan URL
                 </a>
               )}
             </div>
@@ -501,10 +620,11 @@ const NewQR = () => {
           {!generatedQR && !loading && (
             <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
               <div
-                className="bg-gray-100 rounded-lg shadow-md p-8 flex flex-col items-center"
+                className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg shadow-md p-8 flex flex-col items-center border border-gray-200"
                 style={{ width: "180px", height: "180px" }}
               >
-                <div className="text-gray-400 text-center">
+                <div className="text-gray-400 text-center flex flex-col items-center justify-center h-full">
+                  <div className="w-12 h-12 border-2 border-dashed border-gray-300 rounded-lg mb-3"></div>
                   <p className="text-sm">QR Code will appear here</p>
                 </div>
               </div>
@@ -516,11 +636,11 @@ const NewQR = () => {
   );
 
   const renderStep3 = () => (
-    <div className="flex gap-12 w-full px-10 justify-center">
+    <div className="flex gap-12 w-full px-10 justify-between">
       {/* Main Content */}
       <div className="flex-1 max-w-4xl">
-        <div className="space-y-6">
-          <div>
+        <div className="space-y-8">
+          <div className="fade-in">
             <h1 className="text-2xl font-semibold mb-2">Design Your QR Code</h1>
             <p className="text-muted-foreground">
               Customize the appearance of your QR code with frames, shapes,
@@ -528,22 +648,259 @@ const NewQR = () => {
             </p>
           </div>
 
-          <QRDesignComponent
-            qrImage={generatedQR?.qr_image}
-            options={qrDesignOptions}
-            onOptionsChange={setQrDesignOptions}
-            className="w-full"
-            showPreview={false}
-          />
+          {/* Design Options Grid */}
+          <div className="space-y-6 animate-slide-up">
+            {/* Frame Section */}
+            <div className="bg-white rounded-xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover-lift group">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center group-hover:from-blue-200 group-hover:to-blue-300 transition-all duration-300">
+                  <div className="w-8 h-8 border-2 border-blue-500 rounded group-hover:scale-110 transition-transform duration-300"></div>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
+                    Frame Selection
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Add decorative borders and context
+                  </p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+                Choose from various frame designs to make your QR code stand out
+                and provide visual context for scanning. Frames help users
+                understand the purpose of your QR code at a glance.
+              </p>
+
+              {/* Frame Selection Grid */}
+              <div className="grid grid-cols-5 gap-3">
+                {[
+                  { id: 1, name: "No Frame", preview: "□" },
+                  { id: 2, name: "Card", preview: "▣" },
+                  { id: 3, name: "Scooter", preview: "🛴" },
+                  { id: 4, name: "Juice", preview: "🧃" },
+                  { id: 5, name: "Gift", preview: "🎁" },
+                  { id: 6, name: "Cup", preview: "☕" },
+                  { id: 7, name: "Text Tab", preview: "📝" },
+                  { id: 8, name: "Tab", preview: "📋" },
+                  { id: 9, name: "Clipboard", preview: "📎" },
+                  { id: 10, name: "Clipped", preview: "📌" },
+                ].map((frame) => (
+                  <button
+                    key={frame.id}
+                    onClick={() =>
+                      setQrDesignOptions((prev) => ({
+                        ...prev,
+                        frame: frame.id,
+                      }))
+                    }
+                    className={`p-3 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
+                      qrDesignOptions.frame === frame.id
+                        ? "border-blue-500 bg-blue-50 shadow-md"
+                        : "border-gray-200 hover:border-blue-300 bg-white"
+                    }`}
+                  >
+                    <div className="text-2xl mb-1">{frame.preview}</div>
+                    <span className="text-xs text-gray-600">{frame.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Shape Section */}
+            <div className="bg-white rounded-xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover-lift group">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center group-hover:from-green-200 group-hover:to-green-300 transition-all duration-300">
+                  <div className="w-8 h-8 grid grid-cols-2 gap-1 group-hover:scale-110 transition-transform duration-300">
+                    <div className="bg-green-500 rounded-full"></div>
+                    <div className="bg-green-500"></div>
+                    <div className="bg-green-500"></div>
+                    <div className="bg-green-500 rounded-full"></div>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-green-600 transition-colors duration-300">
+                    Shape Selection
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Customize QR code dot patterns
+                  </p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+                Modify the shape of QR code dots to create a unique visual
+                style. Choose from classic squares to rounded corners, dots, or
+                circles for better brand alignment.
+              </p>
+
+              {/* Shape Selection Grid */}
+              <div className="grid grid-cols-4 gap-4">
+                {[
+                  { id: 1, name: "Square", preview: "■■■\n■■■\n■■■" },
+                  { id: 2, name: "Rounded", preview: "●●●\n●●●\n●●●" },
+                  { id: 3, name: "Dots", preview: "•••\n•••\n•••" },
+                  { id: 4, name: "Circle", preview: "○○○\n○○○\n○○○" },
+                ].map((shape) => (
+                  <button
+                    key={shape.id}
+                    onClick={() =>
+                      setQrDesignOptions((prev) => ({
+                        ...prev,
+                        shape: shape.id,
+                      }))
+                    }
+                    className={`p-4 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
+                      qrDesignOptions.shape === shape.id
+                        ? "border-green-500 bg-green-50 shadow-md"
+                        : "border-gray-200 hover:border-green-300 bg-white"
+                    }`}
+                  >
+                    <div className="text-lg mb-2 font-mono leading-tight whitespace-pre">
+                      {shape.preview}
+                    </div>
+                    <span className="text-sm text-gray-600">{shape.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Logo Section */}
+            <div className="bg-white rounded-xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover-lift group">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center group-hover:from-purple-200 group-hover:to-purple-300 transition-all duration-300">
+                  <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-4 h-4 bg-white rounded-full"></div>
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-300">
+                    Logo Selection
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Brand your QR code with icons
+                  </p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+                Add recognizable icons like WhatsApp, location, link, or WiFi
+                symbols to instantly communicate your QR code's purpose and
+                increase scan rates.
+              </p>
+
+              {/* Logo Selection Grid */}
+              <div className="grid grid-cols-7 gap-3">
+                {[
+                  { id: 0, name: "None", icon: "⬜" },
+                  { id: 1, name: "WhatsApp", icon: "💬" },
+                  { id: 2, name: "Location", icon: "📍" },
+                  { id: 3, name: "Link", icon: "🔗" },
+                  { id: 4, name: "Scan", icon: "📱" },
+                  { id: 5, name: "WiFi", icon: "📶" },
+                  { id: 6, name: "Email", icon: "📧" },
+                ].map((logo) => (
+                  <button
+                    key={logo.id}
+                    onClick={() =>
+                      setQrDesignOptions((prev) => ({ ...prev, logo: logo.id }))
+                    }
+                    className={`p-3 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
+                      qrDesignOptions.logo === logo.id
+                        ? "border-purple-500 bg-purple-50 shadow-md"
+                        : "border-gray-200 hover:border-purple-300 bg-white"
+                    }`}
+                  >
+                    <div className="text-xl mb-1">{logo.icon}</div>
+                    <span className="text-xs text-gray-600">{logo.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Quality Level Section */}
+            <div className="bg-white rounded-xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover-lift group">
+              <div className="flex items-center space-x-3 mb-4">
+                <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl flex items-center justify-center group-hover:from-orange-200 group-hover:to-orange-300 transition-all duration-300">
+                  <div className="text-orange-500 font-bold text-xl group-hover:scale-110 transition-transform duration-300">
+                    HD
+                  </div>
+                </div>
+                <div>
+                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-orange-600 transition-colors duration-300">
+                    Quality Level
+                  </h3>
+                  <p className="text-sm text-gray-500">
+                    Error correction and readability
+                  </p>
+                </div>
+              </div>
+              <p className="text-sm text-gray-600 mb-6 leading-relaxed">
+                Higher quality levels add more error correction, making QR codes
+                readable even when partially damaged, dirty, or obscured. Choose
+                based on your usage environment.
+              </p>
+
+              {/* Quality Level Selection */}
+              <div className="grid grid-cols-4 gap-4">
+                {[
+                  {
+                    id: 1,
+                    name: "Low (L)",
+                    description: "~7% recovery",
+                    level: "Basic scanning",
+                  },
+                  {
+                    id: 2,
+                    name: "Medium (M)",
+                    description: "~15% recovery",
+                    level: "Recommended",
+                  },
+                  {
+                    id: 3,
+                    name: "Quality (Q)",
+                    description: "~25% recovery",
+                    level: "Outdoor use",
+                  },
+                  {
+                    id: 4,
+                    name: "High (H)",
+                    description: "~30% recovery",
+                    level: "Maximum safety",
+                  },
+                ].map((quality) => (
+                  <button
+                    key={quality.id}
+                    onClick={() =>
+                      setQrDesignOptions((prev) => ({
+                        ...prev,
+                        level: quality.id,
+                      }))
+                    }
+                    className={`p-4 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
+                      qrDesignOptions.level === quality.id
+                        ? "border-orange-500 bg-orange-50 shadow-md"
+                        : "border-gray-200 hover:border-orange-300 bg-white"
+                    }`}
+                  >
+                    <div className="font-semibold mb-1">{quality.name}</div>
+                    <div className="text-xs text-gray-500 mb-1">
+                      {quality.description}
+                    </div>
+                    <div className="text-xs text-gray-400">{quality.level}</div>
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
 
           {generatedQR?.scanUrl && (
-            <div className="mt-4 p-4 bg-blue-50 rounded-lg">
-              <p className="text-sm text-blue-700 mb-2">Test your QR code:</p>
+            <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg animate-slide-up">
+              <p className="text-sm text-blue-700 mb-2 font-medium">
+                Test your QR code:
+              </p>
               <a
                 href={generatedQR.scanUrl}
                 target="_blank"
                 rel="noreferrer"
-                className="text-sm text-blue-600 underline hover:text-blue-800"
+                className="text-sm text-blue-600 underline hover:text-blue-800 transition-colors duration-300"
               >
                 Open scan URL →
               </a>
@@ -553,19 +910,22 @@ const NewQR = () => {
       </div>
 
       {/* Phone Mockup */}
-      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8">
-        <div className="mb-4">
-          <h3 className="text-lg font-semibold text-center">Final Preview</h3>
+      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80">
+        <div className="mb-6">
+          <h3 className="text-xl font-semibold text-center">Final Preview</h3>
+          <p className="text-sm text-muted-foreground text-center mt-2">
+            Your customized QR code
+          </p>
         </div>
         <div className="relative">
           <img
             src="/iphone15.png"
             alt="iPhone 15 Mockup"
-            className="w-72 h-auto object-contain"
+            className="w-72 h-auto object-contain drop-shadow-lg"
           />
           {/* Final QR Code overlay on phone screen */}
           {generatedQR && (
-            <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+            <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
               {renderQRWithDesign(generatedQR.qr_image, qrDesignOptions)}
               {/* Link to scan endpoint (useful in development to open from phone) */}
               {generatedQR.scanUrl && (
@@ -573,9 +933,9 @@ const NewQR = () => {
                   href={generatedQR.scanUrl}
                   target="_blank"
                   rel="noreferrer"
-                  className="mt-2 text-xs text-primary underline"
+                  className="mt-3 text-xs text-primary underline hover:text-primary/80 transition-colors duration-300"
                 >
-                  Open scan URL
+                  Test scan URL
                 </a>
               )}
             </div>
@@ -586,11 +946,21 @@ const NewQR = () => {
   );
 
   return (
-    <div className="max-w-8xl bg-neutral-100">
-      {renderStepIndicator()}
-      {currentStep === 1 && renderStep1()}
-      {currentStep === 2 && renderStep2()}
-      {currentStep === 3 && renderStep3()}
+    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+      <div className="max-w-8xl mx-auto py-8">
+        {renderStepIndicator()}
+        <div className="transition-all duration-700 ease-in-out">
+          {currentStep === 1 && (
+            <div className="animate-fade-in">{renderStep1()}</div>
+          )}
+          {currentStep === 2 && (
+            <div className="animate-slide-up">{renderStep2()}</div>
+          )}
+          {currentStep === 3 && (
+            <div className="animate-scale-in">{renderStep3()}</div>
+          )}
+        </div>
+      </div>
     </div>
   );
 };
