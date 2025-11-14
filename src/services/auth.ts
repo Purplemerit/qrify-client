@@ -186,11 +186,14 @@ class AuthService {
 
   /**
    * Synchronous authentication check (less reliable, use async version when possible)
+   * Note: With httpOnly cookies, we cannot reliably check auth status client-side
    */
   isAuthenticatedSync(): boolean {
-    // For cookie-based auth, we can't reliably check client-side
-    // This is a basic check that looks for any auth-related cookies
-    return document.cookie.includes('accessToken');
+    // Since cookies are httpOnly, we cannot access them from JavaScript
+    // This method is kept for compatibility but should be avoided
+    // Always prefer the async isAuthenticated() method
+    console.warn('isAuthenticatedSync() is unreliable with httpOnly cookies. Use isAuthenticated() instead.');
+    return true; // Assume authenticated and let server validate
   }
 }
 

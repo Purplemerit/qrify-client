@@ -73,9 +73,12 @@ const NewQR = () => {
   const [qrData, setQrData] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
-  const [generatedQR, setGeneratedQR] = useState<null | { qr_image: string }>(
-    null
-  );
+  const [generatedQR, setGeneratedQR] = useState<null | {
+    qr_image: string;
+    scanUrl?: string;
+    slug?: string;
+    id?: string;
+  }>(null);
 
   const handleQRTypeSelect = (typeName: string) => {
     setSelectedQRType(typeName);
@@ -95,26 +98,31 @@ const NewQR = () => {
     setQrData(formData);
 
     try {
-      // Check if user is authenticated using the cookie-based method
-      if (!authService.isAuthenticatedSync()) {
-        throw new Error("Please log in to generate QR codes");
-      }
-
       // Create QR code - cookies are sent automatically
+      // Server will handle authentication check
       const response = await api.post("/qr/url", {
         name: formData.qrName || "Website QR",
         url: formData.basicInformation?.websiteURL || "",
         dynamic: true,
       });
 
-      const qrData = response.data;
-      console.log("QR created:", qrData);
+      const createdQr = response.data;
+      console.log("QR created:", createdQr);
 
       // Get the QR image - cookies are sent automatically
-      const imageResponse = await api.get(`/qr/${qrData.id}/image`);
+      const imageResponse = await api.get(`/qr/${createdQr.id}/image`);
       const imageData = imageResponse.data;
 
-      setGeneratedQR({ qr_image: imageData.image }); // Set the base64 image
+      // Build scan URL so it can be opened from other devices in dev
+      const apiBase = import.meta.env.VITE_API_URL || "http://localhost:4000";
+      const scanUrl = `${apiBase.replace(/\/$/, "")}/scan/${createdQr.slug}`;
+
+      setGeneratedQR({
+        qr_image: imageData.image,
+        scanUrl,
+        slug: createdQr.slug,
+        id: createdQr.id,
+      }); // Set the base64 image and scan URL
     } catch (err: unknown) {
       let errorMessage = "Something went wrong";
 
@@ -410,6 +418,17 @@ const NewQR = () => {
                 className="rounded-lg shadow-md"
                 style={{ maxWidth: "180px", height: "auto" }}
               />
+              {/* Link to scan endpoint (useful in development to open from phone) */}
+              {generatedQR.scanUrl && (
+                <a
+                  href={generatedQR.scanUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="mt-2 text-xs text-primary underline"
+                >
+                  Open scan URL
+                </a>
+              )}
             </div>
           )}
           {!generatedQR && !loading && (
