@@ -18,13 +18,17 @@ export const useStats = (): UseStatsReturn => {
       // Provide more detailed error information
       let errorMessage = 'Failed to load statistics';
       if (err && typeof err === 'object' && 'response' in err) {
-        const axiosError = err as { response?: { status?: number } };
+        const axiosError = err as { response?: { status?: number; data?: { error?: string } } };
         if (axiosError?.response?.status === 404) {
           errorMessage = 'Statistics endpoint not found. Please ensure the server is running.';
         } else if (axiosError?.response?.status === 401) {
           errorMessage = 'Authentication required. Please log in.';
+        } else if (axiosError?.response?.status === 503) {
+          errorMessage = 'Geolocation service temporarily unavailable. Stats will show with limited location data.';
         } else if (axiosError?.response?.status && axiosError.response.status >= 500) {
           errorMessage = 'Server error. Please try again later.';
+        } else if (axiosError?.response?.data?.error) {
+          errorMessage = axiosError.response.data.error;
         }
       } else if (err && typeof err === 'object' && 'code' in err) {
         const networkError = err as { code?: string; message?: string };
