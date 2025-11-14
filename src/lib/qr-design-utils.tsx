@@ -66,63 +66,63 @@ const getQRPosition = (frameId: number) => {
         top: "40%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 0.8,
+        scale: 1.0,
       };
     case 3: // Scooter
       return {
         top: "27%",
         left: "27%",
         transform: "translate(-50%, -50%)",
-        scale: 0.6,
+        scale: 0.75,
       };
     case 4: // Juice
       return {
         top: "60%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 0.75,
+        scale: 0.9,
       };
     case 5: // Gift Wrapper
       return {
         top: "41%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 0.7,
+        scale: 0.85,
       };
     case 6: // Cup
       return {
         top: "49%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 0.65,
+        scale: 0.8,
       };
     case 7: // Text Tab
       return {
         top: "62%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 0.8,
+        scale: 1.0,
       };
     case 8: // Tab
       return {
         top: "39%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 0.85,
+        scale: 1.05,
       };
     case 9: // Clipboard
       return {
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 0.45,
+        scale: 0.8,
       };
     case 10: // Clipped Text
       return {
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 0.45,
+        scale: 0.8,
       };
     default:
       return {
@@ -183,7 +183,7 @@ export const renderQRWithDesign = (
     />
   ) : (
     <div
-      className={`w-32 h-32 bg-gray-200 ${getShapeClass(
+      className={`w-40 h-40 bg-gray-200 ${getShapeClass(
         options.shape
       )} flex items-center justify-center`}
     >
@@ -191,14 +191,14 @@ export const renderQRWithDesign = (
     </div>
   );
 
-  // Logo overlay
+  // Logo overlay - positioned relative to QR code, not absolute position
   const logoOverlay = selectedLogoData?.icon && (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      <div className="w-8 h-8 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-gray-200 p-1.5">
+    <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 z-30 pointer-events-none">
+      <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-gray-200 p-2">
         <img
           src={selectedLogoData.icon}
           alt={selectedLogoData.name}
-          className="w-full h-full"
+          className="w-full h-full object-contain"
         />
       </div>
     </div>
@@ -208,11 +208,13 @@ export const renderQRWithDesign = (
   if (selectedFrameData?.id === 1 || !selectedFrameData?.icon) {
     return (
       <div
-        className="relative bg-white rounded-lg shadow-lg flex items-center justify-center p-4"
-        style={{ width: "180px", height: "180px" }}
+        className="relative bg-white rounded-lg shadow-lg flex items-center justify-center p-6"
+        style={{ width: "240px", height: "240px" }}
       >
-        {qrCode}
-        {logoOverlay}
+        <div className="relative">
+          {qrCode}
+          {logoOverlay}
+        </div>
       </div>
     );
   }
@@ -223,7 +225,7 @@ export const renderQRWithDesign = (
   return (
     <div
       className="relative flex items-center justify-center"
-      style={{ width: "180px", height: "180px" }}
+      style={{ width: "240px", height: "240px" }}
     >
       {/* Frame SVG as background */}
       <img
@@ -240,21 +242,11 @@ export const renderQRWithDesign = (
           transform: `${qrPosition.transform} scale(${qrPosition.scale})`,
         }}
       >
-        {qrCode}
-      </div>
-      {/* Logo overlay */}
-      {logoOverlay && (
-        <div
-          className="absolute z-20"
-          style={{
-            top: qrPosition.top,
-            left: qrPosition.left,
-            transform: `${qrPosition.transform} scale(${qrPosition.scale})`,
-          }}
-        >
+        <div className="relative">
+          {qrCode}
           {logoOverlay}
         </div>
-      )}
+      </div>
     </div>
   );
 };
