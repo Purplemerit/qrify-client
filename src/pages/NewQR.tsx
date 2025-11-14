@@ -112,16 +112,26 @@ const NewQR = () => {
   }
 
   const handleNextFromStep2 = async () => {
-    // Get form data from the current QR form
+    // Get the website URL from the form
+    const websiteUrlInput = document.getElementById(
+      "website-url"
+    ) as HTMLInputElement;
+    const websiteURL = websiteUrlInput?.value || "";
+
+    if (!websiteURL.trim()) {
+      setError("Please enter a website URL");
+      return;
+    }
+
+    // Create form data with the user's input
     const formData = {
       qrName: selectedQRType + " QR",
       basicInformation: {
-        websiteURL: "https://example.com", // This would come from the form
+        websiteURL: websiteURL,
       },
     };
 
     await handleGenerateQR(formData);
-    setCurrentStep(3);
   };
 
   const handleGenerateQR = async (formData: FormData) => {
@@ -155,6 +165,9 @@ const NewQR = () => {
         slug: createdQr.slug,
         id: createdQr.id,
       }); // Set the base64 image and scan URL
+
+      // Move to step 3 after successful QR generation
+      setCurrentStep(3);
     } catch (err: unknown) {
       let errorMessage = "Something went wrong";
 
@@ -305,7 +318,7 @@ const NewQR = () => {
             <Button
               onClick={handleNextFromStep2}
               disabled={loading}
-              className="px-8 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg"
+              className="px-8 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50"
             >
               {loading ? (
                 <div className="flex items-center space-x-2">
