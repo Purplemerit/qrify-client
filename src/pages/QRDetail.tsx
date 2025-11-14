@@ -38,7 +38,7 @@ interface QRCodeData {
     shape: number;
     logo: number;
     level: number;
-  };
+  } | null;
 }
 
 const QRDetail = () => {
@@ -211,7 +211,19 @@ const QRDetail = () => {
               </CardHeader>
               <CardContent className="flex flex-col items-center space-y-4">
                 <div className="w-64 h-64 flex items-center justify-center border border-gray-200 rounded-lg bg-white">
-                  <QRCodeSVG value={qrData.data} size={240} level="M" />
+                  {qrData.designOptions &&
+                  Object.values(qrData.designOptions).some((val, i) =>
+                    i === 2 ? val !== 0 : val !== (i === 3 ? 2 : 1)
+                  ) ? (
+                    <div className="scale-75 origin-center">
+                      {renderQRWithDesign(qrData.data, qrData.designOptions, {
+                        width: 240,
+                        height: 240,
+                      })}
+                    </div>
+                  ) : (
+                    <QRCodeSVG value={qrData.data} size={240} level="M" />
+                  )}
                 </div>
                 <div className="text-center space-y-2">
                   <p className="text-sm text-gray-600">Scan URL:</p>

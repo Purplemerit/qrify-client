@@ -49,6 +49,12 @@ export const tokenStorage = {
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // Cookies are automatically included due to withCredentials: true
+    console.log('API Request:', {
+      url: config.url,
+      baseURL: config.baseURL,
+      withCredentials: config.withCredentials,
+      cookies: document.cookie // Log current cookies for debugging
+    });
     return config;
   },
   (error) => {
