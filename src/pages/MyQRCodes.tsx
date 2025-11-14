@@ -16,6 +16,8 @@ import {
   Trash2,
   Plus,
   Folder,
+  Check,
+  X,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import {
@@ -25,6 +27,10 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import {
+  type QRDesignOptions,
+  renderQRWithDesign,
+} from "@/lib/qr-design-utils";
 
 interface QRCodeData {
   id: string;
@@ -49,6 +55,8 @@ const MyQRCodes = () => {
   const navigate = useNavigate();
   const [qrCodes, setQrCodes] = useState<QRCodeData[]>([]);
   const [viewedQRId, setViewedQRId] = useState<string | null>(null);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [editingName, setEditingName] = useState("");
   const qrRefs = useRef<{ [key: string]: SVGSVGElement | null }>({});
 
   useEffect(() => {
@@ -62,6 +70,48 @@ const MyQRCodes = () => {
     };
     fetchQRCodes();
   }, []);
+
+  const handleDelete = async (id: string) => {
+    if (!confirm("Are you sure you want to delete this QR code?")) return;
+
+    try {
+      await api.delete(`/qr/${id}`);
+      setQrCodes(qrCodes.filter((qr) => qr.id !== id));
+    } catch (err) {
+      console.error("Failed to delete QR code:", err);
+      alert("Failed to delete QR code");
+    }
+  };
+
+  const handleEditName = (qr: QRCodeData) => {
+    setEditingId(qr.id);
+    setEditingName(qr.title);
+  };
+
+  const handleSaveName = async (id: string) => {
+    try {
+      await api.put(`/qr/${id}`, { name: editingName });
+      setQrCodes(
+        qrCodes.map((qr) =>
+          qr.id === id ? { ...qr, title: editingName, name: editingName } : qr
+        )
+      );
+      setEditingId(null);
+      setEditingName("");
+    } catch (err) {
+      console.error("Failed to update QR name:", err);
+      alert("Failed to update QR name");
+    }
+  };
+
+  const handleCancelEdit = () => {
+    setEditingId(null);
+    setEditingName("");
+  };
+
+  const handleQRClick = (qr: QRCodeData) => {
+    navigate(`/qr/${qr.id}`, { state: { qrData: qr } });
+  };
 
   const handleDownload = (id: string, title: string) => {
     const svg = qrRefs.current[id];
@@ -118,22 +168,60 @@ const MyQRCodes = () => {
             >
               {/* Left Section: QR Name and Preview */}
               <div className="flex items-center space-x-4">
-                <div className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50">
-                  {viewedQRId === qr.id ? (
-                    <QRCodeSVG
-                      value={qr.data}
-                      size={40}
-                      ref={(el) => (qrRefs.current[qr.id] = el)}
-                    />
-                  ) : (
-                    <QrCode className="w-6 h-6 text-gray-400" />
-                  )}
+                <div
+                  className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 cursor-pointer"
+                  onClick={() => handleQRClick(qr)}
+                >
+                  <QRCodeSVG
+                    value={qr.data}
+                    size={40}
+                    ref={(el) => (qrRefs.current[qr.id] = el)}
+                    level="M"
+                  />
                 </div>
                 <div>
-                  <h3 className="font-medium text-gray-900">{qr.title}</h3>
-                  <p className="text-sm text-gray-500 truncate max-w-xs">
-                    {qr.data}
-                  </p>
+                  {editingId === qr.id ? (
+                    <div className="flex items-center space-x-2">
+                      <Input
+                        value={editingName}
+                        onChange={(e) => setEditingName(e.target.value)}
+                        className="h-8 w-48"
+                        onKeyDown={(e) => {
+                          if (e.key === "Enter") handleSaveName(qr.id);
+                          if (e.key === "Escape") handleCancelEdit();
+                        }}
+                        autoFocus
+                      />
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={() => handleSaveName(qr.id)}
+                        className="h-8 w-8 p-0"
+                      >
+                        <Check className="w-4 h-4 text-green-600" />
+                      </Button>
+                      <Button
+                        size="sm"
+                        variant="ghost"
+                        onClick={handleCancelEdit}
+                        className="h-8 w-8 p-0"
+                      >
+                        <X className="w-4 h-4 text-red-600" />
+                      </Button>
+                    </div>
+                  ) : (
+                    <div>
+                      <h3
+                        className="font-medium text-gray-900 cursor-pointer"
+                        onClick={() => handleQRClick(qr)}
+                      >
+                        {qr.title}
+                      </h3>
+                      <p className="text-sm text-gray-500 truncate max-w-xs">
+                        {qr.data}
+                      </p>
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -165,19 +253,22 @@ const MyQRCodes = () => {
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end">
-                    <DropdownMenuItem onClick={() => setViewedQRId(qr.id)}>
-                      <Eye className="w-4 h-4 mr-2" /> View
+                    <DropdownMenuItem onClick={() => handleQRClick(qr)}>
+                      <Eye className="w-4 h-4 mr-2" /> View Details
                     </DropdownMenuItem>
                     <DropdownMenuItem
                       onClick={() => handleDownload(qr.id, qr.title)}
                     >
                       <Download className="w-4 h-4 mr-2" /> Download
                     </DropdownMenuItem>
-                    <DropdownMenuItem>
-                      <Edit className="w-4 h-4 mr-2" /> Edit
+                    <DropdownMenuItem onClick={() => handleEditName(qr)}>
+                      <Edit className="w-4 h-4 mr-2" /> Edit Name
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
-                    <DropdownMenuItem className="text-red-600">
+                    <DropdownMenuItem
+                      className="text-red-600"
+                      onClick={() => handleDelete(qr.id)}
+                    >
                       <Trash2 className="w-4 h-4 mr-2" /> Delete
                     </DropdownMenuItem>
                   </DropdownMenuContent>

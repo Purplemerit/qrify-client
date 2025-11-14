@@ -9,6 +9,7 @@ import Index from "./pages/Index";
 import NewQR from "./pages/NewQR";
 import BulkQR from "./pages/BulkQR";
 import MyQRCodes from "./pages/MyQRCodes";
+import QRDetail from "./pages/QRDetail";
 import Stats from "./pages/Stats";
 import Templates from "./pages/Templates";
 import MyDomains from "./pages/MyDomains";
@@ -77,6 +78,14 @@ const App = () => (
                 </Layout>
               }
               path="/my-qr-codes"
+            />
+            <Route
+              element={
+                <Layout>
+                  <QRDetail />
+                </Layout>
+              }
+              path="/qr/:id"
             />
             <Route
               element={
