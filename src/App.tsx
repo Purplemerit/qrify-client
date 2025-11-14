@@ -12,8 +12,6 @@ import MyQRCodes from "./pages/MyQRCodes";
 import QRDetail from "./pages/QRDetail";
 import Stats from "./pages/Stats";
 import Templates from "./pages/Templates";
-import MyDomains from "./pages/MyDomains";
-import Plans from "./pages/Plans";
 import Settings from "./pages/Settings";
 import Users from "./pages/Users";
 import Contact from "./pages/Contact";
@@ -102,22 +100,6 @@ const App = () => (
                 </Layout>
               }
               path="/templates"
-            />
-            <Route
-              element={
-                <Layout>
-                  <MyDomains />
-                </Layout>
-              }
-              path="/my-domains"
-            />
-            <Route
-              element={
-                <Layout>
-                  <Plans />
-                </Layout>
-              }
-              path="/plans"
             />
             <Route
               element={
