@@ -66,63 +66,63 @@ const getQRPosition = (frameId: number) => {
         top: "40%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 1.25,
+        scale: 0.8,
       };
     case 3: // Scooter
       return {
         top: "27%",
         left: "27%",
         transform: "translate(-50%, -50%)",
-        scale: 1.2,
+        scale: 0.6,
       };
     case 4: // Juice
       return {
         top: "60%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 1.5,
+        scale: 0.75,
       };
     case 5: // Gift Wrapper
       return {
         top: "41%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 1.52,
+        scale: 0.7,
       };
     case 6: // Cup
       return {
         top: "49%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 1.18,
+        scale: 0.65,
       };
     case 7: // Text Tab
       return {
         top: "62%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 1.58,
+        scale: 0.8,
       };
     case 8: // Tab
       return {
         top: "39%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 1.73,
+        scale: 0.85,
       };
     case 9: // Clipboard
       return {
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 0.7,
+        scale: 0.45,
       };
     case 10: // Clipped Text
       return {
         top: "50%",
         left: "50%",
         transform: "translate(-50%, -50%)",
-        scale: 0.7,
+        scale: 0.45,
       };
     default:
       return {
@@ -154,15 +154,39 @@ export const renderQRWithDesign = (
       ? "blur-[0.2px]"
       : "";
 
+  // Shape-specific classes for QR code
+  const getShapeClass = (shapeId: number) => {
+    switch (shapeId) {
+      case 2: // Rounded
+        return "rounded-md";
+      case 3: // Dots
+        return "rounded-lg";
+      case 4: // Circle
+        return "rounded-full";
+      default: // Square
+        return "";
+    }
+  };
+
   // Use provided QR image if available, otherwise show mock pattern
   const qrCode = qrImage ? (
     <img
       src={qrImage}
       alt="Generated QR Code"
-      className={`${size.width} ${size.height} ${blurAmount}`}
+      className={`${size.width} ${size.height} ${blurAmount} ${getShapeClass(
+        options.shape
+      )}`}
+      style={{
+        imageRendering:
+          options.shape === 3 || options.shape === 4 ? "auto" : "pixelated",
+      }}
     />
   ) : (
-    <div className="w-32 h-32 bg-gray-200 rounded flex items-center justify-center">
+    <div
+      className={`w-32 h-32 bg-gray-200 ${getShapeClass(
+        options.shape
+      )} flex items-center justify-center`}
+    >
       <span className="text-gray-400 text-xs">No QR</span>
     </div>
   );
@@ -213,7 +237,7 @@ export const renderQRWithDesign = (
         style={{
           top: qrPosition.top,
           left: qrPosition.left,
-          transform: `${qrPosition.transform} scale(${qrPosition.scale * 0.7})`, // Scale down for phone preview
+          transform: `${qrPosition.transform} scale(${qrPosition.scale})`,
         }}
       >
         {qrCode}
@@ -225,9 +249,7 @@ export const renderQRWithDesign = (
           style={{
             top: qrPosition.top,
             left: qrPosition.left,
-            transform: `${qrPosition.transform} scale(${
-              qrPosition.scale * 0.7
-            })`,
+            transform: `${qrPosition.transform} scale(${qrPosition.scale})`,
           }}
         >
           {logoOverlay}
