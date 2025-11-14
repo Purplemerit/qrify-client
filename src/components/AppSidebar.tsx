@@ -4,8 +4,6 @@ import {
   Plus,
   BarChart3,
   Grid3X3,
-  Globe,
-  CreditCard,
   Settings,
   Users,
   HelpCircle,
@@ -32,8 +30,6 @@ const mainItems = [
   { title: "My QR codes", url: "/my-qr-codes", icon: QrCode },
   { title: "Stats", url: "/stats", icon: BarChart3 },
   { title: "Templates", url: "/templates", icon: Grid3X3 },
-  { title: "My domains", url: "/my-domains", icon: Globe },
-  { title: "Plans and payments", url: "/plans", icon: CreditCard },
   { title: "Settings", url: "/settings", icon: Settings },
   { title: "Users", url: "/users", icon: Users },
 ];
