@@ -133,4 +133,12 @@ api.interceptors.response.use(
   }
 );
 
+// Stats API functions
+export const statsApi = {
+  getStats: async () => {
+    const response = await api.get('/qr/stats');
+    return response.data;
+  }
+};
+
 export default api;
