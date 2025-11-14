@@ -14,6 +14,8 @@ const TabIcon = "/assets/tab.svg";
 const ClipboardIcon = "/assets/clipboard.svg";
 const ClippedTextIcon = "/assets/clipped-text.svg";
 
+const QRCodeSVG = "/QR_code.svg";
+
 // SVG asset paths for logos
 const WhatsappIcon = "/assets/whatsapp.svg";
 const LocationIcon = "/assets/location.svg";
@@ -200,11 +202,11 @@ export function Hero() {
       case "Website":
         return (
           <>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Enter your Website
             </label>
             <input
-              className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-1/2 border border-gray-300 rounded-lg px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="E.g. https://www.myweb.com/"
               value={websiteUrl}
               onChange={(e) => setWebsiteUrl(e.target.value)}
@@ -214,11 +216,11 @@ export function Hero() {
       case "Text":
         return (
           <>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Enter your text
             </label>
             <textarea
-              className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-1/2 border border-gray-300 rounded-lg px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Write your message here..."
               rows={1}
               value={textContent}
@@ -229,45 +231,45 @@ export function Hero() {
       case "PDF":
         return (
           <>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Upload your PDF
             </label>
             <input
               type="file"
               accept="application/pdf"
-              className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs"
+              className="w-1/2 border border-gray-300 rounded-lg px-4 py-3 text-base"
             />
           </>
         );
       case "Images":
         return (
           <>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Upload your image
             </label>
             <input
               type="file"
               accept="image/*"
-              className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs"
+              className="w-1/2 border border-gray-300 rounded-lg px-4 py-3 text-base"
             />
           </>
         );
       case "vCard Plus":
         return (
           <>
-            <label className="block text-xs font-medium text-gray-700 mb-0.5">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Fill in your contact details
             </label>
             <input
-              className="w-full border border-gray-300 rounded px-2 py-0.5 text-xs mb-0.5 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-1/2 border border-gray-300 rounded-lg px-4 py-2.5 text-base mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Name"
             />
             <input
-              className="w-full border border-gray-300 rounded px-2 py-0.5 text-xs mb-0.5 focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-1/2 border border-gray-300 rounded-lg px-4 py-2.5 text-base mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Phone"
             />
             <input
-              className="w-full border border-gray-300 rounded px-2 py-0.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-1/2 border border-gray-300 rounded-lg px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Email"
             />
           </>
@@ -275,11 +277,11 @@ export function Hero() {
       case "Video":
         return (
           <>
-            <label className="block text-xs font-medium text-gray-700 mb-1">
+            <label className="block text-sm font-medium text-gray-700 mb-2">
               Paste your video link
             </label>
             <input
-              className="w-full border border-gray-300 rounded px-2 py-1.5 text-xs focus:outline-none focus:ring-1 focus:ring-blue-500"
+              className="w-1/2 border border-gray-300 rounded-lg px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="E.g. https://youtube.com/..."
             />
           </>
@@ -289,83 +291,15 @@ export function Hero() {
     }
   };
 
-  // QR Code rendering based on shape - Professional realistic pattern
+  // QR Code rendering - now using SVG
   const renderQRPattern = () => {
-    const selectedShapeData = shapeOptions.find((s) => s.id === selectedShape);
-
-    // Realistic QR code pattern (21x21 grid simulation)
-    // 1 = black, 0 = white
-    const qrMatrix = [
-      [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-      [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 0, 1, 0, 0, 1, 0, 0, 0, 0, 0, 1],
-      [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
-      [1, 0, 1, 1, 1, 0, 1, 0, 0, 1, 1, 1, 0, 0, 1, 0, 1, 1, 1, 0, 1],
-      [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1, 1, 1, 0, 1],
-      [1, 0, 0, 0, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 0, 0, 0, 0, 0, 1],
-      [1, 1, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 1, 1],
-      [0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0],
-      [1, 0, 1, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 1],
-      [0, 1, 0, 0, 1, 0, 0, 0, 1, 0, 1, 1, 0, 0, 0, 1, 1, 0, 1, 0, 0],
-      [1, 1, 1, 0, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1],
-      [0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 0, 0],
-      [1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 1, 1, 1, 0, 0, 1, 1],
-      [0, 0, 0, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 0, 0, 0],
-      [1, 1, 1, 1, 1, 1, 1, 0, 1, 1, 0, 1, 0, 1, 1, 0, 0, 1, 1, 1, 1],
-      [1, 0, 0, 0, 0, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 1, 0, 0, 0, 1],
-      [1, 0, 1, 1, 1, 0, 1, 0, 1, 0, 0, 1, 0, 1, 1, 0, 1, 1, 0, 1, 1],
-      [1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0],
-      [1, 0, 1, 1, 1, 0, 1, 0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0, 1, 1, 1],
-      [1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 1, 1, 0, 1, 0, 0, 1, 0, 0, 0],
-      [1, 1, 1, 1, 1, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1, 1, 1, 0, 1, 1, 1],
-    ];
-
-    const pattern = [];
-    const size = 21;
-
-    for (let row = 0; row < size; row++) {
-      for (let col = 0; col < size; col++) {
-        const i = row * size + col;
-        const isBlack = qrMatrix[row][col] === 1;
-
-        if (selectedShapeData?.name === "Square") {
-          pattern.push(
-            <div
-              key={i}
-              className={`w-1 h-1 ${isBlack ? "bg-gray-900" : "bg-white"}`}
-            ></div>
-          );
-        } else if (selectedShapeData?.name === "Rounded") {
-          pattern.push(
-            <div
-              key={i}
-              className={`w-1 h-1 rounded-sm ${
-                isBlack ? "bg-gray-900" : "bg-white"
-              }`}
-            ></div>
-          );
-        } else if (selectedShapeData?.name === "Dots") {
-          pattern.push(
-            <div
-              key={i}
-              className={`w-1 h-1 rounded-full ${
-                isBlack ? "bg-gray-900" : "bg-white"
-              }`}
-            ></div>
-          );
-        } else if (selectedShapeData?.name === "Circle") {
-          pattern.push(
-            <div
-              key={i}
-              className={`w-1 h-1 rounded-full ${
-                isBlack ? "bg-gray-900" : "bg-white"
-              }`}
-              style={{ transform: isBlack ? "scale(1)" : "scale(0.3)" }}
-            ></div>
-          );
-        }
-      }
-    }
-    return pattern;
+    return (
+      <img 
+        src={QRCodeSVG} 
+        alt="QR Code" 
+        className="w-32 h-32"
+      />
+    );
   };
 
   // Frame wrapper for QR code
@@ -384,7 +318,7 @@ export function Hero() {
         ? "blur-[0.2px]"
         : "";
 
-    // Use generated QR if available, otherwise show mock pattern
+    // Use generated QR if available, otherwise show SVG
     const qrCode = generatedQR ? (
       <img
         src={generatedQR}
@@ -392,12 +326,11 @@ export function Hero() {
         className={`w-32 h-32 ${blurAmount}`}
       />
     ) : (
-      <div
-        className={`grid grid-cols-21 gap-[1px] ${blurAmount}`}
-        style={{ gridTemplateColumns: "repeat(21, minmax(0, 1fr))" }}
-      >
-        {renderQRPattern()}
-      </div>
+      <img
+        src={QRCodeSVG}
+        alt="QR Code"
+        className={`w-32 h-32 ${blurAmount}`}
+      />
     );
 
     // Logo overlay
@@ -484,62 +417,40 @@ export function Hero() {
   };
 
   const renderDesignOptions = () => {
-    // Mini professional QR pattern for thumbnails
-    const miniQRPattern = [
-      [1, 1, 1, 0, 1, 0, 1, 1, 1],
-      [1, 0, 1, 0, 0, 0, 1, 0, 1],
-      [1, 0, 1, 1, 1, 1, 1, 0, 1],
-      [0, 0, 0, 1, 0, 1, 0, 0, 0],
-      [1, 0, 1, 0, 1, 0, 1, 0, 1],
-      [0, 1, 0, 1, 0, 1, 0, 1, 0],
-      [1, 1, 1, 0, 1, 0, 1, 1, 1],
-      [1, 0, 1, 0, 0, 0, 1, 0, 1],
-      [1, 0, 1, 1, 1, 1, 1, 0, 1],
-    ];
 
     switch (activeDesignTab) {
       case "Frame":
         return (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
+          <div className="flex gap-3 overflow-x-auto pb-2">
             {frameOptions.map((frame) => (
               <button
                 key={frame.id}
                 onClick={() => setSelectedFrame(frame.id)}
-                className={`relative flex flex-col items-center justify-center p-2 sm:p-3 lg:p-4 rounded-lg border-2 transition-all ${
+                className={`relative flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all flex-shrink-0 ${
                   selectedFrame === frame.id
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-200 hover:border-gray-300 bg-white"
                 }`}
               >
-                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gray-100 rounded flex items-center justify-center mb-1 sm:mb-2">
+                <div className="w-20 h-20 bg-gray-100 rounded flex items-center justify-center mb-2">
                   {frame.icon ? (
                     <img
                       src={frame.icon}
                       alt={frame.name}
-                      className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12"
+                      className="w-16 h-16"
                       style={{ filter: "invert(46%) sepia(0%) saturate(0%) hue-rotate(212deg) brightness(94%) contrast(88%)" }}
                     />
                   ) : (
-                    <div className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 bg-white border border-gray-300 rounded flex items-center justify-center p-1">
-                      <div
-                        className="grid gap-[1px]"
-                        style={{
-                          gridTemplateColumns: "repeat(9, minmax(0, 1fr))",
-                        }}
-                      >
-                        {miniQRPattern.flat().map((cell, i) => (
-                          <div
-                            key={i}
-                            className={`w-[2px] sm:w-[3px] h-[2px] sm:h-[3px] ${
-                              cell ? "bg-gray-900" : "bg-white"
-                            }`}
-                          ></div>
-                        ))}
-                      </div>
+                    <div className="w-16 h-16 bg-white border border-gray-300 rounded flex items-center justify-center p-1">
+                      <img 
+                        src={QRCodeSVG} 
+                        alt="QR Code" 
+                        className="w-full h-full object-contain"
+                      />
                     </div>
                   )}
                 </div>
-                <span className="text-[10px] sm:text-xs text-gray-600">
+                <span className="text-sm text-gray-600">
                   {frame.name}
                 </span>
               </button>
@@ -548,63 +459,27 @@ export function Hero() {
         );
       case "Shape":
         return (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {shapeOptions.map((shape) => (
               <button
                 key={shape.id}
                 onClick={() => setSelectedShape(shape.id)}
-                className={`relative flex flex-col items-center justify-center p-2 sm:p-3 lg:p-4 rounded-lg border-2 transition-all ${
+                className={`relative flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all ${
                   selectedShape === shape.id
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-200 hover:border-gray-300 bg-white"
                 }`}
               >
-                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gray-100 rounded flex items-center justify-center mb-1 sm:mb-2">
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 bg-white border border-gray-300 rounded flex items-center justify-center p-1">
-                    <div
-                      className="grid gap-[1px]"
-                      style={{
-                        gridTemplateColumns: "repeat(9, minmax(0, 1fr))",
-                      }}
-                    >
-                      {miniQRPattern.flat().map((cell, i) => {
-                        const className = cell ? "bg-gray-900" : "bg-white";
-                        const sizeClass =
-                          "w-[2px] sm:w-[3px] h-[2px] sm:h-[3px]";
-                        if (shape.name === "Square") {
-                          return (
-                            <div
-                              key={i}
-                              className={`${sizeClass} ${className}`}
-                            ></div>
-                          );
-                        } else if (shape.name === "Rounded") {
-                          return (
-                            <div
-                              key={i}
-                              className={`${sizeClass} rounded-sm ${className}`}
-                            ></div>
-                          );
-                        } else if (shape.name === "Dots") {
-                          return (
-                            <div
-                              key={i}
-                              className={`${sizeClass} rounded-full ${className}`}
-                            ></div>
-                          );
-                        } else {
-                          return (
-                            <div
-                              key={i}
-                              className={`${sizeClass} rounded-full ${className}`}
-                            ></div>
-                          );
-                        }
-                      })}
-                    </div>
+                <div className="w-20 h-20 bg-gray-100 rounded flex items-center justify-center mb-2">
+                  <div className="w-16 h-16 bg-white border border-gray-300 rounded flex items-center justify-center p-1">
+                    <img 
+                      src={QRCodeSVG} 
+                      alt="QR Code" 
+                      className="w-full h-full object-contain"
+                    />
                   </div>
                 </div>
-                <span className="text-[10px] sm:text-xs text-gray-600">
+                <span className="text-sm text-gray-600">
                   {shape.name}
                 </span>
               </button>
@@ -613,29 +488,29 @@ export function Hero() {
         );
       case "Logo":
         return (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
+          <div className="flex gap-3 overflow-x-auto pb-2">
             {logoOptions.map((logo) => (
               <button
                 key={logo.id}
                 onClick={() => setSelectedLogo(logo.id)}
-                className={`relative flex flex-col items-center justify-center p-2 sm:p-3 lg:p-4 rounded-lg border-2 transition-all ${
+                className={`relative flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all flex-shrink-0 ${
                   selectedLogo === logo.id
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-200 hover:border-gray-300 bg-white"
                 }`}
               >
-                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gray-100 rounded flex items-center justify-center mb-1 sm:mb-2">
+                <div className="w-20 h-20 bg-gray-100 rounded flex items-center justify-center mb-2">
                   {logo.icon ? (
                     <img
                       src={logo.icon}
                       alt={logo.name}
-                      className="w-8 h-8 sm:w-10 sm:h-10"
+                      className="w-14 h-14"
                     />
                   ) : (
-                    <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-white border border-gray-300" />
+                    <div className="w-14 h-14 rounded-full bg-white border border-gray-300" />
                   )}
                 </div>
-                <span className="text-[10px] sm:text-xs text-gray-600">
+                <span className="text-sm text-gray-600">
                   {logo.name}
                 </span>
               </button>
@@ -644,21 +519,23 @@ export function Hero() {
         );
       case "Level":
         return (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 sm:gap-3">
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
             {levelOptions.map((level) => (
               <button
                 key={level.id}
                 onClick={() => setSelectedLevel(level.id)}
-                className={`relative flex flex-col items-center justify-center p-2 sm:p-3 lg:p-4 rounded-lg border-2 transition-all ${
+                className={`relative flex flex-col items-center justify-center p-3 rounded-lg border-2 transition-all ${
                   selectedLevel === level.id
                     ? "border-blue-500 bg-blue-50"
                     : "border-gray-200 hover:border-gray-300 bg-white"
                 }`}
               >
-                <div className="w-12 h-12 sm:w-14 sm:h-14 lg:w-16 lg:h-16 bg-gray-100 rounded flex items-center justify-center mb-1 sm:mb-2">
-                  <div className="w-10 h-10 sm:w-11 sm:h-11 lg:w-12 lg:h-12 bg-white border border-gray-300 rounded flex items-center justify-center p-1">
-                    <div
-                      className={`grid gap-[1px] ${
+                <div className="w-20 h-20 bg-gray-100 rounded flex items-center justify-center mb-2">
+                  <div className="w-16 h-16 bg-white border border-gray-300 rounded flex items-center justify-center p-1">
+                    <img 
+                      src={QRCodeSVG} 
+                      alt="QR Code" 
+                      className={`w-full h-full object-contain ${
                         level.id === 1
                           ? "blur-[1px]"
                           : level.id === 2
@@ -667,22 +544,10 @@ export function Hero() {
                           ? "blur-[0.2px]"
                           : ""
                       }`}
-                      style={{
-                        gridTemplateColumns: "repeat(9, minmax(0, 1fr))",
-                      }}
-                    >
-                      {miniQRPattern.flat().map((cell, i) => (
-                        <div
-                          key={i}
-                          className={`w-[2px] sm:w-[3px] h-[2px] sm:h-[3px] ${
-                            cell ? "bg-gray-900" : "bg-white"
-                          }`}
-                        ></div>
-                      ))}
-                    </div>
+                    />
                   </div>
                 </div>
-                <span className="text-[10px] sm:text-xs text-gray-600">
+                <span className="text-sm text-gray-600">
                   {level.name}
                 </span>
               </button>
@@ -700,28 +565,28 @@ export function Hero() {
       style={{ backgroundColor: "#F3F3FF" }}
     >
       <div
-        className="mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-3 overflow-hidden"
+        className="mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-4 overflow-hidden"
         style={{
-          width: "880px",
-          height: "490px",
+          width: "980px",
+          height: "560px",
           flexShrink: 0,
           aspectRatio: "88/49",
         }}
       >
         {/* Main Tabs */}
-        <div className="flex flex-nowrap gap-2 mb-4 pb-3 border-b border-gray-200 overflow-x-auto">
+        <div className="flex flex-nowrap gap-3 mb-6 pb-4 border-b border-gray-200 overflow-x-auto">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`flex items-center gap-1 px-4 py-1.5 rounded text-xs font-medium transition-all whitespace-nowrap flex-1 justify-center ${
+              className={`flex items-center gap-2 px-6 py-3 rounded text-base font-medium transition-all whitespace-nowrap flex-1 justify-center ${
                 activeTab === tab
                   ? "bg-gray-100 text-blue-600"
                   : "text-blue-600 hover:bg-gray-50"
               }`}
             >
               <svg
-                className="w-3 h-3"
+                className="w-5 h-5"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -782,14 +647,13 @@ export function Hero() {
 
         {/* Content area with Step 1 & 2 on left, Step 3 on right */}
         <div
-          className="grid grid-cols-1 lg:grid-cols-3 gap-3"
-          style={{ height: "calc(100% - 60px)" }}
+          className="grid grid-cols-1 lg:grid-cols-3 gap-3 p-4"
         >
           {/* Left Column - Step 1 and Step 2 */}
-          <div className="lg:col-span-2 space-y-2">
+          <div className="lg:col-span-2 space-y-6">
             {/* Step 1: Complete the content */}
-            <div>
-              <h3 className="flex items-center gap-1 text-sm font-semibold text-gray-900 mb-1">
+            <div className="space-y-4">
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-900 mb-1">
                 <span className="flex items-center justify-center w-5 h-5 bg-gray-900 text-white rounded text-xs font-bold">
                   1
                 </span>
@@ -799,8 +663,8 @@ export function Hero() {
             </div>
 
             {/* Step 2: Design your QR */}
-            <div>
-              <h3 className="flex items-center gap-1 text-sm font-semibold text-gray-900 mb-1">
+            <div className="space-y-4">
+              <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-900 mb-1">
                 <span className="flex items-center justify-center w-5 h-5 bg-gray-900 text-white rounded text-xs font-bold">
                   2
                 </span>
@@ -832,7 +696,7 @@ export function Hero() {
           </div>
 
           {/* Right Column - Step 3: Download your QR */}
-          <div className="lg:col-span-1 flex flex-col overflow-hidden">
+          <div className="lg:col-span-1 flex flex-col overflow-hidden space-y-4">
             <h3 className="flex items-center gap-1 text-sm font-semibold text-gray-600 mb-2 flex-shrink-0">
               <span className="flex items-center justify-center w-5 h-5 bg-gray-500 text-white rounded text-xs font-bold">
                 3
