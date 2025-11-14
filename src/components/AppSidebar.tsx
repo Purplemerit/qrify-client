@@ -61,12 +61,15 @@ export function AppSidebar() {
     <Sidebar collapsible="icon">
       <SidebarContent className="flex flex-col overflow-y-auto scrollbar-hide">
         {/* Logo */}
-        <div className="p-6 border-b">
-          <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-primary rounded-lg flex items-center justify-center shadow-sm">
-              <QrCode className="w-6 h-6 text-primary-foreground" />
+        <div className="p-2 border-b">
+          <div className="flex items-center justify-center">
+            <div className="w-32 h-14 flex items-center justify-center overflow-hidden">
+              <img
+                src="/logo.png"
+                alt="QRify Logo"
+                className="w-full h-full object-contain"
+              />
             </div>
-            {open && <span className="font-bold text-xl">QRify</span>}
           </div>
         </div>
 
