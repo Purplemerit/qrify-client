@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
@@ -16,7 +16,9 @@ import {
   Tag,
   ChevronDown,
   ChevronUp,
+  Check,
 } from "lucide-react";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import WebsiteQRForm from "@/components/qr-forms/WebsiteQRForm";
 import PDFQRForm from "@/components/qr-forms/PDFQRForm";
 import ImagesQRForm from "@/components/qr-forms/ImagesQRForm";
@@ -28,12 +30,14 @@ import MP3QRForm from "@/components/qr-forms/MP3QRForm";
 import BusinessQRForm from "@/components/qr-forms/BusinessQRForm";
 import GenericQRForm from "@/components/qr-forms/GenericQRForm";
 import QRDesignComponent from "@/components/QRDesignComponent";
+import QRDesignSelector from "@/components/QRDesignSelector";
 import {
   type QRDesignOptions,
   renderQRWithDesign,
 } from "@/lib/qr-design-utils";
 import api from "@/lib/api";
 import { authService } from "@/services/auth";
+import templateStorage, { type QRTemplate } from "@/lib/template-storage";
 
 const dynamicQrTypes = [
   { name: "Website", description: "Open a URL", icon: Globe },
@@ -100,6 +104,51 @@ const NewQR = () => {
     logo: 0,
     level: 2,
   });
+
+  // Templates state
+  const [availableTemplates, setAvailableTemplates] = useState<QRTemplate[]>(
+    []
+  );
+  const [templatesLoading, setTemplatesLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<"custom" | "templates">("custom");
+  const [appliedTemplateId, setAppliedTemplateId] = useState<string | null>(
+    null
+  );
+
+  // Load templates when component mounts
+  useEffect(() => {
+    const loadTemplates = async () => {
+      try {
+        setTemplatesLoading(true);
+        const templates = await templateStorage.getTemplates();
+        setAvailableTemplates(templates);
+      } catch (error) {
+        console.error("Failed to load templates:", error);
+      } finally {
+        setTemplatesLoading(false);
+      }
+    };
+
+    loadTemplates();
+  }, []);
+
+  const handleApplyTemplate = (template: QRTemplate) => {
+    if (appliedTemplateId === template.id) {
+      // Unapply template - reset to default options
+      setQrDesignOptions({
+        frame: 1,
+        shape: 1,
+        logo: 0,
+        level: 2,
+      });
+      setAppliedTemplateId(null);
+    } else {
+      // Apply template
+      setQrDesignOptions(template.designOptions);
+      setAppliedTemplateId(template.id);
+    }
+    setActiveTab("custom");
+  };
 
   const handleQRTypeSelect = (typeName: string) => {
     setSelectedQRType(typeName);
@@ -720,339 +769,144 @@ const NewQR = () => {
             </p>
           </div>
 
-          {/* Design Options Grid */}
-          <div className="space-y-6 animate-slide-up">
-            {/* Frame Section */}
-            <div className="bg-white rounded-xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover-lift group">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center group-hover:from-blue-200 group-hover:to-blue-300 transition-all duration-300">
-                  <div className="w-8 h-8 border-2 border-blue-500 rounded group-hover:scale-110 transition-transform duration-300"></div>
+          {/* Design Options with Templates */}
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) =>
+              setActiveTab(value as "custom" | "templates")
+            }
+            className="w-full"
+          >
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="custom">Custom Design</TabsTrigger>
+              <TabsTrigger value="templates">
+                Templates{" "}
+                {availableTemplates.length > 0 &&
+                  `(${availableTemplates.length})`}
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="custom" className="mt-6">
+              <QRDesignSelector
+                designOptions={qrDesignOptions}
+                onDesignChange={setQrDesignOptions}
+              />
+            </TabsContent>
+
+            <TabsContent value="templates" className="mt-6">
+              {templatesLoading ? (
+                <div className="text-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                  <p className="text-muted-foreground">Loading templates...</p>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
-                    Frame Selection
+              ) : availableTemplates.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-muted rounded-lg mx-auto mb-4 flex items-center justify-center">
+                    <Tag className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-medium mb-2">
+                    No Templates Available
                   </h3>
-                  <p className="text-sm text-gray-500">
-                    Add decorative borders and context
+                  <p className="text-muted-foreground max-w-md mx-auto">
+                    You haven't created any templates yet. Go to the Templates
+                    page to create custom design templates that you can reuse.
                   </p>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-                Choose from various frame designs to make your QR code stand out
-                and provide visual context for scanning. Frames help users
-                understand the purpose of your QR code at a glance.
-              </p>
-
-              {/* Frame Selection Grid */}
-              <div className="grid grid-cols-5 gap-3">
-                {[
-                  { id: 1, name: "No Frame", icon: null },
-                  { id: 2, name: "Card", icon: "/assets/card.svg" },
-                  { id: 3, name: "Scooter", icon: "/assets/scooter.svg" },
-                  { id: 4, name: "Juice", icon: "/assets/juice.svg" },
-                  {
-                    id: 5,
-                    name: "Gift Wrapper",
-                    icon: "/assets/gift-wrapper.svg",
-                  },
-                  { id: 6, name: "Cup", icon: "/assets/cup.svg" },
-                  {
-                    id: 7,
-                    name: "Text Tab",
-                    icon: "/assets/text-then-tab.svg",
-                  },
-                  { id: 8, name: "Tab", icon: "/assets/tab.svg" },
-                  { id: 9, name: "Clipboard", icon: "/assets/clipboard.svg" },
-                  {
-                    id: 10,
-                    name: "Clipped Text",
-                    icon: "/assets/clipped-text.svg",
-                  },
-                ].map((frame) => (
-                  <button
-                    key={frame.id}
-                    onClick={() =>
-                      setQrDesignOptions((prev) => ({
-                        ...prev,
-                        frame: frame.id,
-                      }))
-                    }
-                    className={`p-3 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
-                      qrDesignOptions.frame === frame.id
-                        ? "border-blue-500 bg-blue-50 shadow-md"
-                        : "border-gray-200 hover:border-blue-300 bg-white"
-                    }`}
+                  <Button
+                    variant="outline"
+                    className="mt-4"
+                    onClick={() => window.open("/templates", "_blank")}
                   >
-                    <div className="w-12 h-12 mx-auto mb-2 flex items-center justify-center bg-gray-50 rounded">
-                      {frame.icon ? (
-                        <img
-                          src={frame.icon}
-                          alt={frame.name}
-                          className="w-10 h-10 object-contain"
-                          style={{
-                            filter:
-                              "invert(46%) sepia(0%) saturate(0%) hue-rotate(212deg) brightness(94%) contrast(88%)",
-                          }}
-                        />
-                      ) : (
-                        <div className="w-8 h-8 border border-gray-400 rounded flex items-center justify-center">
-                          <div className="w-6 h-6 grid grid-cols-3 gap-[1px]">
-                            {Array.from({ length: 9 }).map((_, i) => (
-                              <div
-                                key={i}
-                                className="w-1 h-1 bg-gray-600"
-                              ></div>
-                            ))}
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                    <span className="text-xs text-gray-600">{frame.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Shape Section */}
-            <div className="bg-white rounded-xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover-lift group">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center group-hover:from-green-200 group-hover:to-green-300 transition-all duration-300">
-                  <div className="w-8 h-8 grid grid-cols-2 gap-1 group-hover:scale-110 transition-transform duration-300">
-                    <div className="bg-green-500 rounded-full"></div>
-                    <div className="bg-green-500"></div>
-                    <div className="bg-green-500"></div>
-                    <div className="bg-green-500 rounded-full"></div>
+                    Create Templates
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="text-sm text-muted-foreground">
+                    Choose from your saved templates to quickly apply a design:
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {availableTemplates.map((template) => {
+                      const isApplied = appliedTemplateId === template.id;
+                      return (
+                        <Card
+                          key={template.id}
+                          className={`hover:shadow-lg transition-all duration-300 cursor-pointer group relative ${
+                            isApplied
+                              ? "border-2 border-primary bg-primary/5"
+                              : "border border-gray-200 hover:border-primary/40"
+                          }`}
+                          onClick={() => handleApplyTemplate(template)}
+                        >
+                          <CardContent className="p-4">
+                            <div className="space-y-3">
+                              <div className="flex justify-center relative">
+                                {renderQRWithDesign(
+                                  "https://example.com/template-preview",
+                                  template.designOptions,
+                                  { width: 80, height: 80 }
+                                )}
+                                {/* Applied indicator */}
+                                {isApplied && (
+                                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center shadow-lg">
+                                    <Check className="w-3 h-3" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="text-center">
+                                <h4
+                                  className={`font-medium transition-colors duration-300 ${
+                                    isApplied
+                                      ? "text-primary"
+                                      : "group-hover:text-primary"
+                                  }`}
+                                >
+                                  {template.name}
+                                </h4>
+                                {template.description && (
+                                  <p className="text-sm text-muted-foreground mt-1">
+                                    {template.description}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="flex flex-wrap gap-1 justify-center">
+                                <Badge variant="secondary" className="text-xs">
+                                  Frame {template.designOptions.frame}
+                                </Badge>
+                                <Badge variant="secondary" className="text-xs">
+                                  Shape {template.designOptions.shape}
+                                </Badge>
+                                {template.designOptions.logo > 0 && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-xs"
+                                  >
+                                    Logo {template.designOptions.logo}
+                                  </Badge>
+                                )}
+                              </div>
+                              <Button
+                                size="sm"
+                                variant={isApplied ? "outline" : "default"}
+                                className={`w-full transition-colors duration-300 ${
+                                  isApplied
+                                    ? "border-primary text-primary hover:bg-primary hover:text-white"
+                                    : "group-hover:bg-primary/90"
+                                }`}
+                              >
+                                {isApplied
+                                  ? "Unapply Template"
+                                  : "Apply Template"}
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
                   </div>
                 </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-green-600 transition-colors duration-300">
-                    Shape Selection
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    Customize QR code dot patterns
-                  </p>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-                Modify the shape of QR code dots to create a unique visual
-                style. Choose from classic squares to rounded corners, dots, or
-                circles for better brand alignment.
-              </p>
-
-              {/* Shape Selection Grid */}
-              <div className="grid grid-cols-4 gap-4">
-                {[
-                  { id: 1, name: "Square", preview: "■" },
-                  { id: 2, name: "Rounded", preview: "●" },
-                  { id: 3, name: "Dots", preview: "•" },
-                  { id: 4, name: "Circle", preview: "◯" },
-                ].map((shape) => (
-                  <button
-                    key={shape.id}
-                    onClick={() =>
-                      setQrDesignOptions((prev) => ({
-                        ...prev,
-                        shape: shape.id,
-                      }))
-                    }
-                    className={`p-4 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
-                      qrDesignOptions.shape === shape.id
-                        ? "border-green-500 bg-green-50 shadow-md"
-                        : "border-gray-200 hover:border-green-300 bg-white"
-                    }`}
-                  >
-                    <div className="mb-3">
-                      <div className="grid grid-cols-5 gap-1 mx-auto w-fit">
-                        {Array.from({ length: 25 }).map((_, i) => {
-                          const isPattern = [
-                            0, 1, 2, 3, 4, 5, 9, 10, 14, 15, 19, 20, 21, 22, 23,
-                            24,
-                          ].includes(i);
-                          if (!isPattern)
-                            return <div key={i} className="w-1.5 h-1.5"></div>;
-
-                          if (shape.id === 1)
-                            return (
-                              <div
-                                key={i}
-                                className="w-1.5 h-1.5 bg-gray-800"
-                              ></div>
-                            );
-                          if (shape.id === 2)
-                            return (
-                              <div
-                                key={i}
-                                className="w-1.5 h-1.5 bg-gray-800 rounded-sm"
-                              ></div>
-                            );
-                          if (shape.id === 3)
-                            return (
-                              <div
-                                key={i}
-                                className="w-1.5 h-1.5 bg-gray-800 rounded-full"
-                              ></div>
-                            );
-                          if (shape.id === 4)
-                            return (
-                              <div
-                                key={i}
-                                className="w-1.5 h-1.5 bg-gray-800 rounded-full border border-gray-600"
-                              ></div>
-                            );
-                        })}
-                      </div>
-                    </div>
-                    <span className="text-sm text-gray-600">{shape.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Logo Section */}
-            <div className="bg-white rounded-xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover-lift group">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center group-hover:from-purple-200 group-hover:to-purple-300 transition-all duration-300">
-                  <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                    <div className="w-4 h-4 bg-white rounded-full"></div>
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-300">
-                    Logo Selection
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    Brand your QR code with icons
-                  </p>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-                Add recognizable icons like WhatsApp, location, link, or WiFi
-                symbols to instantly communicate your QR code's purpose and
-                increase scan rates.
-              </p>
-
-              {/* Logo Selection Grid */}
-              <div className="grid grid-cols-7 gap-3">
-                {[
-                  { id: 0, name: "None", icon: null },
-                  { id: 1, name: "WhatsApp", icon: "/assets/whatsapp.svg" },
-                  { id: 2, name: "Location", icon: "/assets/location.svg" },
-                  { id: 3, name: "Link", icon: "/assets/link.svg" },
-                  { id: 4, name: "Scan", icon: "/assets/scan.svg" },
-                  { id: 5, name: "WiFi", icon: "/assets/wifi.svg" },
-                  { id: 6, name: "Email", icon: "/assets/email.svg" },
-                ].map((logo) => (
-                  <button
-                    key={logo.id}
-                    onClick={() =>
-                      setQrDesignOptions((prev) => ({ ...prev, logo: logo.id }))
-                    }
-                    className={`p-3 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
-                      qrDesignOptions.logo === logo.id
-                        ? "border-purple-500 bg-purple-50 shadow-md"
-                        : "border-gray-200 hover:border-purple-300 bg-white"
-                    }`}
-                  >
-                    <div className="w-8 h-8 mx-auto mb-2 flex items-center justify-center">
-                      {logo.icon ? (
-                        <img
-                          src={logo.icon}
-                          alt={logo.name}
-                          className="w-6 h-6 object-contain"
-                          style={{
-                            filter:
-                              qrDesignOptions.logo === logo.id
-                                ? "invert(48%) sepia(79%) saturate(2476%) hue-rotate(249deg) brightness(95%) contrast(98%)"
-                                : "invert(46%) sepia(0%) saturate(0%) hue-rotate(212deg) brightness(94%) contrast(88%)",
-                          }}
-                        />
-                      ) : (
-                        <div className="w-6 h-6 border border-dashed border-gray-400 rounded flex items-center justify-center">
-                          <span className="text-xs text-gray-400">×</span>
-                        </div>
-                      )}
-                    </div>
-                    <span className="text-xs text-gray-600">{logo.name}</span>
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Quality Level Section */}
-            <div className="bg-white rounded-xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover-lift group">
-              <div className="flex items-center space-x-3 mb-4">
-                <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl flex items-center justify-center group-hover:from-orange-200 group-hover:to-orange-300 transition-all duration-300">
-                  <div className="text-orange-500 font-bold text-xl group-hover:scale-110 transition-transform duration-300">
-                    HD
-                  </div>
-                </div>
-                <div>
-                  <h3 className="text-xl font-semibold text-gray-900 group-hover:text-orange-600 transition-colors duration-300">
-                    Quality Level
-                  </h3>
-                  <p className="text-sm text-gray-500">
-                    Error correction and readability
-                  </p>
-                </div>
-              </div>
-              <p className="text-sm text-gray-600 mb-6 leading-relaxed">
-                Higher quality levels add more error correction, making QR codes
-                readable even when partially damaged, dirty, or obscured. Choose
-                based on your usage environment.
-              </p>
-
-              {/* Quality Level Selection */}
-              <div className="grid grid-cols-4 gap-4">
-                {[
-                  {
-                    id: 1,
-                    name: "Low (L)",
-                    description: "~7% recovery",
-                    level: "Basic scanning",
-                  },
-                  {
-                    id: 2,
-                    name: "Medium (M)",
-                    description: "~15% recovery",
-                    level: "Recommended",
-                  },
-                  {
-                    id: 3,
-                    name: "Quality (Q)",
-                    description: "~25% recovery",
-                    level: "Outdoor use",
-                  },
-                  {
-                    id: 4,
-                    name: "High (H)",
-                    description: "~30% recovery",
-                    level: "Maximum safety",
-                  },
-                ].map((quality) => (
-                  <button
-                    key={quality.id}
-                    onClick={() =>
-                      setQrDesignOptions((prev) => ({
-                        ...prev,
-                        level: quality.id,
-                      }))
-                    }
-                    className={`p-4 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
-                      qrDesignOptions.level === quality.id
-                        ? "border-orange-500 bg-orange-50 shadow-md"
-                        : "border-gray-200 hover:border-orange-300 bg-white"
-                    }`}
-                  >
-                    <div className="font-semibold mb-1">{quality.name}</div>
-                    <div className="text-xs text-gray-500 mb-1">
-                      {quality.description}
-                    </div>
-                    <div className="text-xs text-gray-400">{quality.level}</div>
-                  </button>
-                ))}
-              </div>
-            </div>
-          </div>
+              )}
+            </TabsContent>
+          </Tabs>
 
           {generatedQR?.scanUrl && (
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg animate-slide-up">
