@@ -143,6 +143,9 @@ const NewQR = () => {
         shape: 1,
         logo: 0,
         level: 2,
+        dotStyle: 1,
+        bgColor: "#ffffff",
+        outerBorder: 1,
       });
       setAppliedTemplateId(null);
     } else {
@@ -724,10 +727,15 @@ const NewQR = () => {
           )}
           {generatedQR && !loading && (
             <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
-              {renderQRWithDesign(generatedQR.qr_image, qrDesignOptions, {
-                width: 240,
-                height: 240,
-              })}
+              {renderQRWithDesign(
+                generatedQR.scanUrl ||
+                  `http://localhost:4000/scan/${generatedQR.slug}`,
+                qrDesignOptions,
+                {
+                  width: 240,
+                  height: 240,
+                }
+              )}
               {/* Link to scan endpoint (useful in development to open from phone) */}
               {generatedQR.scanUrl && (
                 <a
@@ -946,10 +954,15 @@ const NewQR = () => {
           {/* Final QR Code overlay on phone screen */}
           {generatedQR && (
             <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
-              {renderQRWithDesign(generatedQR.qr_image, qrDesignOptions, {
-                width: 240,
-                height: 240,
-              })}
+              {renderQRWithDesign(
+                generatedQR.scanUrl ||
+                  `http://localhost:4000/scan/${generatedQR.slug}`,
+                qrDesignOptions,
+                {
+                  width: 240,
+                  height: 240,
+                }
+              )}
               {/* Link to scan endpoint (useful in development to open from phone) */}
               {generatedQR.scanUrl && (
                 <a

@@ -43,12 +43,7 @@ interface QRCodeData {
   created_at: string;
   slug: string;
   dynamic: boolean;
-  designOptions?: {
-    frame: number;
-    shape: number;
-    logo: number;
-    level: number;
-  } | null;
+  designOptions?: QRDesignOptions | null;
 }
 
 const MyQRCodes = () => {
@@ -172,10 +167,7 @@ const MyQRCodes = () => {
                   className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 cursor-pointer"
                   onClick={() => handleQRClick(qr)}
                 >
-                  {qr.designOptions &&
-                  Object.values(qr.designOptions).some((val, i) =>
-                    i === 2 ? val !== 0 : val !== (i === 3 ? 2 : 1)
-                  ) ? (
+                  {qr.designOptions ? (
                     <div className="scale-50 origin-center w-[80px] h-[80px] flex items-center justify-center">
                       {renderQRWithDesign(qr.data, qr.designOptions, {
                         width: 80,
