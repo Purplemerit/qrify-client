@@ -1,5 +1,10 @@
 import React from "react";
-import { type QRDesignOptions } from "@/lib/qr-design-utils";
+import {
+  type QRDesignOptions,
+  dotStyleOptions,
+  bgColorOptions,
+  outerBorderOptions,
+} from "@/lib/qr-design-utils";
 
 interface QRDesignSelectorProps {
   designOptions: QRDesignOptions;
@@ -12,7 +17,10 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
   onDesignChange,
   compact = false,
 }) => {
-  const updateDesignOption = (key: keyof QRDesignOptions, value: number) => {
+  const updateDesignOption = (
+    key: keyof QRDesignOptions,
+    value: number | string
+  ) => {
     onDesignChange({
       ...designOptions,
       [key]: value,
@@ -109,7 +117,7 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
         <div className="space-y-3">
           <h4 className="text-md font-medium">Frame</h4>
           <div className="grid grid-cols-5 gap-2">
-            {frameOptions.slice(0, 5).map((frame) => (
+            {frameOptions.map((frame) => (
               <button
                 key={frame.id}
                 onClick={() => updateDesignOption("frame", frame.id)}
@@ -177,7 +185,7 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
         <div className="space-y-3">
           <h4 className="text-md font-medium">Logo</h4>
           <div className="grid grid-cols-4 gap-2">
-            {logoOptions.slice(0, 4).map((logo) => (
+            {logoOptions.map((logo) => (
               <button
                 key={logo.id}
                 onClick={() => updateDesignOption("logo", logo.id)}
@@ -232,6 +240,96 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
                 </div>
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* Compact QR Code Style Section */}
+        <div className="space-y-3">
+          <h4 className="text-md font-medium">QR Code Style</h4>
+
+          {/* Dot Style */}
+          <div>
+            <h5 className="text-sm font-medium mb-2 text-gray-700">
+              Dot Style
+            </h5>
+            <div className="grid grid-cols-4 gap-2">
+              {dotStyleOptions.map((style) => (
+                <button
+                  key={style.id}
+                  onClick={() => updateDesignOption("dotStyle", style.id)}
+                  className={`p-2 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
+                    (designOptions.dotStyle || 1) === style.id
+                      ? "border-pink-500 bg-pink-50 shadow-md"
+                      : "border-gray-200 hover:border-pink-300 bg-white"
+                  }`}
+                >
+                  <div className="text-lg mb-1">{style.icon}</div>
+                  <span className="text-xs text-gray-600">{style.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Background Color */}
+          <div>
+            <h5 className="text-sm font-medium mb-2 text-gray-700">
+              Background
+            </h5>
+            <div className="grid grid-cols-4 gap-2">
+              {bgColorOptions.map((color) => (
+                <button
+                  key={color.id}
+                  onClick={() => updateDesignOption("bgColor", color.id)}
+                  className={`p-2 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
+                    (designOptions.bgColor || "#ffffff") === color.id
+                      ? "border-pink-500 bg-pink-50 shadow-md"
+                      : "border-gray-200 hover:border-pink-300 bg-white"
+                  }`}
+                >
+                  <div
+                    className="w-6 h-6 mx-auto mb-1 rounded border border-gray-200"
+                    style={{ background: color.gradient }}
+                  ></div>
+                  <span className="text-xs text-gray-600">{color.name}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+
+          {/* Border Style */}
+          <div>
+            <h5 className="text-sm font-medium mb-2 text-gray-700">Border</h5>
+            <div className="grid grid-cols-4 gap-2">
+              {outerBorderOptions.map((border) => (
+                <button
+                  key={border.id}
+                  onClick={() => updateDesignOption("outerBorder", border.id)}
+                  className={`p-2 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
+                    (designOptions.outerBorder || 1) === border.id
+                      ? "border-pink-500 bg-pink-50 shadow-md"
+                      : "border-gray-200 hover:border-pink-300 bg-white"
+                  }`}
+                >
+                  <div className="mb-1 flex justify-center">
+                    <div
+                      className="w-4 h-4 bg-gray-100 rounded-sm"
+                      style={{
+                        border:
+                          border.style === "none"
+                            ? "1px dashed #ccc"
+                            : border.style
+                                .replace("2px", "1px")
+                                .replace("4px", "1px"),
+                        boxShadow: border.shadow
+                          ? "0 1px 2px rgba(0,0,0,0.1)"
+                          : "none",
+                      }}
+                    ></div>
+                  </div>
+                  <span className="text-xs text-gray-600">{border.name}</span>
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
@@ -449,6 +547,119 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
               <div className="text-xs text-gray-400">{quality.level}</div>
             </button>
           ))}
+        </div>
+      </div>
+
+      {/* QR Code Style Section */}
+      <div className="bg-white rounded-xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover-lift group">
+        <div className="flex items-center space-x-3 mb-4">
+          <div className="w-12 h-12 bg-gradient-to-br from-pink-100 to-pink-200 rounded-xl flex items-center justify-center group-hover:from-pink-200 group-hover:to-pink-300 transition-all duration-300">
+            <div className="text-pink-500 text-xl group-hover:scale-110 transition-transform duration-300">
+              ✨
+            </div>
+          </div>
+          <div>
+            <h3 className="text-xl font-semibold text-gray-900 group-hover:text-pink-600 transition-colors duration-300">
+              QR Code Style
+            </h3>
+            <p className="text-sm text-gray-500">
+              Advanced customization options
+            </p>
+          </div>
+        </div>
+
+        {/* Dot Style Subsection */}
+        <div className="mb-8">
+          <h4 className="text-lg font-medium mb-4 text-gray-800">Dot Style</h4>
+          <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+            Choose unique shapes for your QR code dots to create distinctive
+            visual styles.
+          </p>
+          <div className="grid grid-cols-4 gap-3">
+            {dotStyleOptions.map((style) => (
+              <button
+                key={style.id}
+                onClick={() => updateDesignOption("dotStyle", style.id)}
+                className={`p-3 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
+                  (designOptions.dotStyle || 1) === style.id
+                    ? "border-pink-500 bg-pink-50 shadow-md"
+                    : "border-gray-200 hover:border-pink-300 bg-white"
+                }`}
+              >
+                <div className="text-2xl mb-2 flex justify-center items-center h-8">
+                  <span className="text-gray-700">{style.icon}</span>
+                </div>
+                <span className="text-xs text-gray-600">{style.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Background Color Subsection */}
+        <div className="mb-8">
+          <h4 className="text-lg font-medium mb-4 text-gray-800">
+            Background Color
+          </h4>
+          <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+            Select gradient background colors to make your QR codes more
+            visually appealing.
+          </p>
+          <div className="grid grid-cols-4 gap-3">
+            {bgColorOptions.map((color) => (
+              <button
+                key={color.id}
+                onClick={() => updateDesignOption("bgColor", color.id)}
+                className={`p-3 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
+                  (designOptions.bgColor || "#ffffff") === color.id
+                    ? "border-pink-500 bg-pink-50 shadow-md"
+                    : "border-gray-200 hover:border-pink-300 bg-white"
+                }`}
+              >
+                <div
+                  className="w-10 h-10 mx-auto mb-2 rounded-lg border border-gray-200"
+                  style={{ background: color.gradient }}
+                ></div>
+                <span className="text-xs text-gray-600">{color.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Outer Border Subsection */}
+        <div>
+          <h4 className="text-lg font-medium mb-4 text-gray-800">
+            Outer Border
+          </h4>
+          <p className="text-sm text-gray-600 mb-4 leading-relaxed">
+            Add stylish borders around your QR codes for enhanced visual impact.
+          </p>
+          <div className="grid grid-cols-4 gap-3">
+            {outerBorderOptions.map((border) => (
+              <button
+                key={border.id}
+                onClick={() => updateDesignOption("outerBorder", border.id)}
+                className={`p-3 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
+                  (designOptions.outerBorder || 1) === border.id
+                    ? "border-pink-500 bg-pink-50 shadow-md"
+                    : "border-gray-200 hover:border-pink-300 bg-white"
+                }`}
+              >
+                <div className="mb-2 flex justify-center">
+                  <div
+                    className="w-8 h-8 bg-gray-100 rounded"
+                    style={{
+                      border:
+                        border.style === "none"
+                          ? "1px dashed #ccc"
+                          : border.style,
+                      boxShadow: border.shadow || "none",
+                    }}
+                  ></div>
+                </div>
+                <span className="text-xs text-gray-600">{border.name}</span>
+              </button>
+            ))}
+          </div>
         </div>
       </div>
     </div>

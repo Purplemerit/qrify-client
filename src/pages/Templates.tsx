@@ -45,6 +45,9 @@ const Templates = () => {
     shape: 1,
     logo: 0,
     level: 2,
+    dotStyle: 1,
+    bgColor: "#ffffff",
+    outerBorder: 1,
   });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -93,6 +96,9 @@ const Templates = () => {
         shape: 1,
         logo: 0,
         level: 2,
+        dotStyle: 1,
+        bgColor: "#ffffff",
+        outerBorder: 1,
       });
       setShowCreateForm(false);
     } catch (err) {
@@ -124,60 +130,198 @@ const Templates = () => {
 
   return (
     <div className="max-w-6xl mx-auto py-8 px-4">
-      <div className="mb-8">
-        <h1 className="text-3xl font-semibold mb-2">QR Code Templates</h1>
-        <p className="text-muted-foreground">
-          Create and manage your custom QR code design templates
-        </p>
-      </div>
+      {!showCreateForm ? (
+        // Templates List View
+        <>
+          <div className="mb-8">
+            <h1 className="text-3xl font-semibold mb-2">QR Code Templates</h1>
+            <p className="text-muted-foreground">
+              Create and manage your custom QR code design templates
+            </p>
+          </div>
 
-      {/* Create New Template Button */}
-      <div className="mb-8">
-        <Button
-          onClick={() => setShowCreateForm(true)}
-          className="flex items-center gap-2"
-          disabled={loading}
-        >
-          <Plus className="h-4 w-4" />
-          Create New Template
-        </Button>
-      </div>
+          {/* Create New Template Button */}
+          <div className="mb-8">
+            <Button
+              onClick={() => setShowCreateForm(true)}
+              className="flex items-center gap-2"
+              disabled={loading}
+            >
+              <Plus className="h-4 w-4" />
+              Create New Template
+            </Button>
+          </div>
 
-      {/* Error Message */}
-      {error && (
-        <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-          <p className="text-red-600 text-sm">{error}</p>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={loadTemplates}
-            className="mt-2"
-          >
-            Retry
-          </Button>
-        </div>
-      )}
+          {/* Error Message */}
+          {error && (
+            <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+              <p className="text-red-600 text-sm">{error}</p>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={loadTemplates}
+                className="mt-2"
+              >
+                Retry
+              </Button>
+            </div>
+          )}
 
-      {/* Loading State */}
-      {loading && (
-        <div className="flex justify-center py-12">
-          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-        </div>
-      )}
+          {/* Loading State */}
+          {loading && (
+            <div className="flex justify-center py-12">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+            </div>
+          )}
 
-      {/* Create Template Form */}
-      {showCreateForm && (
-        <Card className="mb-8">
-          <CardHeader>
-            <CardTitle>Create Custom Template</CardTitle>
-            <CardDescription>
-              Design your QR code template with custom frames, shapes, logos,
-              and quality settings
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-4">
+          {/* Templates Grid */}
+          <div>
+            <h2 className="text-xl font-semibold mb-4">Your Templates</h2>
+            {templates.length === 0 ? (
+              <Card>
+                <CardContent className="flex flex-col items-center justify-center py-12">
+                  <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center mb-4">
+                    <Plus className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-medium mb-2">No templates yet</h3>
+                  <p className="text-muted-foreground text-center max-w-md">
+                    Create your first QR code template to save time when
+                    generating QR codes with consistent designs
+                  </p>
+                  <Button
+                    className="mt-4"
+                    onClick={() => setShowCreateForm(true)}
+                  >
+                    Create Your First Template
+                  </Button>
+                </CardContent>
+              </Card>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {templates.map((template) => (
+                  <Card
+                    key={template.id}
+                    className="hover:shadow-lg transition-all duration-300"
+                  >
+                    <CardHeader>
+                      <div className="flex items-start justify-between">
+                        <div>
+                          <CardTitle className="text-lg">
+                            {template.name}
+                          </CardTitle>
+                          {template.description && (
+                            <CardDescription className="mt-1">
+                              {template.description}
+                            </CardDescription>
+                          )}
+                        </div>
+                      </div>
+                      <div className="flex gap-2 mt-2">
+                        <Badge variant="secondary">
+                          Frame {template.designOptions.frame}
+                        </Badge>
+                        <Badge variant="secondary">
+                          Shape {template.designOptions.shape}
+                        </Badge>
+                        {template.designOptions.logo > 0 && (
+                          <Badge variant="secondary">
+                            Logo {template.designOptions.logo}
+                          </Badge>
+                        )}
+                        {template.designOptions.dotStyle &&
+                          template.designOptions.dotStyle > 1 && (
+                            <Badge variant="secondary">
+                              Dot Style {template.designOptions.dotStyle}
+                            </Badge>
+                          )}
+                      </div>
+                    </CardHeader>
+                    <CardContent>
+                      <div className="space-y-4">
+                        <div className="flex justify-center">
+                          <QRPreview
+                            designOptions={template.designOptions}
+                            size={96}
+                          />
+                        </div>
+                        <div className="text-xs text-muted-foreground text-center">
+                          Created {formatDate(template.createdAt)}
+                        </div>
+                        <div className="flex gap-2">
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            className="flex-1"
+                          >
+                            <Eye className="h-4 w-4 mr-2" />
+                            Preview
+                          </Button>
+                          <Button
+                            variant="outline"
+                            size="sm"
+                            onClick={() => handleDeleteTemplate(template.id)}
+                            className="text-red-600 hover:text-red-700"
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
+          </div>
+        </>
+      ) : (
+        // Create Template Editor View - Two Column Layout
+        <div className="h-screen flex bg-gray-50 -m-8">
+          {/* Left Sidebar - Scrollable Selection Panel */}
+          <div className="w-1/2 overflow-y-auto border-r border-gray-200 bg-white">
+            <div className="p-6">
+              <div className="mb-8">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <h1 className="text-2xl font-semibold mb-2">
+                      Create Template
+                    </h1>
+                    <p className="text-muted-foreground">
+                      Design your custom QR code template
+                    </p>
+                  </div>
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      setShowCreateForm(false);
+                      setNewTemplateName("");
+                      setNewTemplateDescription("");
+                      setError("");
+                      setDesignOptions({
+                        frame: 1,
+                        shape: 1,
+                        logo: 0,
+                        level: 2,
+                        dotStyle: 1,
+                        bgColor: "#ffffff",
+                        outerBorder: 1,
+                      });
+                    }}
+                    disabled={saving}
+                  >
+                    Back to Templates
+                  </Button>
+                </div>
+              </div>
+
+              {/* Error Message */}
+              {error && (
+                <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-red-600 text-sm">{error}</p>
+                </div>
+              )}
+
+              {/* Template Info Form */}
+              <div className="space-y-4 mb-6">
                 <div>
                   <Label htmlFor="template-name">Template Name</Label>
                   <Input
@@ -201,137 +345,101 @@ const Templates = () => {
                   />
                 </div>
               </div>
-              <div className="flex justify-center">
-                <QRPreview designOptions={designOptions} size={180} />
-              </div>
-            </div>
 
-            {/* Design Options */}
-            <QRDesignSelector
-              designOptions={designOptions}
-              onDesignChange={setDesignOptions}
-            />
+              {/* Design Options */}
+              <QRDesignSelector
+                designOptions={designOptions}
+                onDesignChange={setDesignOptions}
+                compact
+              />
 
-            <div className="flex gap-4 pt-4">
-              <Button
-                onClick={handleCreateTemplate}
-                disabled={!newTemplateName.trim() || saving}
-              >
-                {saving ? (
-                  <div className="flex items-center space-x-2">
-                    <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                    <span>Saving...</span>
-                  </div>
-                ) : (
-                  "Save Template"
-                )}
-              </Button>
-              <Button
-                variant="outline"
-                onClick={() => {
-                  setShowCreateForm(false);
-                  setNewTemplateName("");
-                  setNewTemplateDescription("");
-                  setError("");
-                  setDesignOptions({
-                    frame: 1,
-                    shape: 1,
-                    logo: 0,
-                    level: 2,
-                  });
-                }}
-                disabled={saving}
-              >
-                Cancel
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Templates Grid */}
-      <div>
-        <h2 className="text-xl font-semibold mb-4">Your Templates</h2>
-        {templates.length === 0 ? (
-          <Card>
-            <CardContent className="flex flex-col items-center justify-center py-12">
-              <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center mb-4">
-                <Plus className="h-8 w-8 text-muted-foreground" />
-              </div>
-              <h3 className="text-lg font-medium mb-2">No templates yet</h3>
-              <p className="text-muted-foreground text-center max-w-md">
-                Create your first QR code template to save time when generating
-                QR codes with consistent designs
-              </p>
-              <Button className="mt-4" onClick={() => setShowCreateForm(true)}>
-                Create Your First Template
-              </Button>
-            </CardContent>
-          </Card>
-        ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {templates.map((template) => (
-              <Card
-                key={template.id}
-                className="hover:shadow-lg transition-all duration-300"
-              >
-                <CardHeader>
-                  <div className="flex items-start justify-between">
-                    <div>
-                      <CardTitle className="text-lg">{template.name}</CardTitle>
-                      {template.description && (
-                        <CardDescription className="mt-1">
-                          {template.description}
-                        </CardDescription>
-                      )}
+              {/* Save/Cancel Buttons */}
+              <div className="flex gap-4 pt-6 border-t mt-6">
+                <Button
+                  onClick={handleCreateTemplate}
+                  disabled={!newTemplateName.trim() || saving}
+                  className="flex-1"
+                >
+                  {saving ? (
+                    <div className="flex items-center space-x-2">
+                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                      <span>Saving...</span>
                     </div>
-                  </div>
-                  <div className="flex gap-2 mt-2">
+                  ) : (
+                    "Save Template"
+                  )}
+                </Button>
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    setShowCreateForm(false);
+                    setNewTemplateName("");
+                    setNewTemplateDescription("");
+                    setError("");
+                    setDesignOptions({
+                      frame: 1,
+                      shape: 1,
+                      logo: 0,
+                      level: 2,
+                      dotStyle: 1,
+                      bgColor: "#ffffff",
+                      outerBorder: 1,
+                    });
+                  }}
+                  disabled={saving}
+                >
+                  Cancel
+                </Button>
+              </div>
+            </div>
+          </div>
+
+          {/* Right Panel - Fixed Preview Area */}
+          <div className="w-1/2 bg-gradient-to-br from-blue-50 to-indigo-100">
+            <div className="h-full flex flex-col justify-center items-center p-8">
+              <div className="text-center mb-8">
+                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+                  Live Preview
+                </h2>
+                <p className="text-gray-600">See how your template will look</p>
+              </div>
+
+              <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md">
+                <QRPreview designOptions={designOptions} size={280} />
+              </div>
+
+              <div className="mt-8 text-center">
+                <h3 className="font-semibold text-gray-800 mb-2">
+                  {newTemplateName || "Untitled Template"}
+                </h3>
+                {newTemplateDescription && (
+                  <p className="text-gray-600 text-sm">
+                    {newTemplateDescription}
+                  </p>
+                )}
+                <div className="flex gap-2 mt-4 justify-center flex-wrap">
+                  <Badge variant="secondary">Frame {designOptions.frame}</Badge>
+                  <Badge variant="secondary">Shape {designOptions.shape}</Badge>
+                  {designOptions.logo > 0 && (
+                    <Badge variant="secondary">Logo {designOptions.logo}</Badge>
+                  )}
+                  {designOptions.dotStyle && designOptions.dotStyle > 1 && (
                     <Badge variant="secondary">
-                      Frame {template.designOptions.frame}
+                      Dot Style {designOptions.dotStyle}
                     </Badge>
-                    <Badge variant="secondary">
-                      Shape {template.designOptions.shape}
-                    </Badge>
-                    {template.designOptions.logo > 0 && (
+                  )}
+                  {designOptions.outerBorder &&
+                    designOptions.outerBorder > 1 && (
                       <Badge variant="secondary">
-                        Logo {template.designOptions.logo}
+                        Border {designOptions.outerBorder}
                       </Badge>
                     )}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    <div className="flex justify-center">
-                      <QRPreview
-                        designOptions={template.designOptions}
-                        size={96}
-                      />
-                    </div>
-                    <div className="text-xs text-muted-foreground text-center">
-                      Created {formatDate(template.createdAt)}
-                    </div>
-                    <div className="flex gap-2">
-                      <Button variant="outline" size="sm" className="flex-1">
-                        <Eye className="h-4 w-4 mr-2" />
-                        Preview
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDeleteTemplate(template.id)}
-                        className="text-red-600 hover:text-red-700"
-                      >
-                        <Trash2 className="h-4 w-4" />
-                      </Button>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              </div>
+            </div>
           </div>
-        )}
-      </div>
+        </div>
+      )}
     </div>
   );
 };

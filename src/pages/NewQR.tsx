@@ -103,6 +103,9 @@ const NewQR = () => {
     shape: 1,
     logo: 0,
     level: 2,
+    dotStyle: 1,
+    bgColor: "#ffffff",
+    outerBorder: 1,
   });
 
   // Templates state
