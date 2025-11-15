@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Eye, Trash2, Edit } from "lucide-react";
+import { Plus, Eye, Trash2, Edit, X } from "lucide-react";
 import {
   type QRDesignOptions,
   renderQRWithDesign,
@@ -38,6 +38,10 @@ const QRPreview: React.FC<{
 const Templates = () => {
   const [templates, setTemplates] = useState<QRTemplate[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [showPreview, setShowPreview] = useState(false);
+  const [previewTemplate, setPreviewTemplate] = useState<QRTemplate | null>(
+    null
+  );
   const [newTemplateName, setNewTemplateName] = useState("");
   const [newTemplateDescription, setNewTemplateDescription] = useState("");
   const [designOptions, setDesignOptions] = useState<QRDesignOptions>({
@@ -120,6 +124,16 @@ const Templates = () => {
     }
   };
 
+  const handlePreviewTemplate = (template: QRTemplate) => {
+    setPreviewTemplate(template);
+    setShowPreview(true);
+  };
+
+  const closePreview = () => {
+    setShowPreview(false);
+    setPreviewTemplate(null);
+  };
+
   const formatDate = (date: Date) => {
     return new Date(date).toLocaleDateString("en-US", {
       year: "numeric",
@@ -128,8 +142,107 @@ const Templates = () => {
     });
   };
 
+  // Preview Modal Component
+  const PreviewModal = () => {
+    if (!showPreview || !previewTemplate) return null;
+
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+        <div className="bg-white rounded-lg shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+          <div className="flex items-center justify-between p-6 border-b">
+            <div>
+              <h2 className="text-2xl font-semibold">{previewTemplate.name}</h2>
+              {previewTemplate.description && (
+                <p className="text-muted-foreground mt-1">
+                  {previewTemplate.description}
+                </p>
+              )}
+            </div>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={closePreview}
+              className="p-2"
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+
+          <div className="p-6">
+            <div className="text-center mb-6">
+              <h3 className="text-lg font-medium mb-4">Template Preview</h3>
+              <div className="bg-gray-50 rounded-lg p-8 inline-block">
+                <QRPreview
+                  designOptions={previewTemplate.designOptions}
+                  size={200}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <div>
+                <h4 className="font-medium mb-2">Design Options</h4>
+                <div className="flex gap-2 flex-wrap">
+                  <Badge variant="secondary">
+                    Frame {previewTemplate.designOptions.frame}
+                  </Badge>
+                  <Badge variant="secondary">
+                    Shape {previewTemplate.designOptions.shape}
+                  </Badge>
+                  {previewTemplate.designOptions.logo > 0 && (
+                    <Badge variant="secondary">
+                      Logo {previewTemplate.designOptions.logo}
+                    </Badge>
+                  )}
+                  {previewTemplate.designOptions.dotStyle &&
+                    previewTemplate.designOptions.dotStyle > 1 && (
+                      <Badge variant="secondary">
+                        Dot Style {previewTemplate.designOptions.dotStyle}
+                      </Badge>
+                    )}
+                  {previewTemplate.designOptions.outerBorder &&
+                    previewTemplate.designOptions.outerBorder > 1 && (
+                      <Badge variant="secondary">
+                        Border {previewTemplate.designOptions.outerBorder}
+                      </Badge>
+                    )}
+                  <Badge variant="outline">
+                    Level {previewTemplate.designOptions.level}
+                  </Badge>
+                </div>
+              </div>
+
+              <div>
+                <h4 className="font-medium mb-2">Template Details</h4>
+                <div className="text-sm text-muted-foreground space-y-1">
+                  <p>Created: {formatDate(previewTemplate.createdAt)}</p>
+                  <p>
+                    Background Color: {previewTemplate.designOptions.bgColor}
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            <div className="flex gap-3 mt-6 pt-4 border-t">
+              <Button className="flex-1">Use This Template</Button>
+              <Button
+                variant="outline"
+                onClick={() => handleDeleteTemplate(previewTemplate.id)}
+                className="text-red-600 hover:text-red-700"
+              >
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div className="max-w-6xl mx-auto py-8 px-4">
+      <PreviewModal />
       {!showCreateForm ? (
         // Templates List View
         <>
@@ -252,6 +365,7 @@ const Templates = () => {
                             variant="outline"
                             size="sm"
                             className="flex-1"
+                            onClick={() => handlePreviewTemplate(template)}
                           >
                             <Eye className="h-4 w-4 mr-2" />
                             Preview
