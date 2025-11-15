@@ -153,7 +153,7 @@ const Templates = () => {
     };
 
     return (
-      <div 
+      <div
         className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
         onClick={handleBackdropClick}
       >
@@ -204,30 +204,48 @@ const Templates = () => {
                   Design Configuration
                 </h4>
                 <div className="grid grid-cols-2 gap-3">
-                  <Badge variant="secondary" className="justify-center py-2 text-sm">
+                  <Badge
+                    variant="secondary"
+                    className="justify-center py-2 text-sm"
+                  >
                     Frame {previewTemplate.designOptions.frame}
                   </Badge>
-                  <Badge variant="secondary" className="justify-center py-2 text-sm">
+                  <Badge
+                    variant="secondary"
+                    className="justify-center py-2 text-sm"
+                  >
                     Shape {previewTemplate.designOptions.shape}
                   </Badge>
                   {previewTemplate.designOptions.logo > 0 && (
-                    <Badge variant="secondary" className="justify-center py-2 text-sm">
+                    <Badge
+                      variant="secondary"
+                      className="justify-center py-2 text-sm"
+                    >
                       Logo {previewTemplate.designOptions.logo}
                     </Badge>
                   )}
                   {previewTemplate.designOptions.dotStyle &&
                     previewTemplate.designOptions.dotStyle > 1 && (
-                      <Badge variant="secondary" className="justify-center py-2 text-sm">
+                      <Badge
+                        variant="secondary"
+                        className="justify-center py-2 text-sm"
+                      >
                         Dot Style {previewTemplate.designOptions.dotStyle}
                       </Badge>
                     )}
                   {previewTemplate.designOptions.outerBorder &&
                     previewTemplate.designOptions.outerBorder > 1 && (
-                      <Badge variant="secondary" className="justify-center py-2 text-sm">
+                      <Badge
+                        variant="secondary"
+                        className="justify-center py-2 text-sm"
+                      >
                         Border {previewTemplate.designOptions.outerBorder}
                       </Badge>
                     )}
-                  <Badge variant="outline" className="justify-center py-2 text-sm">
+                  <Badge
+                    variant="outline"
+                    className="justify-center py-2 text-sm"
+                  >
                     Level {previewTemplate.designOptions.level}
                   </Badge>
                 </div>
@@ -235,20 +253,29 @@ const Templates = () => {
 
               {/* Template Info */}
               <div className="bg-gray-50 rounded-xl p-6">
-                <h4 className="font-semibold text-gray-900 mb-3">Template Information</h4>
+                <h4 className="font-semibold text-gray-900 mb-3">
+                  Template Information
+                </h4>
                 <div className="space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-600">Created</span>
+                    <span className="text-sm font-medium text-gray-600">
+                      Created
+                    </span>
                     <span className="text-sm text-gray-900 font-medium">
                       {formatDate(previewTemplate.createdAt)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-600">Background</span>
+                    <span className="text-sm font-medium text-gray-600">
+                      Background
+                    </span>
                     <div className="flex items-center gap-2">
-                      <div 
+                      <div
                         className="w-4 h-4 rounded border border-gray-300"
-                        style={{ backgroundColor: previewTemplate.designOptions.bgColor }}
+                        style={{
+                          backgroundColor:
+                            previewTemplate.designOptions.bgColor,
+                        }}
                       />
                       <span className="text-sm text-gray-900 font-mono">
                         {previewTemplate.designOptions.bgColor}
