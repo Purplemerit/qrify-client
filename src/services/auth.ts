@@ -5,6 +5,9 @@ export interface User {
   email: string;
   emailVerified: boolean;
   role: string;
+  language?: string;
+  dateFormat?: string;
+  timeFormat?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -54,13 +57,14 @@ export interface ChangePasswordRequest {
   newPassword: string;
 }
 
-export interface ChangeEmailRequest {
-  newEmail: string;
-  password: string;
+export interface UpdatePreferencesRequest {
+  language?: string;
+  dateFormat?: string;
+  timeFormat?: string;
 }
 
-export interface VerifyEmailChangeRequest {
-  token: string;
+export interface DeleteAccountRequest {
+  password: string;
 }
 
 export interface GetMeResponse {
@@ -186,18 +190,18 @@ class AuthService {
   }
 
   /**
-   * Request email change (sends verification to new email)
+   * Update user preferences
    */
-  async changeEmail(data: ChangeEmailRequest): Promise<{ message: string }> {
-    const response = await api.post<{ message: string }>('/auth/change-email', data);
+  async updatePreferences(data: UpdatePreferencesRequest): Promise<{ message: string; user: User }> {
+    const response = await api.put<{ message: string; user: User }>('/auth/preferences', data);
     return response.data;
   }
 
   /**
-   * Confirm email change with token
+   * Delete user account
    */
-  async confirmEmailChange(data: VerifyEmailChangeRequest): Promise<{ message: string }> {
-    const response = await api.post<{ message: string }>('/auth/change-email/verify', data);
+  async deleteAccount(data: DeleteAccountRequest): Promise<{ message: string }> {
+    const response = await api.delete<{ message: string }>('/auth/account', { data });
     return response.data;
   }
 
