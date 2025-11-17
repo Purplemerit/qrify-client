@@ -15,8 +15,6 @@ import Templates from "./pages/Templates";
 import Settings from "./pages/Settings";
 import Users from "./pages/Users";
 import Contact from "./pages/Contact";
-import HelpCenter from "./pages/HelpCenter";
-import Developers from "./pages/Developers";
 import NotFound from "./pages/NotFound";
 import Home from "./pages/Home";
 import Login from "./pages/Login";
@@ -124,22 +122,6 @@ const App = () => (
                 </Layout>
               }
               path="/contact"
-            />
-            <Route
-              element={
-                <Layout>
-                  <HelpCenter />
-                </Layout>
-              }
-              path="/help"
-            />
-            <Route
-              element={
-                <Layout>
-                  <Developers />
-                </Layout>
-              }
-              path="/developers"
             />
           </Route>
 
