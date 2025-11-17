@@ -3,7 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Plus, X, ChevronDown, ChevronUp } from "lucide-react";
+import { Plus, X } from "lucide-react";
 
 interface LanguageField {
   id: string;
@@ -33,28 +33,6 @@ const WebsiteQRForm = ({ onGenerate }: WebsiteQRFormProps) => {
   const [websiteURL, setWebsiteURL] = useState("");
   const [languages, setLanguages] = useState<LanguageField[]>([]);
   const [countries, setCountries] = useState<CountryField[]>([]);
-
-  // Stats - Schedule
-  const [activateSchedule, setActivateSchedule] = useState(false);
-  const [sinceDate, setSinceDate] = useState("");
-  const [untilDate, setUntilDate] = useState("");
-
-  // URL Configuration
-  const [autoGenerate, setAutoGenerate] = useState(true);
-  const [uri, setUri] = useState("");
-
-  // Scan Limit
-  const [enableScanLimit, setEnableScanLimit] = useState(false);
-  const [scanLimit, setScanLimit] = useState("");
-
-  // Configuration
-  const [folder, setFolder] = useState("");
-  const [domain, setDomain] = useState("");
-  const [password, setPassword] = useState("");
-
-  // Collapsible sections state
-  const [isStatsExpanded, setIsStatsExpanded] = useState(false);
-  const [isConfigurationExpanded, setIsConfigurationExpanded] = useState(false);
 
   const addLanguage = () => {
     setLanguages([
@@ -114,26 +92,6 @@ const WebsiteQRForm = ({ onGenerate }: WebsiteQRFormProps) => {
         websiteURL,
         languages: multiLanguageSupport ? languages : [],
         countries: multiCountrySupport ? countries : [],
-      },
-      stats: {
-        schedule: {
-          activateSchedule,
-          sinceDate: activateSchedule ? sinceDate : null,
-          untilDate: activateSchedule ? untilDate : null,
-        },
-      },
-      urlConfiguration: {
-        autoGenerate,
-        uri: autoGenerate ? "" : uri,
-      },
-      scanLimit: {
-        enableScanLimit,
-        limit: enableScanLimit ? scanLimit : null,
-      },
-      configuration: {
-        folder,
-        domain,
-        password,
       },
     };
     onGenerate(data);
@@ -302,216 +260,6 @@ const WebsiteQRForm = ({ onGenerate }: WebsiteQRFormProps) => {
             <Label htmlFor="enable-time-ranges">Enable time ranges</Label>
           </div>
         </CardContent>
-      </Card>
-
-      {/* Stats */}
-      <Card>
-        <CardHeader
-          className="cursor-pointer"
-          onClick={() => setIsStatsExpanded(!isStatsExpanded)}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Stats</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Key tools and data to evaluate performance
-              </p>
-            </div>
-            {isStatsExpanded ? (
-              <ChevronUp className="w-5 h-5 transition-transform duration-300" />
-            ) : (
-              <ChevronDown className="w-5 h-5 transition-transform duration-300" />
-            )}
-          </div>
-        </CardHeader>
-        <div
-          className={`transition-all duration-300 ease-in-out overflow-hidden ${
-            isStatsExpanded ? "max-h-[1000px] opacity-100" : "max-h-0 opacity-0"
-          }`}
-        >
-          <CardContent className="space-y-6">
-            {/* Schedule Section */}
-            <div>
-              <Label className="mb-2 block">Schedule a date</Label>
-              <p className="text-sm text-muted-foreground mb-3">
-                Set the dates on which your content will be shown through the
-                QR. At the end of that period, it will be disabled.
-              </p>
-              <div className="flex items-center space-x-2 mb-4">
-                <input
-                  type="checkbox"
-                  id="activate-schedule"
-                  checked={activateSchedule}
-                  onChange={(e) => setActivateSchedule(e.target.checked)}
-                  className="w-4 h-4"
-                />
-                <Label htmlFor="activate-schedule">
-                  Activate the schedule to work during certain dates
-                </Label>
-              </div>
-
-              {activateSchedule && (
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="since-date">Since</Label>
-                    <Input
-                      id="since-date"
-                      type="date"
-                      value={sinceDate}
-                      onChange={(e) => setSinceDate(e.target.value)}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="until-date">Until</Label>
-                    <Input
-                      id="until-date"
-                      type="date"
-                      value={untilDate}
-                      onChange={(e) => setUntilDate(e.target.value)}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-
-            {/* URL Configuration Section */}
-            <div className="border-t pt-6">
-              <div className="mb-4">
-                <h4 className="font-medium">URL Configuration</h4>
-                <p className="text-sm text-muted-foreground">
-                  Customize your qrfy.com address identifier
-                </p>
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="auto-generate"
-                    checked={autoGenerate}
-                    onChange={(e) => setAutoGenerate(e.target.checked)}
-                    className="w-4 h-4"
-                  />
-                  <Label htmlFor="auto-generate">Auto generate</Label>
-                </div>
-
-                {!autoGenerate && (
-                  <div className="space-y-2">
-                    <Label htmlFor="uri">URI</Label>
-                    <div className="flex items-center">
-                      <span className="text-sm text-muted-foreground mr-2">
-                        qrfy.com/
-                      </span>
-                      <Input
-                        id="uri"
-                        placeholder="custom-identifier"
-                        value={uri}
-                        onChange={(e) => setUri(e.target.value)}
-                      />
-                    </div>
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Scan Limit Section */}
-            <div className="border-t pt-6">
-              <div className="mb-4">
-                <h4 className="font-medium">Scan Limit</h4>
-                <p className="text-sm text-muted-foreground">
-                  Limit the number of times your QR can be scanned in total
-                </p>
-              </div>
-              <div className="space-y-4">
-                <div className="flex items-center space-x-2">
-                  <input
-                    type="checkbox"
-                    id="enable-scan-limit"
-                    checked={enableScanLimit}
-                    onChange={(e) => setEnableScanLimit(e.target.checked)}
-                    className="w-4 h-4"
-                  />
-                  <Label htmlFor="enable-scan-limit">Enable scan limit</Label>
-                </div>
-
-                {enableScanLimit && (
-                  <div className="space-y-2">
-                    <Label htmlFor="scan-limit-value">Maximum scans</Label>
-                    <Input
-                      id="scan-limit-value"
-                      type="number"
-                      placeholder="e.g., 1000"
-                      value={scanLimit}
-                      onChange={(e) => setScanLimit(e.target.value)}
-                      min="1"
-                    />
-                  </div>
-                )}
-              </div>
-            </div>
-          </CardContent>
-        </div>
-      </Card>
-
-      {/* Configuration */}
-      <Card>
-        <CardHeader
-          className="cursor-pointer"
-          onClick={() => setIsConfigurationExpanded(!isConfigurationExpanded)}
-        >
-          <div className="flex items-center justify-between">
-            <div>
-              <CardTitle>Configuration</CardTitle>
-              <p className="text-sm text-muted-foreground">
-                Customized settings to optimize your experience
-              </p>
-            </div>
-            {isConfigurationExpanded ? (
-              <ChevronUp className="w-5 h-5 transition-transform duration-300" />
-            ) : (
-              <ChevronDown className="w-5 h-5 transition-transform duration-300" />
-            )}
-          </div>
-        </CardHeader>
-        <div
-          className={`transition-all duration-300 ease-in-out overflow-hidden ${
-            isConfigurationExpanded
-              ? "max-h-[600px] opacity-100"
-              : "max-h-0 opacity-0"
-          }`}
-        >
-          <CardContent className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="folder">Folder</Label>
-              <Input
-                id="folder"
-                placeholder="Select or create a folder"
-                value={folder}
-                onChange={(e) => setFolder(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="domain">Domain</Label>
-              <Input
-                id="domain"
-                placeholder="Select a custom domain"
-                value={domain}
-                onChange={(e) => setDomain(e.target.value)}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Set a password to protect your QR"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-              />
-            </div>
-          </CardContent>
-        </div>
       </Card>
     </div>
   );
