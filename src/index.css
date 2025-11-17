@@ -4,6 +4,65 @@
 
 /* QR Management App Design System */
 
+/* QR Code Dot Styles */
+@layer components {
+  /* Base container for all QR codes */
+  .qr-container svg rect {
+    transition: all 0.2s ease;
+  }
+  
+  /* Fallback CSS styles for dot styles */
+  .qr-dots-rounded svg rect {
+    rx: 1.5;
+    ry: 1.5;
+  }
+  
+  .qr-dots-circle svg rect {
+    rx: 50%;
+    ry: 50%;
+  }
+  
+  .qr-dots-diamond svg rect {
+    transform-origin: center;
+    transform: rotate(45deg);
+  }
+  
+  .qr-dots-heart svg rect {
+    rx: 2;
+    ry: 2;
+    filter: drop-shadow(0 0 1px rgba(255, 0, 0, 0.3));
+  }
+  
+  .qr-dots-star svg rect {
+    clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+  }
+  
+  .qr-dots-hexagon svg rect {
+    clip-path: polygon(30% 0%, 70% 0%, 100% 50%, 70% 100%, 30% 100%, 0% 50%);
+  }
+  
+  .qr-dots-triangle svg rect {
+    clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+  }
+  
+  /* Enhanced styles for better visual effects */
+  .qr-dots-rounded svg rect,
+  .qr-dots-circle svg rect,
+  .qr-dots-heart svg rect {
+    transition: rx 0.2s ease, ry 0.2s ease;
+  }
+  
+  .qr-dots-diamond svg rect {
+    transition: transform 0.2s ease;
+  }
+  
+  .qr-dots-star svg rect,
+  .qr-dots-hexagon svg rect,
+  .qr-dots-triangle svg rect {
+    transition: clip-path 0.2s ease;
+  }
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -99,5 +158,81 @@
 
   body {
     @apply bg-background text-foreground;
+  }
+}
+
+@layer utilities {
+  .scrollbar-hide {
+    -ms-overflow-style: none;  /* Internet Explorer 10+ */
+    scrollbar-width: none;  /* Firefox */
+  }
+  
+  .scrollbar-hide::-webkit-scrollbar { 
+    display: none;  /* Safari and Chrome */
+  }
+
+  /* Smooth animations for NewQR component */
+  @keyframes fade-in {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(20px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes scale-in {
+    from {
+      opacity: 0;
+      transform: scale(0.95);
+    }
+    to {
+      opacity: 1;
+      transform: scale(1);
+    }
+  }
+
+  .fade-in {
+    animation: fade-in 0.5s ease-out;
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.6s ease-out;
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out;
+  }
+
+  .animate-scale-in {
+    animation: scale-in 0.3s ease-out;
+  }
+
+  /* Smooth transitions for collapsible sections */
+  .transition-max-height {
+    transition: max-height 0.5s ease-in-out, opacity 0.3s ease-in-out;
+  }
+
+  /* Enhanced hover effects */
+  .hover-lift {
+    transition: transform 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   }
 }

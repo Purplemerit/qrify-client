@@ -1,9 +1,10 @@
-import api, { tokenStorage } from '../lib/api';
+import api from '../lib/api';
 
 export interface User {
   id: string;
   email: string;
   emailVerified: boolean;
+  role: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -24,21 +25,11 @@ export interface LoginRequest {
 }
 
 export interface LoginResponse {
-  accessToken: string;
-  refreshToken: string;
   user: User;
 }
 
-export interface LogoutRequest {
-  refreshToken: string;
-}
-
-export interface RefreshTokenRequest {
-  refreshToken: string;
-}
-
 export interface RefreshTokenResponse {
-  accessToken: string;
+  message: string;
 }
 
 export interface ForgotPasswordRequest {
@@ -82,6 +73,7 @@ class AuthService {
    */
   async signup(data: SignupRequest): Promise<SignupResponse> {
     const response = await api.post<SignupResponse>('/auth/signup', data);
+    // Cookies are set automatically by the server
     return response.data;
   }
 
@@ -90,12 +82,7 @@ class AuthService {
    */
   async login(data: LoginRequest): Promise<LoginResponse> {
     const response = await api.post<LoginResponse>('/auth/login', data);
-    const { accessToken, refreshToken } = response.data;
-
-    // Store tokens
-    tokenStorage.setAccessToken(accessToken);
-    tokenStorage.setRefreshToken(refreshToken);
-
+    // Cookies are set automatically by the server
     return response.data;
   }
 
@@ -103,30 +90,20 @@ class AuthService {
    * Logout and invalidate refresh token
    */
   async logout(): Promise<void> {
-    const refreshToken = tokenStorage.getRefreshToken();
-
-    if (refreshToken) {
-      try {
-        await api.post('/auth/logout', { refreshToken });
-      } catch (error) {
-        console.error('Logout error:', error);
-      }
+    try {
+      await api.post('/auth/logout');
+      // Cookies are cleared automatically by the server
+    } catch (error) {
+      console.error('Logout error:', error);
     }
-
-    // Clear tokens from storage
-    tokenStorage.clearTokens();
   }
 
   /**
    * Refresh access token using refresh token
    */
-  async refreshToken(data: RefreshTokenRequest): Promise<RefreshTokenResponse> {
-    const response = await api.post<RefreshTokenResponse>('/auth/refresh', data);
-    const { accessToken } = response.data;
-
-    // Update access token in storage
-    tokenStorage.setAccessToken(accessToken);
-
+  async refreshToken(): Promise<RefreshTokenResponse> {
+    const response = await api.post<RefreshTokenResponse>('/auth/refresh');
+    // Cookies are updated automatically by the server
     return response.data;
   }
 
@@ -197,8 +174,26 @@ class AuthService {
   /**
    * Check if user is authenticated
    */
-  isAuthenticated(): boolean {
-    return !!tokenStorage.getAccessToken();
+  async isAuthenticated(): Promise<boolean> {
+    try {
+      // Try to fetch current user to verify authentication
+      await this.getCurrentUser();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
+  /**
+   * Synchronous authentication check (less reliable, use async version when possible)
+   * Note: With httpOnly cookies, we cannot reliably check auth status client-side
+   */
+  isAuthenticatedSync(): boolean {
+    // Since cookies are httpOnly, we cannot access them from JavaScript
+    // This method is kept for compatibility but should be avoided
+    // Always prefer the async isAuthenticated() method
+    console.warn('isAuthenticatedSync() is unreliable with httpOnly cookies. Use isAuthenticated() instead.');
+    return true; // Assume authenticated and let server validate
   }
 }
 

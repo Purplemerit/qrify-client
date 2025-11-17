@@ -10,7 +10,6 @@ export default function Signup() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [success, setSuccess] = useState(false);
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -44,15 +43,14 @@ export default function Signup() {
         password: formData.password,
       });
 
-      setSuccess(true);
-      // Show success message for a moment before redirecting
-      setTimeout(() => {
-        navigate("/login");
-      }, 3000);
+      // Navigate directly to My QR Codes page after successful signup
+      navigate("/my-qr-codes");
     } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'response' in err) {
+      if (err && typeof err === "object" && "response" in err) {
         const error = err as { response?: { data?: { error?: string } } };
-        setError(error.response?.data?.error || "Signup failed. Please try again.");
+        setError(
+          error.response?.data?.error || "Signup failed. Please try again."
+        );
       } else {
         setError("An unexpected error occurred. Please try again.");
       }
@@ -61,49 +59,26 @@ export default function Signup() {
     }
   };
 
-  if (success) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6">
-        <div className="w-full max-w-md">
-          <div className="bg-white rounded-lg shadow-lg p-8">
-            <div className="text-center">
-              <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-                </svg>
-              </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Account Created!</h2>
-              <p className="text-gray-600 mb-4">
-                Please check your email to verify your account before logging in.
-              </p>
-              <p className="text-sm text-gray-500">
-                Redirecting to login page...
-              </p>
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="min-h-screen bg-gray-50 flex items-center justify-center px-6 py-12">
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="w-12 h-12 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-xl">
-            Q
-          </div>
-          <div>
-            <h1 className="text-2xl font-semibold">QRFY</h1>
-            <p className="text-xs text-gray-400">QR Code Generator</p>
-          </div>
+          <img
+            src="/logo.png"
+            alt="QRFY Logo"
+            className="h-12 object-contain"
+          />
         </div>
 
         {/* Signup Card */}
         <div className="bg-white rounded-lg shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Create Account</h2>
-          <p className="text-gray-500 mb-6">Sign up to start creating QR codes</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Create Account
+          </h2>
+          <p className="text-gray-500 mb-6">
+            Sign up to start creating QR codes
+          </p>
 
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -113,7 +88,10 @@ export default function Signup() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Email Address
               </label>
               <input
@@ -130,7 +108,10 @@ export default function Signup() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Password
               </label>
               <input
@@ -145,11 +126,16 @@ export default function Signup() {
                 disabled={loading}
                 minLength={8}
               />
-              <p className="mt-1 text-xs text-gray-500">Must be at least 8 characters long</p>
+              <p className="mt-1 text-xs text-gray-500">
+                Must be at least 8 characters long
+              </p>
             </div>
 
             <div>
-              <label htmlFor="confirmPassword" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="confirmPassword"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Confirm Password
               </label>
               <input
@@ -196,7 +182,10 @@ export default function Signup() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Already have an account?{" "}
-              <Link to="/login" className="text-blue-600 hover:text-blue-700 font-medium">
+              <Link
+                to="/login"
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
                 Sign in
               </Link>
             </p>
@@ -210,7 +199,9 @@ export default function Signup() {
               <div className="w-full border-t border-gray-300"></div>
             </div>
             <div className="relative flex justify-center text-sm">
-              <span className="px-2 bg-gray-50 text-gray-500">Or continue with</span>
+              <span className="px-2 bg-gray-50 text-gray-500">
+                Or continue with
+              </span>
             </div>
           </div>
 

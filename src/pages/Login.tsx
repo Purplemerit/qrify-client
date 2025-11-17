@@ -16,12 +16,14 @@ export default function Login() {
 
     try {
       await authService.login({ email, password });
-      // Redirect to dashboard after successful login
-      navigate("/");
+      // Redirect to My QR Codes page after successful login
+      navigate("/my-qr-codes");
     } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'response' in err) {
+      if (err && typeof err === "object" && "response" in err) {
         const error = err as { response?: { data?: { error?: string } } };
-        setError(error.response?.data?.error || "Login failed. Please try again.");
+        setError(
+          error.response?.data?.error || "Login failed. Please try again."
+        );
       } else {
         setError("An unexpected error occurred. Please try again.");
       }
@@ -35,19 +37,21 @@ export default function Login() {
       <div className="w-full max-w-md">
         {/* Logo */}
         <div className="flex items-center justify-center gap-3 mb-8">
-          <div className="w-12 h-12 bg-blue-600 rounded flex items-center justify-center text-white font-bold text-xl">
-            Q
-          </div>
-          <div>
-            <h1 className="text-2xl font-semibold">QRFY</h1>
-            <p className="text-xs text-gray-400">QR Code Generator</p>
-          </div>
+          <img
+            src="/logo.png"
+            alt="QRFY Logo"
+            className="h-12 object-contain"
+          />
         </div>
 
         {/* Login Card */}
         <div className="bg-white rounded-lg shadow-lg p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-2">Welcome Back</h2>
-          <p className="text-gray-500 mb-6">Sign in to your account to continue</p>
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">
+            Welcome Back
+          </h2>
+          <p className="text-gray-500 mb-6">
+            Sign in to your account to continue
+          </p>
 
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -57,7 +61,10 @@ export default function Login() {
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Email Address
               </label>
               <input
@@ -73,7 +80,10 @@ export default function Login() {
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Password
               </label>
               <input
@@ -97,7 +107,10 @@ export default function Login() {
                 />
                 <span className="ml-2 text-sm text-gray-600">Remember me</span>
               </label>
-              <Link to="/forgot-password" className="text-sm text-blue-600 hover:text-blue-700">
+              <Link
+                to="/forgot-password"
+                className="text-sm text-blue-600 hover:text-blue-700"
+              >
                 Forgot password?
               </Link>
             </div>
@@ -114,7 +127,10 @@ export default function Login() {
           <div className="mt-6 text-center">
             <p className="text-sm text-gray-600">
               Don't have an account?{" "}
-              <Link to="/signup" className="text-blue-600 hover:text-blue-700 font-medium">
+              <Link
+                to="/signup"
+                className="text-blue-600 hover:text-blue-700 font-medium"
+              >
                 Sign up
               </Link>
             </p>

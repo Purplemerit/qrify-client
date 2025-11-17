@@ -1,32 +1,30 @@
 import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button"
+import { Button } from "@/components/ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
   CardHeader,
   CardTitle,
-} from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import {
-  Tabs,
-  TabsContent,
-  TabsList,
-  TabsTrigger,
-} from "@/components/ui/tabs"
+} from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
   SelectValue,
-} from "@/components/ui/select"
+} from "@/components/ui/select";
 import { authService } from "../services/auth";
 
 const Settings = () => {
   // User data state
-  const [user, setUser] = useState<{ email: string; emailVerified: boolean } | null>(null);
+  const [user, setUser] = useState<{
+    email: string;
+    emailVerified: boolean;
+  } | null>(null);
 
   // Change password state
   const [currentPassword, setCurrentPassword] = useState("");
@@ -86,9 +84,11 @@ const Settings = () => {
       // Clear success message after 3 seconds
       setTimeout(() => setPasswordSuccess(false), 3000);
     } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'response' in err) {
+      if (err && typeof err === "object" && "response" in err) {
         const error = err as { response?: { data?: { error?: string } } };
-        setPasswordError(error.response?.data?.error || "Failed to change password");
+        setPasswordError(
+          error.response?.data?.error || "Failed to change password"
+        );
       } else {
         setPasswordError("An unexpected error occurred");
       }
@@ -122,7 +122,7 @@ const Settings = () => {
       // Clear success message after 5 seconds
       setTimeout(() => setEmailSuccess(false), 5000);
     } catch (err: unknown) {
-      if (err && typeof err === 'object' && 'response' in err) {
+      if (err && typeof err === "object" && "response" in err) {
         const error = err as { response?: { data?: { error?: string } } };
         setEmailError(error.response?.data?.error || "Failed to change email");
       } else {
@@ -134,7 +134,7 @@ const Settings = () => {
   };
 
   return (
-    <div className="max-w-7xl transform scale-[1.1] origin-top-left space-y-8">
+    <div className="max-w-6xl mx-auto px-4 py-6 space-y-8">
       <div className="mb-6">
         <h1 className="text-2xl font-semibold">Settings</h1>
       </div>
@@ -154,14 +154,14 @@ const Settings = () => {
         <TabsContent value="general" className="space-y-6">
           {/* Contact Information */}
           <Card>
-            <div className="flex">
-              <CardHeader className="w-1/4">
+            <div className="flex flex-col lg:flex-row">
+              <CardHeader className="lg:w-1/3 xl:w-1/4">
                 <CardTitle>Contact information</CardTitle>
                 <CardDescription>
                   Manage and update your personal information easily
                 </CardDescription>
               </CardHeader>
-              <CardContent className="w-3/4 space-y-4">
+              <CardContent className="lg:w-2/3 xl:w-3/4 space-y-4">
                 <form onSubmit={handleChangeEmail} className="space-y-4">
                   <div className="space-y-2 py-6">
                     <Label htmlFor="current-email">Current Email</Label>
@@ -173,7 +173,9 @@ const Settings = () => {
                       disabled
                     />
                     {user && !user.emailVerified && (
-                      <p className="text-sm text-yellow-600">Email not verified</p>
+                      <p className="text-sm text-yellow-600">
+                        Email not verified
+                      </p>
                     )}
                   </div>
                   <div className="space-y-2">
@@ -211,11 +213,15 @@ const Settings = () => {
                   {emailSuccess && (
                     <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
                       <p className="text-sm text-green-600">
-                        Verification email sent to your new email address. Please check your inbox.
+                        Verification email sent to your new email address.
+                        Please check your inbox.
                       </p>
                     </div>
                   )}
-                  <Button type="submit" disabled={emailLoading || !newEmail || !emailPassword}>
+                  <Button
+                    type="submit"
+                    disabled={emailLoading || !newEmail || !emailPassword}
+                  >
                     {emailLoading ? "Sending..." : "Change Email"}
                   </Button>
                 </form>
@@ -225,14 +231,15 @@ const Settings = () => {
 
           {/* Change Password */}
           <Card>
-            <div className="flex">
-              <CardHeader className="w-1/4">
+            <div className="flex flex-col lg:flex-row">
+              <CardHeader className="lg:w-1/3 xl:w-1/4">
                 <CardTitle>Change password</CardTitle>
                 <CardDescription>
-                  Change your password to keep your account secure. It is recommended to use a unique and strong password.
+                  Change your password to keep your account secure. It is
+                  recommended to use a unique and strong password.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="w-3/4 space-y-4">
+              <CardContent className="lg:w-2/3 xl:w-3/4 space-y-4">
                 <form onSubmit={handleChangePassword} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="current-password">Current Password</Label>
@@ -262,7 +269,9 @@ const Settings = () => {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="confirm-password">Confirm New Password</Label>
+                    <Label htmlFor="confirm-password">
+                      Confirm New Password
+                    </Label>
                     <Input
                       id="confirm-password"
                       type="password"
@@ -281,7 +290,9 @@ const Settings = () => {
                   )}
                   {passwordSuccess && (
                     <div className="p-3 bg-green-50 border border-green-200 rounded-lg">
-                      <p className="text-sm text-green-600">Password changed successfully!</p>
+                      <p className="text-sm text-green-600">
+                        Password changed successfully!
+                      </p>
                     </div>
                   )}
                   <Button type="submit" disabled={passwordLoading}>
@@ -294,14 +305,15 @@ const Settings = () => {
 
           {/* 2FA */}
           <Card>
-            <div className="flex">
-              <CardHeader className="w-1/4">
+            <div className="flex flex-col lg:flex-row">
+              <CardHeader className="lg:w-1/3 xl:w-1/4">
                 <CardTitle>2-factor Authentication</CardTitle>
                 <CardDescription>
-                  Add an extra layer of security to your account by enabling two-factor authentication (2FA).
+                  Add an extra layer of security to your account by enabling
+                  two-factor authentication (2FA).
                 </CardDescription>
               </CardHeader>
-              <CardContent className="w-3/4 mt-20">
+              <CardContent className="lg:w-2/3 xl:w-3/4 flex items-center pt-6">
                 <Button>Activate</Button>
               </CardContent>
             </div>
@@ -309,14 +321,15 @@ const Settings = () => {
 
           {/* Language */}
           <Card>
-            <div className="flex">
-              <CardHeader className="w-1/4">
+            <div className="flex flex-col lg:flex-row">
+              <CardHeader className="lg:w-1/3 xl:w-1/4">
                 <CardTitle>Language</CardTitle>
                 <CardDescription>
-                  Select your preferred language to personalize your platform experience.
+                  Select your preferred language to personalize your platform
+                  experience.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="w-3/4 space-y-4">
+              <CardContent className="lg:w-2/3 xl:w-3/4 space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="language">Language</Label>
                   <Select>
@@ -336,15 +349,16 @@ const Settings = () => {
 
           {/* Date and Time */}
           <Card>
-            <div className="flex">
-              <CardHeader className="w-1/4">
+            <div className="flex flex-col lg:flex-row">
+              <CardHeader className="lg:w-1/3 xl:w-1/4">
                 <CardTitle>Date and time</CardTitle>
                 <CardDescription>
-                  Configure the format in which you prefer to display dates and times on the platform.
+                  Configure the format in which you prefer to display dates and
+                  times on the platform.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="w-3/4 space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+              <CardContent className="lg:w-2/3 xl:w-3/4 space-y-4">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="date-format">Date format</Label>
                     <Select>
@@ -378,11 +392,11 @@ const Settings = () => {
 
           {/* Thousands Separator */}
           <Card>
-            <div className="flex">
-              <CardHeader className="w-1/4">
+            <div className="flex flex-col lg:flex-row">
+              <CardHeader className="lg:w-1/3 xl:w-1/4">
                 <CardTitle>Thousands</CardTitle>
               </CardHeader>
-              <CardContent className="w-3/4 space-y-4">
+              <CardContent className="lg:w-2/3 xl:w-3/4 space-y-4">
                 <div className="space-y-2">
                   <Label htmlFor="separator">Separator</Label>
                   <Select>
@@ -403,13 +417,17 @@ const Settings = () => {
 
           {/* Account Status */}
           <Card>
-            <div className="flex">
-              <CardHeader className="w-1/4">
+            <div className="flex flex-col lg:flex-row">
+              <CardHeader className="lg:w-1/3 xl:w-1/4">
                 <CardTitle>Account Status</CardTitle>
-                <CardDescription>Delete my account and all the information it contains.</CardDescription>
+                <CardDescription>
+                  Delete my account and all the information it contains.
+                </CardDescription>
               </CardHeader>
-                <CardContent className="w-3/4 mt-20">
-                <Button className="w-16 h-12">Delete</Button>
+              <CardContent className="lg:w-2/3 xl:w-3/4 flex items-center pt-6">
+                <Button variant="destructive" className="w-16 h-12">
+                  Delete
+                </Button>
               </CardContent>
             </div>
           </Card>
@@ -417,14 +435,15 @@ const Settings = () => {
 
         <TabsContent value="tax">
           <Card>
-            <div className="flex">
-              <CardHeader className="w-1/4">
+            <div className="flex flex-col lg:flex-row">
+              <CardHeader className="lg:w-1/3 xl:w-1/4">
                 <CardTitle>Invoicing</CardTitle>
                 <CardDescription>
-                  Please complete your tax information to ensure your invoices are generated correctly
+                  Please complete your tax information to ensure your invoices
+                  are generated correctly
                 </CardDescription>
               </CardHeader>
-              <CardContent className="w-3/4 space-y-4">
+              <CardContent className="lg:w-2/3 xl:w-3/4 space-y-4">
                 <Label>Type</Label>
                 <TabsList className="grid w-30 grid-cols-2">
                   <TabsTrigger value="company">Company</TabsTrigger>
@@ -458,20 +477,29 @@ const Settings = () => {
 
         <TabsContent value="analytics">
           <Card>
-            <div className="flex">
-              <CardHeader className="w-1/4">
+            <div className="flex flex-col lg:flex-row">
+              <CardHeader className="lg:w-1/3 xl:w-1/4">
                 <CardTitle>Tracking Analytics</CardTitle>
                 <CardDescription>
-                  Integrate analytics tools to effectively track performance and interactions with your QRs.
+                  Integrate analytics tools to effectively track performance and
+                  interactions with your QRs.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="w-3/4 space-y-4">
+              <CardContent className="lg:w-2/3 xl:w-3/4 space-y-4">
                 <Label>Google Analytics 4 Tracking ID</Label>
-                <Input id="analytics" className="w-full h-12" placeholder="G-XXXXXXXX" />
+                <Input
+                  id="analytics"
+                  className="w-full h-12"
+                  placeholder="G-XXXXXXXX"
+                />
                 <Label>Facebook Pixel ID</Label>
                 <Input id="facebookPixel" className="w-full h-12" />
                 <Label>Google Tag Manager ID</Label>
-                <Input id="gtm" className="w-full h-12" placeholder="GTM-XXXXXXXX" />
+                <Input
+                  id="gtm"
+                  className="w-full h-12"
+                  placeholder="GTM-XXXXXXXX"
+                />
               </CardContent>
             </div>
           </Card>
@@ -479,12 +507,14 @@ const Settings = () => {
 
         <TabsContent value="api">
           <Card>
-            <div className="flex">
-              <CardHeader className="w-1/4">
+            <div className="flex flex-col lg:flex-row">
+              <CardHeader className="lg:w-1/3 xl:w-1/4">
                 <CardTitle>API Key</CardTitle>
-                <CardDescription>Manage your API keys for external integrations.</CardDescription>
+                <CardDescription>
+                  Manage your API keys for external integrations.
+                </CardDescription>
               </CardHeader>
-              <CardContent className="w-3/4 mt-20">
+              <CardContent className="lg:w-2/3 xl:w-3/4 flex items-center pt-6">
                 <Button>Generate API Key</Button>
               </CardContent>
             </div>
@@ -493,14 +523,15 @@ const Settings = () => {
 
         <TabsContent value="notifications">
           <Card>
-            <div className="flex">
-              <CardHeader className="w-1/4">
+            <div className="flex flex-col lg:flex-row">
+              <CardHeader className="lg:w-1/3 xl:w-1/4">
                 <CardTitle>Notifications</CardTitle>
                 <CardDescription>
-                  Set up the alerts you want to enable and receive only the information you want.
+                  Set up the alerts you want to enable and receive only the
+                  information you want.
                 </CardDescription>
               </CardHeader>
-              <CardContent className="w-3/4 mt-20">
+              <CardContent className="lg:w-2/3 xl:w-3/4 flex items-center pt-6">
                 <Button>Save</Button>
               </CardContent>
             </div>
@@ -508,7 +539,7 @@ const Settings = () => {
         </TabsContent>
       </Tabs>
     </div>
-  )
-}
+  );
+};
 
-export default Settings
+export default Settings;
