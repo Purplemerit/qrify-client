@@ -20,6 +20,7 @@ import {
   Plus,
   Check,
   Tag,
+  ChevronDown,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import {
@@ -54,9 +55,14 @@ interface QRCodeData {
 const BulkQR = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
-  const [selectedQRType, setSelectedQRType] = useState("Website");
+  const [selectedQRType, setSelectedQRType] = useState("");
+  const [isStaticQR, setIsStaticQR] = useState(false);
   const [csvFile, setCsvFile] = useState<File | null>(null);
   const [csvUrls, setCsvUrls] = useState<string[]>([]);
+
+  // Collapsible sections state
+  const [isDynamicCollapsed, setIsDynamicCollapsed] = useState(false);
+  const [isStaticCollapsed, setIsStaticCollapsed] = useState(false);
   const [qrDesignOptions, setQrDesignOptions] = useState<QRDesignOptions>({
     frame: 1,
     shape: 1,
@@ -119,8 +125,9 @@ const BulkQR = () => {
     setActiveTab("custom");
   };
 
-  const handleQRTypeSelect = (typeName: string) => {
+  const handleQRTypeSelect = (typeName: string, isStatic = false) => {
     setSelectedQRType(typeName);
+    setIsStaticQR(isStatic);
     setCurrentStep(2);
   };
 
@@ -204,7 +211,7 @@ const BulkQR = () => {
           const response = await api.post("/qr/url", {
             name: `Bulk QR ${i + 1} - ${url}`,
             url: url,
-            dynamic: true,
+            dynamic: !isStaticQR,
             bulk: true, // Mark as bulk QR
           });
 
@@ -249,6 +256,12 @@ const BulkQR = () => {
 
   const handleCompleteAndNavigate = async () => {
     if (generatedQRs.length === 0) {
+      navigate("/my-qr-codes");
+      return;
+    }
+
+    // For static QRs, no need to update design options - navigate directly
+    if (isStaticQR) {
       navigate("/my-qr-codes");
       return;
     }
@@ -492,39 +505,144 @@ const BulkQR = () => {
     <div className="flex gap-12 w-full px-10 justify-between">
       {/* Main Content */}
       <div className="flex-1 max-w-4xl">
-        {/* Bulk QRs Section */}
+        {/* Dynamic Bulk QRs Section */}
         <div className="mb-8">
-          <div className="flex items-center gap-3 mb-2">
-            <h1 className="text-2xl font-semibold">Bulk QR Codes</h1>
-            <Badge variant="secondary" className="bg-blue-300 text-black pt-2">
-              BATCH GENERATION
-            </Badge>
+          <div
+            className="flex items-center justify-between cursor-pointer group mb-4"
+            onClick={() => setIsDynamicCollapsed(!isDynamicCollapsed)}
+          >
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-semibold group-hover:text-primary transition-colors duration-300">
+                Dynamic Bulk QRs
+              </h1>
+              <Badge
+                variant="secondary"
+                className="bg-green-100 text-green-800 border-green-200"
+              >
+                WITH TRACKING
+              </Badge>
+            </div>
+            <div
+              className={`transition-transform duration-700 ease-in-out ${
+                isDynamicCollapsed ? "rotate-0" : "rotate-180"
+              }`}
+            >
+              <ChevronDown className="h-5 w-5 text-muted-foreground" />
+            </div>
           </div>
-          <p className="text-muted-foreground">
-            Generate multiple QR codes at once from a CSV file
-          </p>
+
+          {!isDynamicCollapsed && (
+            <p className="text-muted-foreground mb-6">
+              Generate multiple trackable QR codes that can be updated in real
+              time
+            </p>
+          )}
+
+          <div
+            className={`transition-all duration-700 ease-in-out ${
+              isDynamicCollapsed ? "max-h-0 opacity-0" : "max-h-96 opacity-100"
+            }`}
+            style={{ overflow: isDynamicCollapsed ? "hidden" : "visible" }}
+          >
+            <div className="grid grid-cols-1 gap-4 p-2">
+              <Card
+                className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-primary/40 hover:scale-105 rounded-2xl group bg-white overflow-hidden relative transform-gpu hover:-translate-y-1"
+                onClick={() => handleQRTypeSelect("Website", false)}
+              >
+                <CardContent className="p-6 relative z-10">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-primary/10 to-primary/20 rounded-xl flex items-center justify-center group-hover:from-primary/20 group-hover:to-primary/30 transition-all duration-300 group-hover:scale-110">
+                      <Globe className="w-6 h-6 text-primary group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg group-hover:text-primary transition-colors duration-300">
+                        Website Bulk QRs
+                      </h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        Generate multiple trackable QR codes from CSV with scan
+                        analytics
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+                {/* Hover effect overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/3 to-primary/8 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none rounded-2xl"></div>
+                {/* Subtle border glow effect */}
+                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none shadow-[inset_0_0_0_1px_rgba(59,130,246,0.1)]"></div>
+              </Card>
+            </div>
+          </div>
         </div>
 
-        {/* Website QR Type Card */}
-        <div className="grid grid-cols-1 gap-4">
-          <Card
-            className="hover:shadow-md transition-shadow cursor-pointer border-2 hover:border-primary/20 py-2 rounded-2xl"
-            onClick={() => handleQRTypeSelect("Website")}
+        {/* Static Bulk QRs Section */}
+        <div className="mt-12">
+          <div
+            className="flex items-center justify-between cursor-pointer group mb-4"
+            onClick={() => setIsStaticCollapsed(!isStaticCollapsed)}
           >
-            <CardContent className="p-6">
-              <div className="flex items-start space-x-4">
-                <div className="w-12 h-12 bg-muted/50 rounded-lg flex items-center justify-center">
-                  <Globe className="w-6 h-6 text-muted-foreground" />
-                </div>
-                <div>
-                  <h3 className="font-medium text-lg">Website</h3>
-                  <p className="text-muted-foreground text-sm">
-                    Generate QR codes for multiple URLs from CSV
-                  </p>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
+            <div className="flex items-center gap-3">
+              <h1 className="text-2xl font-semibold group-hover:text-primary transition-colors duration-300">
+                Static Bulk QRs
+              </h1>
+              <Badge
+                variant="secondary"
+                className="bg-orange-100 text-orange-800 border-orange-200"
+              >
+                NO TRACKING
+              </Badge>
+            </div>
+            <div
+              className={`transition-transform duration-700 ease-in-out ${
+                isStaticCollapsed ? "rotate-0" : "rotate-180"
+              }`}
+            >
+              <ChevronDown className="h-5 w-5 text-muted-foreground" />
+            </div>
+          </div>
+
+          {!isStaticCollapsed && (
+            <p className="text-muted-foreground mb-6">
+              Generate multiple QR codes with URLs embedded directly - no
+              tracking
+            </p>
+          )}
+
+          <div
+            className={`transition-all duration-700 ease-in-out ${
+              isStaticCollapsed
+                ? "max-h-0 opacity-0"
+                : "max-h-[900px] opacity-100"
+            }`}
+            style={{ overflow: isStaticCollapsed ? "hidden" : "visible" }}
+          >
+            <div className="grid grid-cols-1 gap-4 p-2">
+              <Card
+                className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-primary/40 hover:scale-105 rounded-2xl group bg-white overflow-hidden relative transform-gpu hover:-translate-y-1"
+                onClick={() => handleQRTypeSelect("Website", true)}
+              >
+                <CardContent className="p-6 relative z-10">
+                  <div className="flex items-start space-x-4">
+                    <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl flex items-center justify-center group-hover:from-orange-200 group-hover:to-orange-300 transition-all duration-300 group-hover:scale-110">
+                      <Globe className="w-6 h-6 text-orange-600 group-hover:scale-110 transition-transform duration-300" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="font-semibold text-lg group-hover:text-primary transition-colors duration-300">
+                        Website Bulk QRs
+                      </h3>
+                      <p className="text-muted-foreground text-sm leading-relaxed">
+                        Generate multiple static QR codes from CSV - URLs
+                        embedded directly
+                      </p>
+                    </div>
+                  </div>
+                </CardContent>
+                {/* Hover effect overlay */}
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-50/50 to-orange-100/50 opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none rounded-2xl"></div>
+                {/* Subtle border glow effect */}
+                <div className="absolute inset-0 rounded-2xl opacity-0 group-hover:opacity-100 transition-all duration-300 pointer-events-none shadow-[inset_0_0_0_1px_rgba(251,146,60,0.1)]"></div>
+              </Card>
+            </div>
+          </div>
         </div>
       </div>
 
@@ -567,9 +685,15 @@ const BulkQR = () => {
       <div className="flex-1 max-w-4xl">
         <div className="space-y-8">
           <div>
-            <h1 className="text-2xl font-semibold mb-2">Customize QR Design</h1>
+            <h1 className="text-2xl font-semibold mb-2">
+              {selectedQRType} Bulk QR Codes{" "}
+              {isStaticQR ? "(Static)" : "(Dynamic)"}
+            </h1>
             <p className="text-muted-foreground">
               Choose the design options that will be applied to all QR codes
+              {isStaticQR
+                ? " - These will be static QR codes with no tracking"
+                : " - These will be dynamic QR codes with tracking and analytics"}
             </p>
           </div>
 
