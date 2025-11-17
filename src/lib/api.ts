@@ -181,8 +181,21 @@ api.interceptors.response.use(
 // Stats API functions
 export const statsApi = {
   getStats: async () => {
-    const response = await api.get('/qr/stats');
-    return response.data;
+    console.log('📊 Fetching stats from:', `${baseURL}/qr/stats`);
+    try {
+      const response = await api.get('/qr/stats');
+      console.log('📊 Stats response received:', response.status, response.data);
+      
+      // Validate response data
+      if (!response.data || typeof response.data !== 'object') {
+        throw new Error('Invalid stats data received from server');
+      }
+      
+      return response.data;
+    } catch (error) {
+      console.error('📊 Stats API error:', error);
+      throw error;
+    }
   }
 };
 
