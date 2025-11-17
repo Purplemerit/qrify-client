@@ -39,7 +39,6 @@ export default function Signup() {
 
     try {
       console.log("🚀 Starting signup request...");
-      debugger; // Check before signup request
 
       const response = await authService.signup({
         email: formData.email,
@@ -47,16 +46,13 @@ export default function Signup() {
       });
 
       console.log("✅ Signup response received:", response);
-      debugger; // Check signup response
 
       // Navigate directly to My QR Codes page after successful signup
       console.log("🔄 About to navigate to /my-qr-codes");
-      debugger; // Check before navigation
 
       navigate("/my-qr-codes");
 
       console.log("🎯 Navigation completed");
-      debugger; // Check after navigation
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
         const error = err as { response?: { data?: { error?: string } } };

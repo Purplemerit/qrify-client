@@ -61,14 +61,12 @@ api.interceptors.request.use(
       withCredentials: config.withCredentials,
       data: config.data
     });
-    debugger; // Check request configuration
     
     // Cookies are automatically included due to withCredentials: true
     return config;
   },
   (error) => {
     console.error('❌ Request interceptor error:', error);
-    debugger; // Check request errors
     return Promise.reject(error);
   }
 );
@@ -110,14 +108,12 @@ api.interceptors.response.use(
       statusText: error.response?.statusText,
       data: error.response?.data
     });
-    debugger; // Check API errors
     
     const originalRequest = error.config;
 
     // If error is 401 and we haven't tried to refresh yet
     if (error.response?.status === 401 && !originalRequest._retry) {
       console.log('🔄 Got 401 error, attempting token refresh...');
-      debugger; // Check before token refresh
       
       if (isRefreshing) {
         console.log('⏳ Already refreshing, queueing request...');
@@ -141,14 +137,12 @@ api.interceptors.response.use(
       try {
         console.log('🔄 Making refresh token request...');
         console.log('🍪 Cookies before refresh:', document.cookie);
-        debugger; // Check before refresh call
         
         // Try to refresh the token using cookie-based endpoint
         const refreshResponse = await api.post('/auth/refresh');
         
         console.log('✅ Token refresh successful:', refreshResponse);
         console.log('🍪 Cookies after refresh:', document.cookie);
-        debugger; // Check after refresh success
         
         processQueue(null, 'refreshed');
         
@@ -156,7 +150,6 @@ api.interceptors.response.use(
         return api(originalRequest);
       } catch (refreshError) {
         console.error('❌ Token refresh failed:', refreshError);
-        debugger; // Check refresh failure
         
         // Refresh failed, clear any client-side auth state
         processQueue(refreshError, null);

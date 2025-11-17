@@ -73,7 +73,6 @@ class AuthService {
    */
   async signup(data: SignupRequest): Promise<SignupResponse> {
     console.log('📝 AuthService: Making signup API call with:', { email: data.email });
-    debugger; // Check before API call
     
     const response = await api.post<SignupResponse>('/auth/signup', data);
     
@@ -81,7 +80,6 @@ class AuthService {
     console.log('📝 AuthService: Response status:', response.status);
     console.log('📝 AuthService: Response headers:', response.headers);
     console.log('📝 AuthService: Response data:', response.data);
-    debugger; // Check after API call
     
     // Cookies are set automatically by the server
     return response.data;
@@ -92,7 +90,6 @@ class AuthService {
    */
   async login(data: LoginRequest): Promise<LoginResponse> {
     console.log('🔐 AuthService: Making login API call with:', { email: data.email });
-    debugger; // Check before API call
     
     const response = await api.post<LoginResponse>('/auth/login', data);
     
@@ -104,8 +101,6 @@ class AuthService {
     // Check cookies after login
     console.log('🍪 All cookies after login:', document.cookie);
     console.log('🍪 Set-Cookie headers:', response.headers['set-cookie']);
-    
-    debugger; // Check after API call
     
     // Cookies are set automatically by the server
     return response.data;
@@ -170,7 +165,6 @@ class AuthService {
   async getCurrentUser(): Promise<GetMeResponse> {
     console.log('👤 Getting current user...');
     console.log('🍪 Cookies before /auth/me call:', document.cookie);
-    debugger; // Check before getCurrentUser call
     
     try {
       const response = await api.get<GetMeResponse>('/auth/me');
@@ -179,7 +173,6 @@ class AuthService {
     } catch (error) {
       console.error('❌ getCurrentUser failed:', error);
       console.log('🍪 Cookies after failed /auth/me call:', document.cookie);
-      debugger; // Check after failed getCurrentUser call
       throw error;
     }
   }
@@ -213,7 +206,6 @@ class AuthService {
    */
   async isAuthenticated(): Promise<boolean> {
     console.log('🔍 Checking if user is authenticated...');
-    debugger; // Check before authentication check
     
     try {
       // Try to fetch current user to verify authentication
