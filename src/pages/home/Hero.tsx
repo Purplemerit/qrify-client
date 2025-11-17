@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { toDataURL } from "qrcode";
+import QRCodeStyling from "qr-code-styling";
 import { GoogleAuthSection } from "../../components/GoogleAuthSection";
 import { api, tokenStorage } from "../../lib/api";
 
@@ -43,10 +44,10 @@ export function Hero() {
   ];
 
   const shapeOptions = [
-    { id: 1, name: "Square", preview: "■" },
-    { id: 2, name: "Rounded", preview: "●" },
-    { id: 3, name: "Dots", preview: "•" },
-    { id: 4, name: "Circle", preview: "◯" },
+    { id: 1, name: "Square", preview: "■", value: "square" as const },
+    { id: 2, name: "Dots", preview: "•", value: "dots" as const },
+    { id: 3, name: "Rounded", preview: "●", value: "rounded" as const },
+    { id: 4, name: "Extra Rounded", preview: "◯", value: "extra-rounded" as const },
   ];
 
   const logoOptions = [
@@ -81,8 +82,8 @@ export function Hero() {
   const [generatedQR, setGeneratedQR] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
 
-  // Debounce timer ref
-  const debounceTimer = useRef<NodeJS.Timeout | null>(null);
+  // Debounce timer ref (browser setTimeout returns a number)
+  const debounceTimer = useRef<number | null>(null);
 
   // Download QR code function
   const downloadQRCode = () => {
@@ -100,7 +101,7 @@ export function Hero() {
   useEffect(() => {
     // Clear existing timer
     if (debounceTimer.current) {
-      clearTimeout(debounceTimer.current);
+      window.clearTimeout(debounceTimer.current);
     }
 
     // Check if there's content to generate
@@ -110,7 +111,7 @@ export function Hero() {
 
     if (hasContent) {
       // Set new timer to generate after 500ms of no typing
-      debounceTimer.current = setTimeout(() => {
+      debounceTimer.current = window.setTimeout(() => {
         generateQRCode();
       }, 500);
     } else {
@@ -121,20 +122,69 @@ export function Hero() {
     // Cleanup
     return () => {
       if (debounceTimer.current) {
-        clearTimeout(debounceTimer.current);
+        window.clearTimeout(debounceTimer.current);
       }
     };
-  }, [websiteUrl, textContent, activeTab, selectedLevel]);
+  }, [websiteUrl, textContent, activeTab, selectedLevel, selectedShape, selectedLogo]);
 
   const generateLocalQRCode = async (value: string, level: "L" | "M" | "Q" | "H") => {
     try {
-      const dataUrl = await toDataURL(value, {
-        errorCorrectionLevel: level,
-        type: "image/png",
+      const selectedShapeData = shapeOptions.find((s) => s.id === selectedShape);
+      const selectedLogoData = logoOptions.find((l) => l.id === selectedLogo);
+
+      // Get the shape type, default to square
+      const shapeType = selectedShapeData?.value || "square";
+
+      // Convert relative logo path to absolute URL if logo is selected
+      const logoUrl = selectedLogoData?.icon ? `${window.location.origin}${selectedLogoData.icon}` : null;
+
+      // Build config conditionally - don't pass image properties if no logo
+      const qrConfig: any = {
+        width: 512,
+        height: 512,
+        type: "canvas",
+        data: value,
         margin: 1,
-        scale: 6,
-      });
-      setGeneratedQR(dataUrl);
+        qrOptions: {
+          typeNumber: 0,
+          mode: "Byte",
+          errorCorrectionLevel: level
+        },
+        dotsOptions: {
+          color: "#000000",
+          type: shapeType
+        },
+        cornersSquareOptions: {
+          color: "#000000",
+          type: shapeType === "dots" ? "dot" : shapeType
+        },
+        cornersDotOptions: {
+          color: "#000000",
+          type: shapeType === "dots" ? "dot" : shapeType
+        }
+      };
+
+      // Only add image properties when logo is selected
+      if (logoUrl) {
+        qrConfig.image = logoUrl;
+        qrConfig.imageOptions = {
+          hideBackgroundDots: true,
+          imageSize: 0.3,
+          margin: 0,
+          crossOrigin: "anonymous",
+        };
+      }
+
+      const qrCode = new QRCodeStyling(qrConfig);
+
+      const blob = await qrCode.getRawData("png");
+      if (blob) {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          setGeneratedQR(reader.result as string);
+        };
+        reader.readAsDataURL(blob);
+      }
     } catch (localError) {
       console.error("Local QR generation failed:", localError);
       setGeneratedQR(null);
@@ -167,31 +217,14 @@ export function Hero() {
 
     const levelData = levelOptions.find((l) => l.id === selectedLevel);
     const errorCorrection = (levelData?.value || "M") as "L" | "M" | "Q" | "H";
-    const runLocalGeneration = async () => generateLocalQRCode(content, errorCorrection);
 
+    // Always use local generation for custom shapes and logos
+    // API doesn't support these customizations yet
     try {
-      if (!tokenStorage.getAccessToken()) {
-        await runLocalGeneration();
-        return;
-      }
-
-      const response = await api.post("/qr/url", {
-        url: content,
-        name: `${activeTab} QR`,
-        errorCorrection,
-        format: "PNG",
-      });
-
-      const imageResponse = await api.get(`/qr/${response.data.id}/image`);
-      setGeneratedQR(imageResponse.data.image);
+      await generateLocalQRCode(content, errorCorrection);
     } catch (error: any) {
-      if (error?.response?.status === 401 || error?.response?.status === 403) {
-        await runLocalGeneration();
-        return;
-      }
-
       console.error("Error generating QR code:", error);
-      await runLocalGeneration();
+      setGeneratedQR(null);
     } finally {
       setIsGenerating(false);
     }
@@ -323,30 +356,32 @@ export function Hero() {
       <img
         src={generatedQR}
         alt="Generated QR Code"
-        className={`w-32 h-32 ${blurAmount}`}
+        className={`w-full h-full object-contain ${blurAmount}`}
       />
     ) : (
       <img
         src={QRCodeSVG}
         alt="QR Code"
-        className={`w-32 h-32 ${blurAmount}`}
+        className={`w-full h-full object-contain ${blurAmount}`}
       />
     );
 
-    // Logo overlay
-    const logoOverlay = selectedLogoData?.icon && (
+    // Logo overlay - only show when using SVG fallback (not generated QR)
+    // When using generated QR, the logo is already embedded by qr-code-styling
+    const logoOverlay = !generatedQR && selectedLogoData?.icon && (
       <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-lg border-2 border-gray-200 p-2">
-          <img src={selectedLogoData.icon} alt={selectedLogoData.name} className="w-full h-full" />
+        <div className="w-12 h-12 flex items-center justify-center">
+          <img src={selectedLogoData.icon} alt={selectedLogoData.name} className="w-full h-full object-contain" />
         </div>
       </div>
     );
 
-    // No Frame - just QR (don't show logo overlay when 'No Frame' selected)
+    // No Frame - just QR with logo overlay
     if (selectedFrameData?.id === 1 || !selectedFrameData?.icon) {
       return (
         <div className="relative w-48 h-48 bg-white rounded-lg shadow-lg flex items-center justify-center p-4">
           {qrCode}
+          {logoOverlay}
         </div>
       );
     }
@@ -356,23 +391,23 @@ export function Hero() {
     const getQRPosition = () => {
       switch (selectedFrameData?.id) {
         case 2: // Card
-          return { top: '40%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.25 };
+          return { top: '40%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.10 };
         case 3: // Scooter
-          return { top: '27%', left: '27%', transform: 'translate(-50%, -50%)', scale: 1.2 };
+          return { top: '27%', left: '27%', transform: 'translate(-50%, -50%)', scale: 1 };
         case 4: // Juice
-          return { top: '60%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.5 };
+          return { top: '60%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1 };
         case 5: // Gift Wrapper
-          return { top: '41%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.52 };
+          return { top: '41%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.1 };
         case 6: // Cup
-          return { top: '49%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.18 };
+          return { top: '49%', left: '50%', transform: 'translate(-50%, -50%)', scale: 0.9 };
         case 7: // Text Tab
-          return { top: '62%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.58 };
+          return { top: '62%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.1 };
         case 8: // Tab
-          return { top: '39%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.73 };
+          return { top: '39%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.3 };
         case 9: // Clipboard
-          return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', scale: 0.7 };
+          return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.2 };
         case 10: // Clipped Text
-          return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', scale: 0.7 };
+          return { top: '40%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1.15 };
         default:
           return { top: '50%', left: '50%', transform: 'translate(-50%, -50%)', scale: 1 };
       }
@@ -389,8 +424,8 @@ export function Hero() {
           className="absolute inset-0 w-full h-full object-contain"
         />
         {/* QR Code overlaid on frame */}
-        <div 
-          className="absolute z-10"
+        <div
+          className="absolute z-10 w-32 h-32"
           style={{
             top: qrPosition.top,
             left: qrPosition.left,
