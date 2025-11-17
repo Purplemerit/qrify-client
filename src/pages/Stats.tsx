@@ -66,6 +66,13 @@ const AlertDescription = ({
 const Stats = () => {
   const { data, loading, error, refetch } = useStats();
 
+  console.log("📊 Stats component state:", {
+    data,
+    loading,
+    error,
+    hasData: !!data,
+  });
+
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
