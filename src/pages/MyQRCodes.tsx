@@ -237,16 +237,30 @@ const MyQRCodes = () => {
                 </div>
 
                 {/* Status */}
-                <Badge
-                  variant={qr.status === "Active" ? "default" : "secondary"}
-                  className="text-xs"
-                >
-                  {qr.status}
-                </Badge>
+                <div className="flex flex-col gap-1">
+                  <Badge
+                    variant={qr.status === "Active" ? "default" : "secondary"}
+                    className="text-xs"
+                  >
+                    {qr.status}
+                  </Badge>
+                  <Badge
+                    variant="outline"
+                    className={`text-xs ${
+                      qr.dynamic
+                        ? "border-green-200 text-green-800 bg-green-50"
+                        : "border-orange-200 text-orange-800 bg-orange-50"
+                    }`}
+                  >
+                    {qr.dynamic ? "Dynamic" : "Static"}
+                  </Badge>
+                </div>
 
                 {/* Scan Count */}
                 <div className="text-sm text-gray-500 min-w-[80px] text-center">
-                  {qr.scans?.toLocaleString() || 0} scans
+                  {qr.dynamic
+                    ? `${qr.scans?.toLocaleString() || 0} scans`
+                    : "No tracking"}
                 </div>
 
                 {/* Actions Menu */}

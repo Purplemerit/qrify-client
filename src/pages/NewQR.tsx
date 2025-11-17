@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Globe,
   FileText,
@@ -44,45 +46,14 @@ const dynamicQrTypes = [
 ];
 
 const staticQrTypes = [
-  { name: "PDF", description: "Show a PDF", icon: FileText },
-  { name: "Images", description: "Show an image gallery", icon: Image },
-  {
-    name: "vCard Plus",
-    description: "Share contact details",
-    icon: CreditCard,
-  },
-  { name: "Video", description: "Show a video", icon: Play },
-  { name: "List of links", description: "Group links", icon: Link },
-  {
-    name: "Social Media",
-    description: "Share your social profiles",
-    icon: Users,
-  },
-  { name: "MP3", description: "Play an audio file", icon: Music },
-  {
-    name: "Business",
-    description: "Share information about your business",
-    icon: Building,
-  },
-  { name: "Coupon", description: "Share a coupon", icon: Tag },
-  { name: "Apps", description: "Redirect to app store", icon: Tag },
-  { name: "Event", description: "Promote and share an Event", icon: Building },
-  {
-    name: "Menu",
-    description: "Display the menu of a resturant or bar",
-    icon: Play,
-  },
-  {
-    name: "Feedback",
-    description: "Collect feedback and get rated",
-    icon: Users,
-  },
+  { name: "Website", description: "Open a URL", icon: Globe },
 ];
 
 const NewQR = () => {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
   const [selectedQRType, setSelectedQRType] = useState("");
+  const [isStaticQR, setIsStaticQR] = useState(false);
   const [qrData, setQrData] = useState<unknown>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -156,8 +127,9 @@ const NewQR = () => {
     setActiveTab("custom");
   };
 
-  const handleQRTypeSelect = (typeName: string) => {
+  const handleQRTypeSelect = (typeName: string, isStatic = false) => {
     setSelectedQRType(typeName);
+    setIsStaticQR(isStatic);
     setCurrentStep(2);
   };
 
@@ -215,10 +187,12 @@ const NewQR = () => {
       // Create QR code - cookies are sent automatically
       // Server will handle authentication check
       console.log("Form data being sent:", formData);
+      console.log("Is static QR:", isStaticQR);
+
       const response = await api.post("/qr/url", {
         name: formData.qrName || "Website QR",
         url: formData.basicInformation?.websiteURL || "",
-        dynamic: true,
+        dynamic: !isStaticQR,
       });
 
       const createdQr = response.data;
@@ -228,9 +202,11 @@ const NewQR = () => {
       const imageResponse = await api.get(`/qr/${createdQr.id}/image`);
       const imageData = imageResponse.data;
 
-      // Build scan URL so it can be opened from other devices in dev
+      // Build scan URL - for static QRs, point directly to the URL; for dynamic QRs, use the scan endpoint
       const apiBase = import.meta.env.VITE_API_URL || "http://localhost:4000";
-      const scanUrl = `${apiBase.replace(/\/$/, "")}/scan/${createdQr.slug}`;
+      const scanUrl = isStaticQR
+        ? formData.basicInformation?.websiteURL || ""
+        : `${apiBase.replace(/\/$/, "")}/scan/${createdQr.slug}`;
 
       setGeneratedQR({
         qr_image: imageData.image,
@@ -569,7 +545,7 @@ const NewQR = () => {
                 <Card
                   key={index}
                   className="hover:shadow-2xl transition-all duration-300 cursor-pointer border-2 hover:border-primary/40 hover:scale-105 rounded-2xl group bg-white overflow-hidden relative transform-gpu hover:-translate-y-1"
-                  onClick={() => handleQRTypeSelect(type.name)}
+                  onClick={() => handleQRTypeSelect(type.name, true)}
                 >
                   <CardContent className="p-6 relative z-10">
                     <div className="flex items-start space-x-4">
@@ -631,9 +607,51 @@ const NewQR = () => {
   );
 
   const renderQRForm = () => {
-    switch (selectedQRType) {
-      case "Website":
+    if (selectedQRType === "Website") {
+      if (isStaticQR) {
+        // Static website QR - simplified form
+        return (
+          <Card>
+            <CardContent className="p-6">
+              <div className="space-y-4">
+                <div className="space-y-2">
+                  <Label htmlFor="qr-name">QR Code Name</Label>
+                  <Input
+                    id="qr-name"
+                    placeholder="My Website QR"
+                    defaultValue="Website QR"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="website-url">Website URL *</Label>
+                  <Input
+                    id="website-url"
+                    type="url"
+                    placeholder="https://example.com"
+                    required
+                  />
+                </div>
+                <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+                  <h4 className="font-medium text-orange-800 mb-2">
+                    Static QR Code
+                  </h4>
+                  <p className="text-sm text-orange-700">
+                    This QR code will contain the URL directly and cannot be
+                    changed once created. Scanning will not be tracked.
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      } else {
+        // Dynamic website QR - full form
         return <WebsiteQRForm onGenerate={handleGenerateQR} />;
+      }
+    }
+
+    // Other QR types (removed from static)
+    switch (selectedQRType) {
       case "PDF":
         return <PDFQRForm onGenerate={handleGenerateQR} />;
       case "Images":
@@ -744,7 +762,7 @@ const NewQR = () => {
                   rel="noreferrer"
                   className="mt-3 text-xs text-primary underline hover:text-primary/80 transition-colors duration-300"
                 >
-                  Test scan URL
+                  {isStaticQR ? "Test website" : "Test scan URL"}
                 </a>
               )}
             </div>
@@ -922,7 +940,7 @@ const NewQR = () => {
           {generatedQR?.scanUrl && (
             <div className="mt-6 p-4 bg-blue-50 border border-blue-200 rounded-lg animate-slide-up">
               <p className="text-sm text-blue-700 mb-2 font-medium">
-                Test your QR code:
+                {isStaticQR ? "Test your website:" : "Test your QR code:"}
               </p>
               <a
                 href={generatedQR.scanUrl}
@@ -930,7 +948,7 @@ const NewQR = () => {
                 rel="noreferrer"
                 className="text-sm text-blue-600 underline hover:text-blue-800 transition-colors duration-300"
               >
-                Open scan URL →
+                {isStaticQR ? "Open website →" : "Open scan URL →"}
               </a>
             </div>
           )}
@@ -971,7 +989,7 @@ const NewQR = () => {
                   rel="noreferrer"
                   className="mt-3 text-xs text-primary underline hover:text-primary/80 transition-colors duration-300"
                 >
-                  Test scan URL
+                  {isStaticQR ? "Test website" : "Test scan URL"}
                 </a>
               )}
             </div>
