@@ -93,21 +93,44 @@ const processQueue = (error: unknown = null, token: string | null = null) => {
 };
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    console.log('✅ API Response success:', {
+      method: response.config.method?.toUpperCase(),
+      url: response.config.url,
+      status: response.status,
+      data: response.data
+    });
+    return response;
+  },
   async (error) => {
+    console.error('❌ API Response error:', {
+      method: error.config?.method?.toUpperCase(),
+      url: error.config?.url,
+      status: error.response?.status,
+      statusText: error.response?.statusText,
+      data: error.response?.data
+    });
+    debugger; // Check API errors
+    
     const originalRequest = error.config;
 
     // If error is 401 and we haven't tried to refresh yet
     if (error.response?.status === 401 && !originalRequest._retry) {
+      console.log('🔄 Got 401 error, attempting token refresh...');
+      debugger; // Check before token refresh
+      
       if (isRefreshing) {
+        console.log('⏳ Already refreshing, queueing request...');
         // If already refreshing, queue this request
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
           .then(() => {
+            console.log('🔄 Retrying queued request after refresh...');
             return api(originalRequest);
           })
           .catch((err) => {
+            console.error('❌ Queued request failed:', err);
             return Promise.reject(err);
           });
       }
@@ -116,12 +139,25 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
+        console.log('🔄 Making refresh token request...');
+        console.log('🍪 Cookies before refresh:', document.cookie);
+        debugger; // Check before refresh call
+        
         // Try to refresh the token using cookie-based endpoint
-        await api.post('/auth/refresh');
+        const refreshResponse = await api.post('/auth/refresh');
+        
+        console.log('✅ Token refresh successful:', refreshResponse);
+        console.log('🍪 Cookies after refresh:', document.cookie);
+        debugger; // Check after refresh success
         
         processQueue(null, 'refreshed');
+        
+        console.log('🔄 Retrying original request after refresh...');
         return api(originalRequest);
       } catch (refreshError) {
+        console.error('❌ Token refresh failed:', refreshError);
+        debugger; // Check refresh failure
+        
         // Refresh failed, clear any client-side auth state
         processQueue(refreshError, null);
         tokenStorage.clearTokens();
@@ -130,8 +166,13 @@ api.interceptors.response.use(
         const currentPath = window.location.pathname;
         const publicPaths = ['/', '/home', '/login', '/signup', '/forgot-password'];
 
+        console.log('🚪 Current path:', currentPath, 'Public paths:', publicPaths);
+        
         if (!publicPaths.includes(currentPath)) {
+          console.log('🚪 Redirecting to login...');
           window.location.href = '/login';
+        } else {
+          console.log('🏠 Staying on public page');
         }
 
         return Promise.reject(refreshError);

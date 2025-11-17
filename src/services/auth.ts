@@ -100,6 +100,11 @@ class AuthService {
     console.log('🔐 AuthService: Response status:', response.status);
     console.log('🔐 AuthService: Response headers:', response.headers);
     console.log('🔐 AuthService: Response data:', response.data);
+    
+    // Check cookies after login
+    console.log('🍪 All cookies after login:', document.cookie);
+    console.log('🍪 Set-Cookie headers:', response.headers['set-cookie']);
+    
     debugger; // Check after API call
     
     // Cookies are set automatically by the server
@@ -163,8 +168,20 @@ class AuthService {
    * Get current authenticated user
    */
   async getCurrentUser(): Promise<GetMeResponse> {
-    const response = await api.get<GetMeResponse>('/auth/me');
-    return response.data;
+    console.log('👤 Getting current user...');
+    console.log('🍪 Cookies before /auth/me call:', document.cookie);
+    debugger; // Check before getCurrentUser call
+    
+    try {
+      const response = await api.get<GetMeResponse>('/auth/me');
+      console.log('✅ getCurrentUser success:', response.data);
+      return response.data;
+    } catch (error) {
+      console.error('❌ getCurrentUser failed:', error);
+      console.log('🍪 Cookies after failed /auth/me call:', document.cookie);
+      debugger; // Check after failed getCurrentUser call
+      throw error;
+    }
   }
 
   /**
@@ -195,11 +212,16 @@ class AuthService {
    * Check if user is authenticated
    */
   async isAuthenticated(): Promise<boolean> {
+    console.log('🔍 Checking if user is authenticated...');
+    debugger; // Check before authentication check
+    
     try {
       // Try to fetch current user to verify authentication
       await this.getCurrentUser();
+      console.log('✅ User is authenticated');
       return true;
-    } catch {
+    } catch (error) {
+      console.log('❌ User is not authenticated:', error);
       return false;
     }
   }
