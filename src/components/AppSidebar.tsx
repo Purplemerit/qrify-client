@@ -6,9 +6,7 @@ import {
   Grid3X3,
   Settings,
   Users,
-  HelpCircle,
   Phone,
-  Code,
   Layers,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
@@ -34,11 +32,7 @@ const mainItems = [
   { title: "Users", url: "/users", icon: Users },
 ];
 
-const bottomItems = [
-  { title: "Contact", url: "/contact", icon: Phone },
-  { title: "Help center", url: "/help", icon: HelpCircle },
-  { title: "Developers", url: "/developers", icon: Code },
-];
+const bottomItems = [{ title: "Contact", url: "/contact", icon: Phone }];
 
 export function AppSidebar() {
   const { open } = useSidebar();
