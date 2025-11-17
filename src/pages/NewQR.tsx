@@ -747,7 +747,9 @@ const NewQR = () => {
             <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
               {renderQRWithDesign(
                 generatedQR.scanUrl ||
-                  `http://localhost:4000/scan/${generatedQR.slug}`,
+                  `${
+                    import.meta.env.VITE_API_URL || "http://localhost:4000"
+                  }/scan/${generatedQR.slug}`,
                 qrDesignOptions,
                 {
                   width: 240,
@@ -974,7 +976,9 @@ const NewQR = () => {
             <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
               {renderQRWithDesign(
                 generatedQR.scanUrl ||
-                  `http://localhost:4000/scan/${generatedQR.slug}`,
+                  `${
+                    import.meta.env.VITE_API_URL || "http://localhost:4000"
+                  }/scan/${generatedQR.slug}`,
                 qrDesignOptions,
                 {
                   width: 240,
