@@ -275,13 +275,6 @@ const MyQRCodes = () => {
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
               <Input placeholder="Search..." className="pl-10" />
             </div>
-            <div className="flex items-center text-sm text-gray-500">
-              <Folder className="w-5 h-5 mr-3 text-gray-400" />
-              <span>Here you can manage your section</span>
-              <Button variant="link" className="text-blue-600 pl-2">
-                Create folder
-              </Button>
-            </div>
           </div>
         </div>
 

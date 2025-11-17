@@ -6,7 +6,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import QRDesignComponent from "@/components/QRDesignComponent";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import QRDesignSelector from "@/components/QRDesignSelector";
+import templateStorage, { type QRTemplate } from "@/lib/template-storage";
 import api from "@/lib/api";
 import {
   Globe,
@@ -16,6 +18,8 @@ import {
   CheckCircle,
   X,
   Plus,
+  Check,
+  Tag,
 } from "lucide-react";
 import { QRCodeSVG } from "qrcode.react";
 import {
@@ -66,6 +70,54 @@ const BulkQR = () => {
   const [error, setError] = useState("");
   const [bulkResults, setBulkResults] = useState<BulkQRResult[]>([]);
   const [generatedQRs, setGeneratedQRs] = useState<QRCodeData[]>([]);
+
+  // Templates state
+  const [availableTemplates, setAvailableTemplates] = useState<QRTemplate[]>(
+    []
+  );
+  const [templatesLoading, setTemplatesLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState<"custom" | "templates">("custom");
+  const [appliedTemplateId, setAppliedTemplateId] = useState<string | null>(
+    null
+  );
+
+  // Load templates when component mounts
+  useEffect(() => {
+    const loadTemplates = async () => {
+      try {
+        setTemplatesLoading(true);
+        const templates = await templateStorage.getTemplates();
+        setAvailableTemplates(templates);
+      } catch (error) {
+        console.error("Failed to load templates:", error);
+      } finally {
+        setTemplatesLoading(false);
+      }
+    };
+
+    loadTemplates();
+  }, []);
+
+  const handleApplyTemplate = (template: QRTemplate) => {
+    if (appliedTemplateId === template.id) {
+      // Unapply template - reset to default options
+      setQrDesignOptions({
+        frame: 1,
+        shape: 1,
+        logo: 0,
+        level: 2,
+        dotStyle: 1,
+        bgColor: "#ffffff",
+        outerBorder: 1,
+      });
+      setAppliedTemplateId(null);
+    } else {
+      // Apply template
+      setQrDesignOptions(template.designOptions);
+      setAppliedTemplateId(template.id);
+    }
+    setActiveTab("custom");
+  };
 
   const handleQRTypeSelect = (typeName: string) => {
     setSelectedQRType(typeName);
@@ -153,7 +205,6 @@ const BulkQR = () => {
             name: `Bulk QR ${i + 1} - ${url}`,
             url: url,
             dynamic: true,
-            designOptions: qrDesignOptions,
             bulk: true, // Mark as bulk QR
           });
 
@@ -196,9 +247,48 @@ const BulkQR = () => {
     }
   };
 
-  const handleCompleteAndNavigate = () => {
-    // Navigate to My QR Codes page
-    navigate("/my-qr-codes");
+  const handleCompleteAndNavigate = async () => {
+    if (generatedQRs.length === 0) {
+      navigate("/my-qr-codes");
+      return;
+    }
+
+    try {
+      setLoading(true);
+
+      console.log("Updating bulk QRs with design options:", qrDesignOptions);
+
+      // Update all generated QR codes with the applied design options
+      const updatePromises = generatedQRs.map(async (qr) => {
+        try {
+          await api.put(`/qr/${qr.id}`, {
+            designOptions: qrDesignOptions,
+            status: "active",
+          });
+          return { id: qr.id, success: true };
+        } catch (err) {
+          console.error(`Failed to update QR ${qr.id}:`, err);
+          return { id: qr.id, success: false };
+        }
+      });
+
+      const results = await Promise.all(updatePromises);
+      const failedUpdates = results.filter((result) => !result.success);
+
+      if (failedUpdates.length > 0) {
+        console.warn(
+          `${failedUpdates.length} QR codes failed to update with design options`
+        );
+      }
+
+      // Navigate to My QR Codes page
+      navigate("/my-qr-codes");
+    } catch (err) {
+      console.error("Failed to complete bulk QR creation:", err);
+      setError("Failed to save QR code designs");
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleStepClick = (step: number) => {
@@ -388,9 +478,10 @@ const BulkQR = () => {
         {currentStep === 4 && (
           <Button
             onClick={handleCompleteAndNavigate}
+            disabled={loading}
             className="px-8 rounded-3xl"
           >
-            View All QR Codes
+            {loading ? "Saving Designs..." : "Complete & View QR Codes"}
           </Button>
         )}
       </div>
@@ -437,12 +528,12 @@ const BulkQR = () => {
         </div>
       </div>
 
-      {/* Phone Mockup */}
+      {/* Phone Mockup - Moved to right */}
       <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80">
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-center">Bulk QR Preview</h3>
-          <p className="text-sm text-gray-500 text-center">
-            Upload CSV to generate multiple QRs
+          <h3 className="text-xl font-semibold text-center">Preview Example</h3>
+          <p className="text-sm text-muted-foreground text-center mt-2">
+            See how your bulk QR codes will look
           </p>
         </div>
         <div className="relative">
@@ -451,22 +542,17 @@ const BulkQR = () => {
             alt="iPhone 15 Mockup"
             className="w-72 h-auto object-contain drop-shadow-lg"
           />
-          {/* Phone content overlay */}
-          <div className="absolute top-[60px] left-1/2 transform -translate-x-1/2 w-[250px] h-[450px] rounded-[35px] overflow-hidden bg-white">
-            <div className="p-4 h-full flex flex-col items-center justify-center space-y-4">
-              <Upload className="w-12 h-12 text-gray-400" />
-              <p className="text-xs text-gray-500 text-center">
-                CSV with URLs will generate multiple QR codes
-              </p>
-              <div className="grid grid-cols-2 gap-2">
-                {[1, 2, 3, 4].map((i) => (
-                  <div
-                    key={i}
-                    className="w-16 h-16 bg-gray-100 rounded border-2 border-dashed border-gray-300 flex items-center justify-center"
-                  >
-                    <QRCodeSVG value={`https://example${i}.com`} size={40} />
-                  </div>
-                ))}
+          {/* Sample content inside phone */}
+          <div className="absolute top-[20%] left-1/2 transform -translate-x-1/2 w-[200px]">
+            <div className="bg-white rounded-lg p-4 shadow-inner border">
+              <div className="text-center space-y-2">
+                <Upload className="w-8 h-8 text-gray-400 mx-auto" />
+                <p className="text-xs text-muted-foreground">
+                  CSV with URLs will generate
+                </p>
+                <p className="text-xs text-muted-foreground">
+                  multiple QR codes at once
+                </p>
               </div>
             </div>
           </div>
@@ -487,23 +573,152 @@ const BulkQR = () => {
             </p>
           </div>
 
-          {/* QR Design Component */}
-          <div className="bg-white rounded-lg border border-gray-200 p-6">
-            <QRDesignComponent
-              qrImage="https://example.com"
-              options={qrDesignOptions}
-              onOptionsChange={setQrDesignOptions}
-              showPreview={false}
-            />
-          </div>
+          {/* Design Options with Templates */}
+          <Tabs
+            value={activeTab}
+            onValueChange={(value) =>
+              setActiveTab(value as "custom" | "templates")
+            }
+            className="w-full"
+          >
+            <TabsList className="grid w-full grid-cols-2">
+              <TabsTrigger value="custom">Custom Design</TabsTrigger>
+              <TabsTrigger value="templates">
+                Templates{" "}
+                {availableTemplates.length > 0 &&
+                  `(${availableTemplates.length})`}
+              </TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="custom" className="mt-6">
+              <QRDesignSelector
+                designOptions={qrDesignOptions}
+                onDesignChange={setQrDesignOptions}
+              />
+            </TabsContent>
+
+            <TabsContent value="templates" className="mt-6">
+              {templatesLoading ? (
+                <div className="text-center py-12">
+                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+                  <p className="text-muted-foreground">Loading templates...</p>
+                </div>
+              ) : availableTemplates.length === 0 ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 bg-muted rounded-lg mx-auto mb-4 flex items-center justify-center">
+                    <Tag className="h-8 w-8 text-muted-foreground" />
+                  </div>
+                  <h3 className="text-lg font-medium mb-2">
+                    No Templates Available
+                  </h3>
+                  <p className="text-muted-foreground max-w-md mx-auto">
+                    You haven't created any templates yet. Go to the Templates
+                    page to create custom design templates that you can reuse.
+                  </p>
+                  <Button
+                    variant="outline"
+                    className="mt-4"
+                    onClick={() => window.open("/templates", "_blank")}
+                  >
+                    Create Templates
+                  </Button>
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  <div className="text-sm text-muted-foreground">
+                    Choose from your saved templates to quickly apply a design:
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {availableTemplates.map((template) => {
+                      const isApplied = appliedTemplateId === template.id;
+                      return (
+                        <Card
+                          key={template.id}
+                          className={`hover:shadow-lg transition-all duration-300 cursor-pointer group relative ${
+                            isApplied
+                              ? "border-2 border-primary bg-primary/5"
+                              : "border border-gray-200 hover:border-primary/40"
+                          }`}
+                          onClick={() => handleApplyTemplate(template)}
+                        >
+                          <CardContent className="p-4">
+                            <div className="space-y-3">
+                              <div className="flex justify-center relative">
+                                {renderQRWithDesign(
+                                  "https://example.com/template-preview",
+                                  template.designOptions,
+                                  { width: 80, height: 80 }
+                                )}
+                                {/* Applied indicator */}
+                                {isApplied && (
+                                  <div className="absolute -top-2 -right-2 w-6 h-6 bg-primary text-white rounded-full flex items-center justify-center shadow-lg">
+                                    <Check className="w-3 h-3" />
+                                  </div>
+                                )}
+                              </div>
+                              <div className="text-center">
+                                <h4
+                                  className={`font-medium transition-colors duration-300 ${
+                                    isApplied
+                                      ? "text-primary"
+                                      : "group-hover:text-primary"
+                                  }`}
+                                >
+                                  {template.name}
+                                </h4>
+                                {template.description && (
+                                  <p className="text-sm text-muted-foreground mt-1">
+                                    {template.description}
+                                  </p>
+                                )}
+                              </div>
+                              <div className="flex flex-wrap gap-1 justify-center">
+                                <Badge variant="secondary" className="text-xs">
+                                  Frame {template.designOptions.frame}
+                                </Badge>
+                                <Badge variant="secondary" className="text-xs">
+                                  Shape {template.designOptions.shape}
+                                </Badge>
+                                {template.designOptions.logo > 0 && (
+                                  <Badge
+                                    variant="secondary"
+                                    className="text-xs"
+                                  >
+                                    Logo {template.designOptions.logo}
+                                  </Badge>
+                                )}
+                              </div>
+                              <Button
+                                size="sm"
+                                variant={isApplied ? "outline" : "default"}
+                                className={`w-full transition-colors duration-300 ${
+                                  isApplied
+                                    ? "border-primary text-primary hover:bg-primary hover:text-white"
+                                    : "group-hover:bg-primary/90"
+                                }`}
+                              >
+                                {isApplied
+                                  ? "Unapply Template"
+                                  : "Apply Template"}
+                              </Button>
+                            </div>
+                          </CardContent>
+                        </Card>
+                      );
+                    })}
+                  </div>
+                </div>
+              )}
+            </TabsContent>
+          </Tabs>
         </div>
       </div>
 
       {/* Phone Mockup */}
       <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80">
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-center">Design Preview</h3>
-          <p className="text-sm text-gray-500 text-center">
+          <h3 className="text-xl font-semibold text-center">Design Preview</h3>
+          <p className="text-sm text-muted-foreground text-center mt-2">
             This design will apply to all QRs
           </p>
         </div>
@@ -513,19 +728,15 @@ const BulkQR = () => {
             alt="iPhone 15 Mockup"
             className="w-72 h-auto object-contain drop-shadow-lg"
           />
-          {/* Phone content overlay */}
-          <div className="absolute top-[60px] left-1/2 transform -translate-x-1/2 w-[250px] h-[450px] rounded-[35px] overflow-hidden bg-white">
-            <div className="p-4 h-full flex flex-col items-center justify-center">
-              <div className="w-16 h-16 border border-gray-200 rounded-lg flex items-center justify-center bg-gray-50 mb-3">
-                {renderQRWithDesign("https://example.com", qrDesignOptions, {
-                  width: 50,
-                  height: 50,
-                })}
-              </div>
-              <p className="text-xs text-gray-500 text-center px-2">
-                Preview of your bulk QR design
-              </p>
-            </div>
+          {/* QR Code overlay on phone screen */}
+          <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
+            {renderQRWithDesign("https://example.com", qrDesignOptions, {
+              width: 240,
+              height: 240,
+            })}
+            <p className="mt-3 text-xs text-muted-foreground text-center px-2">
+              Preview of your bulk QR design
+            </p>
           </div>
         </div>
       </div>
@@ -650,9 +861,9 @@ const BulkQR = () => {
       {/* Phone Mockup */}
       <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80">
         <div className="mb-6">
-          <h3 className="text-lg font-semibold text-center">Bulk Generation</h3>
-          <p className="text-sm text-gray-500 text-center">
-            Ready to generate QR codes
+          <h3 className="text-xl font-semibold text-center">Live Preview</h3>
+          <p className="text-sm text-muted-foreground text-center mt-2">
+            Ready to generate {csvUrls.length} QR codes
           </p>
         </div>
         <div className="relative">
@@ -661,37 +872,41 @@ const BulkQR = () => {
             alt="iPhone 15 Mockup"
             className="w-72 h-auto object-contain drop-shadow-lg"
           />
-          {/* Phone content overlay */}
-          <div className="absolute top-[60px] left-1/2 transform -translate-x-1/2 w-[250px] h-[450px] rounded-[35px] overflow-hidden bg-white">
-            <div className="p-4 h-full overflow-y-auto">
-              <div className="space-y-3">
-                {csvUrls.slice(0, 6).map((url, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center gap-3 p-2 bg-gray-50 rounded-lg"
-                  >
-                    <div className="w-10 h-10 bg-white border border-gray-200 rounded flex items-center justify-center">
+          {/* Sample QR codes overlay on phone screen */}
+          {csvUrls.length > 0 ? (
+            <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
+              <div
+                className="bg-white rounded-lg shadow-md p-4 flex flex-col items-center border"
+                style={{ width: "180px" }}
+              >
+                <div className="grid grid-cols-2 gap-2 mb-3">
+                  {csvUrls.slice(0, 4).map((url, index) => (
+                    <div key={index} className="w-16 h-16">
                       {renderQRWithDesign(url, qrDesignOptions, {
-                        width: 30,
-                        height: 30,
+                        width: 60,
+                        height: 60,
                       })}
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-xs font-medium truncate">
-                        Bulk QR {index + 1}
-                      </p>
-                      <p className="text-xs text-gray-500 truncate">{url}</p>
-                    </div>
-                  </div>
-                ))}
-                {csvUrls.length > 6 && (
-                  <div className="text-xs text-gray-500 text-center italic">
-                    +{csvUrls.length - 6} more
-                  </div>
-                )}
+                  ))}
+                </div>
+                <p className="text-xs text-muted-foreground text-center">
+                  {csvUrls.length} URLs ready to generate
+                </p>
               </div>
             </div>
-          </div>
+          ) : (
+            <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center">
+              <div
+                className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg shadow-md p-8 flex flex-col items-center border border-gray-200"
+                style={{ width: "180px", height: "180px" }}
+              >
+                <Upload className="w-12 h-12 text-gray-400 mb-2" />
+                <p className="text-xs text-muted-foreground text-center">
+                  Upload CSV to see preview
+                </p>
+              </div>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -722,15 +937,10 @@ const BulkQR = () => {
                 <div className="flex items-center space-x-4">
                   <div className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50">
                     {result.status === "success" ? (
-                      result.qrCode ? (
-                        <img
-                          src={result.qrCode}
-                          alt="QR Code"
-                          className="w-10 h-10"
-                        />
-                      ) : (
-                        <QRCodeSVG value={result.url} size={40} />
-                      )
+                      renderQRWithDesign(result.url, qrDesignOptions, {
+                        width: 48,
+                        height: 48,
+                      })
                     ) : (
                       <X className="w-6 h-6 text-red-500" />
                     )}
@@ -772,8 +982,8 @@ const BulkQR = () => {
       {/* Phone Mockup */}
       <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80">
         <div className="mb-6">
-          <h1 className="text-lg font-semibold text-center">Completed!</h1>
-          <p className="text-sm text-gray-500 text-center">
+          <h3 className="text-xl font-semibold text-center">Final Preview</h3>
+          <p className="text-sm text-muted-foreground text-center mt-2">
             Your bulk QR codes are ready
           </p>
         </div>
@@ -783,19 +993,25 @@ const BulkQR = () => {
             alt="iPhone 15 Mockup"
             className="w-72 h-auto object-contain drop-shadow-lg"
           />
-          {/* Phone content overlay */}
-          <div className="absolute top-[60px] left-1/2 transform -translate-x-1/2 w-[250px] h-[450px] rounded-[35px] overflow-hidden bg-white">
-            <div className="p-4 h-full flex flex-col items-center justify-center">
-              <CheckCircle className="w-16 h-16 text-green-500 mb-4" />
+          {/* Success overlay on phone screen */}
+          <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
+            <div
+              className="bg-white rounded-lg shadow-md p-6 flex flex-col items-center border"
+              style={{ width: "180px" }}
+            >
+              <CheckCircle className="w-12 h-12 text-green-500 mb-3" />
               <p className="text-lg font-semibold text-center mb-2">
-                {bulkResults.filter((r) => r.status === "success").length} QR
-                Codes
+                {bulkResults.filter((r) => r.status === "success").length}
               </p>
-              <p className="text-sm text-gray-500 text-center mb-4">
-                Generated Successfully
+              <p className="text-sm text-muted-foreground text-center mb-4">
+                QR Codes Generated
               </p>
-              <Button onClick={handleCompleteAndNavigate} className="w-full">
-                View All QR Codes
+              <Button
+                onClick={handleCompleteAndNavigate}
+                disabled={loading}
+                className="w-full text-xs py-2"
+              >
+                {loading ? "Saving..." : "Complete & View All"}
               </Button>
             </div>
           </div>
