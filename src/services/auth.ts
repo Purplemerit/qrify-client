@@ -72,7 +72,17 @@ class AuthService {
    * Register a new user account
    */
   async signup(data: SignupRequest): Promise<SignupResponse> {
+    console.log('📝 AuthService: Making signup API call with:', { email: data.email });
+    debugger; // Check before API call
+    
     const response = await api.post<SignupResponse>('/auth/signup', data);
+    
+    console.log('📝 AuthService: Signup API response:', response);
+    console.log('📝 AuthService: Response status:', response.status);
+    console.log('📝 AuthService: Response headers:', response.headers);
+    console.log('📝 AuthService: Response data:', response.data);
+    debugger; // Check after API call
+    
     // Cookies are set automatically by the server
     return response.data;
   }
@@ -81,7 +91,17 @@ class AuthService {
    * Login with email and password
    */
   async login(data: LoginRequest): Promise<LoginResponse> {
+    console.log('🔐 AuthService: Making login API call with:', { email: data.email });
+    debugger; // Check before API call
+    
     const response = await api.post<LoginResponse>('/auth/login', data);
+    
+    console.log('🔐 AuthService: Login API response:', response);
+    console.log('🔐 AuthService: Response status:', response.status);
+    console.log('🔐 AuthService: Response headers:', response.headers);
+    console.log('🔐 AuthService: Response data:', response.data);
+    debugger; // Check after API call
+    
     // Cookies are set automatically by the server
     return response.data;
   }

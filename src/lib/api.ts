@@ -1,8 +1,12 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 
 // Create axios instance with base URL
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+console.log('🌐 API Base URL:', baseURL);
+console.log('🌐 Environment variables:', import.meta.env);
+
 export const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4000',
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -48,10 +52,23 @@ export const tokenStorage = {
 // Request interceptor (cookies are sent automatically, no manual authorization needed)
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
+    console.log('📡 Making API request:', {
+      method: config.method?.toUpperCase(),
+      url: config.url,
+      baseURL: config.baseURL,
+      fullURL: `${config.baseURL}${config.url}`,
+      headers: config.headers,
+      withCredentials: config.withCredentials,
+      data: config.data
+    });
+    debugger; // Check request configuration
+    
     // Cookies are automatically included due to withCredentials: true
     return config;
   },
   (error) => {
+    console.error('❌ Request interceptor error:', error);
+    debugger; // Check request errors
     return Promise.reject(error);
   }
 );
