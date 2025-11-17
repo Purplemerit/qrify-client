@@ -178,7 +178,7 @@ export function Hero() {
       const qrCode = new QRCodeStyling(qrConfig);
 
       const blob = await qrCode.getRawData("png");
-      if (blob) {
+      if (blob && blob instanceof Blob) {
         const reader = new FileReader();
         reader.onloadend = () => {
           setGeneratedQR(reader.result as string);
