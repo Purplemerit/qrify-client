@@ -44,6 +44,7 @@ interface QRCodeData {
   slug: string;
   dynamic: boolean;
   designOptions?: QRDesignOptions | null;
+  bulk?: boolean; // Add bulk property
 }
 
 const MyQRCodes = () => {
@@ -53,6 +54,10 @@ const MyQRCodes = () => {
   const [editingId, setEditingId] = useState<string | null>(null);
   const [editingName, setEditingName] = useState("");
   const qrRefs = useRef<{ [key: string]: SVGSVGElement | null }>({});
+
+  // Separate regular and bulk QR codes
+  const regularQRCodes = qrCodes.filter((qr) => !qr.bulk);
+  const bulkQRCodes = qrCodes.filter((qr) => qr.bulk);
 
   useEffect(() => {
     const fetchQRCodes = async () => {
@@ -128,12 +133,138 @@ const MyQRCodes = () => {
     <div className="p-4 md:p-6 bg-gray-50/50 min-h-screen">
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold text-gray-800">My QR codes</h1>
-        <Button onClick={() => navigate("/new-qr")}>
-          <Plus className="w-4 h-4 mr-2" />
-          Create New
-        </Button>
+        <div className="flex items-center gap-3">
+          <Button onClick={() => navigate("/bulk-qr")} variant="outline">
+            <Plus className="w-4 h-4 mr-2" />
+            Bulk QR
+          </Button>
+          <Button onClick={() => navigate("/new-qr")}>
+            <Plus className="w-4 h-4 mr-2" />
+            Create New
+          </Button>
+        </div>
       </div>
 
+      {/* Bulk QR Codes Section */}
+      {bulkQRCodes.length > 0 && (
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
+          <div className="p-6 border-b border-gray-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-3">
+                <h2 className="text-lg font-semibold text-gray-700">
+                  Bulk QR Codes
+                </h2>
+                <Badge
+                  variant="secondary"
+                  className="bg-blue-100 text-blue-800"
+                >
+                  {bulkQRCodes.length} codes
+                </Badge>
+              </div>
+            </div>
+          </div>
+
+          {/* Bulk QR Codes Grid */}
+          <div className="p-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+              {bulkQRCodes.map((qr) => (
+                <div
+                  key={qr.id}
+                  className="group relative bg-gray-50 border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all cursor-pointer"
+                  onClick={() => handleQRClick(qr)}
+                >
+                  {/* QR Code Preview */}
+                  <div className="w-full aspect-square border border-gray-200 rounded bg-white flex items-center justify-center mb-3">
+                    {qr.designOptions ? (
+                      <div className="scale-75 origin-center">
+                        {renderQRWithDesign(qr.data, qr.designOptions, {
+                          width: 80,
+                          height: 80,
+                        })}
+                      </div>
+                    ) : (
+                      <QRCodeSVG
+                        value={qr.data}
+                        size={60}
+                        ref={(el) => (qrRefs.current[qr.id] = el)}
+                        level="M"
+                      />
+                    )}
+                  </div>
+
+                  {/* QR Info */}
+                  <div className="space-y-1">
+                    <h3 className="font-medium text-sm text-gray-900 truncate">
+                      {qr.title}
+                    </h3>
+                    <p className="text-xs text-gray-500 truncate">{qr.data}</p>
+                    <div className="flex items-center justify-between">
+                      <Badge
+                        variant="outline"
+                        className="text-xs border-blue-200 text-blue-800 bg-blue-50"
+                      >
+                        Bulk
+                      </Badge>
+                      <span className="text-xs text-gray-400">
+                        {qr.scans?.toLocaleString() || 0}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Actions Menu - appears on hover */}
+                  <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 w-6 p-0 bg-white/90 hover:bg-white"
+                          onClick={(e) => e.stopPropagation()}
+                        >
+                          <MoreHorizontal className="w-3 h-3" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleQRClick(qr)}>
+                          <Eye className="w-4 h-4 mr-2" /> View Details
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDownload(qr.id, qr.title);
+                          }}
+                        >
+                          <Download className="w-4 h-4 mr-2" /> Download
+                        </DropdownMenuItem>
+                        <DropdownMenuItem
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleEditName(qr);
+                          }}
+                        >
+                          <Edit className="w-4 h-4 mr-2" /> Edit Name
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="text-red-600"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(qr.id);
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" /> Delete
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Regular QR Codes Section */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
         <div className="p-6 border-b border-gray-200">
           <h2 className="text-lg font-semibold text-gray-700 mb-4">
@@ -156,7 +287,7 @@ const MyQRCodes = () => {
 
         {/* QR Codes List */}
         <div className="divide-y divide-gray-200">
-          {qrCodes.map((qr) => (
+          {regularQRCodes.map((qr) => (
             <div
               key={qr.id}
               className="flex items-center justify-between p-4 hover:bg-gray-50 transition-colors"
@@ -297,7 +428,7 @@ const MyQRCodes = () => {
         </div>
 
         {/* Empty State */}
-        {qrCodes.length === 0 && (
+        {regularQRCodes.length === 0 && bulkQRCodes.length === 0 && (
           <div className="p-12 text-center">
             <QrCode className="w-16 h-16 text-gray-300 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">
