@@ -1,5 +1,5 @@
-import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar, SidebarTrigger } from "@/components/AppSidebar";
+import { SidebarProvider, useSidebar } from "@/components/ui/sidebar";
+import { AppSidebar } from "@/components/AppSidebar";
 import { useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { authService } from "../services/auth";
@@ -111,6 +111,31 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
   );
 };
 
+// Mobile Menu Button Component
+const MobileMenuButton = () => {
+  const { toggleSidebar } = useSidebar();
+
+  return (
+    <button
+      onClick={toggleSidebar}
+      className="md:hidden p-2 rounded-lg hover:bg-gray-100 active:bg-gray-200 transition-colors"
+      aria-label="Toggle menu"
+    >
+      <svg
+        className="h-7 w-7 text-gray-700"
+        fill="none"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        strokeWidth="2.5"
+        viewBox="0 0 24 24"
+        stroke="currentColor"
+      >
+        <path d="M4 6h16M4 12h16M4 18h16"></path>
+      </svg>
+    </button>
+  );
+};
+
 interface LayoutProps {
   children: React.ReactNode;
 }
@@ -188,7 +213,7 @@ export default function Layout({ children }: LayoutProps) {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full">
-        <AppSidebar />
+        <AppSidebar user={user} />
 
         <div className="flex-1 flex flex-col">
           {/* Header */}
@@ -199,13 +224,13 @@ export default function Layout({ children }: LayoutProps) {
                 <img
                   src="/logo.png"
                   alt="QRify"
-                  className="h-8 w-auto object-contain"
+                  className="h-12 w-auto object-contain"
                 />
               </div>
 
               <nav className="flex items-center gap-3 md:gap-6 text-sm text-gray-600 ml-auto">
                 <a className="hover:text-gray-900 hidden md:block">FAQ</a>
-                <div className="flex items-center gap-2 md:gap-3">
+                <div className="hidden md:flex items-center gap-2 md:gap-3">
                   {user ? (
                     <UserProfile user={user} />
                   ) : (
@@ -221,9 +246,7 @@ export default function Layout({ children }: LayoutProps) {
                 </div>
 
                 {/* Mobile Hamburger Menu - Right Side */}
-                <div className="md:hidden">
-                  <SidebarTrigger />
-                </div>
+                <MobileMenuButton />
               </nav>
             </div>
           </header>
