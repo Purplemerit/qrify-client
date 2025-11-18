@@ -214,7 +214,7 @@ const MyQRCodes = () => {
   };
 
   return (
-    <div className="p-3 md:p-6 bg-gray-50/50 min-h-screen">
+    <div className="p-3 md:p-6 bg-gray-50/50 min-h-screen overflow-x-hidden">
       {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 gap-3">
         <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-800">
@@ -269,8 +269,8 @@ const MyQRCodes = () => {
       </div>
 
       {/* Main Content */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-4 md:p-6 border-b border-gray-200">
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden max-w-full">
+        <div className="p-4 md:p-6 border-b border-gray-200 overflow-hidden">
           {/* Search and View Toggle */}
           <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
             <div className="relative w-full sm:max-w-xs">
@@ -308,35 +308,44 @@ const MyQRCodes = () => {
 
           {/* Tabs */}
           <Tabs value={activeTab} onValueChange={setActiveTab} className="mt-4">
-            <TabsList className="w-full sm:w-auto grid grid-cols-4 h-auto gap-1">
-              <TabsTrigger
-                value="all"
-                className="text-xs sm:text-sm px-2 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-              >
-                All ({filteredQRCodes.length})
-              </TabsTrigger>
-              <TabsTrigger
-                value="dynamic"
-                className="text-xs sm:text-sm px-2 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-              >
-                Dynamic (
-                {filteredQRCodes.filter((qr) => qr.dynamic && !qr.bulk).length})
-              </TabsTrigger>
-              <TabsTrigger
-                value="static"
-                className="text-xs sm:text-sm px-2 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-              >
-                Static (
-                {filteredQRCodes.filter((qr) => !qr.dynamic && !qr.bulk).length}
-                )
-              </TabsTrigger>
-              <TabsTrigger
-                value="bulk"
-                className="text-xs sm:text-sm px-2 py-2 data-[state=active]:bg-blue-600 data-[state=active]:text-white"
-              >
-                Bulk ({filteredQRCodes.filter((qr) => qr.bulk).length})
-              </TabsTrigger>
-            </TabsList>
+            <div className="overflow-x-auto -mx-4 px-4 sm:mx-0 sm:px-0">
+              <TabsList className="inline-flex w-auto h-auto gap-1 min-w-full sm:min-w-0">
+                <TabsTrigger
+                  value="all"
+                  className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap data-[state=active]:bg-blue-600 data-[state=active]:text-white flex-1 sm:flex-none"
+                >
+                  All ({filteredQRCodes.length})
+                </TabsTrigger>
+                <TabsTrigger
+                  value="dynamic"
+                  className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap data-[state=active]:bg-blue-600 data-[state=active]:text-white flex-1 sm:flex-none"
+                >
+                  Dynamic (
+                  {
+                    filteredQRCodes.filter((qr) => qr.dynamic && !qr.bulk)
+                      .length
+                  }
+                  )
+                </TabsTrigger>
+                <TabsTrigger
+                  value="static"
+                  className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap data-[state=active]:bg-blue-600 data-[state=active]:text-white flex-1 sm:flex-none"
+                >
+                  Static (
+                  {
+                    filteredQRCodes.filter((qr) => !qr.dynamic && !qr.bulk)
+                      .length
+                  }
+                  )
+                </TabsTrigger>
+                <TabsTrigger
+                  value="bulk"
+                  className="text-xs sm:text-sm px-2 sm:px-3 py-2 whitespace-nowrap data-[state=active]:bg-blue-600 data-[state=active]:text-white flex-1 sm:flex-none"
+                >
+                  Bulk ({filteredQRCodes.filter((qr) => qr.bulk).length})
+                </TabsTrigger>
+              </TabsList>
+            </div>
 
             {/* Select All Checkbox */}
             {isSelectionMode && displayedQRCodes.length > 0 && (
@@ -547,14 +556,14 @@ const QRListView: React.FC<{
       {qrCodes.map((qr) => (
         <div
           key={qr.id}
-          className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 md:p-4 hover:bg-gray-50 transition-colors gap-3 sm:gap-0 ${
+          className={`flex items-center p-3 md:p-4 hover:bg-gray-50 transition-colors gap-1 sm:gap-2 ${
             selectedQRCodes.has(qr.id)
               ? "bg-blue-50 border-l-4 border-blue-500"
               : ""
           }`}
         >
           {/* Left Section */}
-          <div className="flex items-center space-x-2 md:space-x-4 w-full sm:w-auto min-w-0">
+          <div className="flex items-center space-x-1 sm:space-x-2 md:space-x-3 flex-1 min-w-0 overflow-hidden">
             {isSelectionMode && (
               <Checkbox
                 checked={selectedQRCodes.has(qr.id)}
@@ -563,17 +572,19 @@ const QRListView: React.FC<{
               />
             )}
             <div
-              className="w-10 h-10 md:w-12 md:h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 cursor-pointer flex-shrink-0"
+              className="w-10 h-10 sm:w-12 sm:h-12 md:w-14 md:h-14 border border-gray-200 rounded flex items-center justify-center bg-gray-50 cursor-pointer flex-shrink-0 overflow-hidden"
               onClick={() =>
                 isSelectionMode ? toggleQRSelection(qr.id) : handleQRClick(qr)
               }
             >
               {qr.designOptions ? (
-                <div className="scale-[0.4] md:scale-50 origin-center w-[80px] h-[80px] flex items-center justify-center">
-                  {renderQRWithDesign(qr.data, qr.designOptions, {
-                    width: 80,
-                    height: 80,
-                  })}
+                <div className="scale-[0.35] sm:scale-[0.45] md:scale-50 origin-center flex items-center justify-center">
+                  <div className="w-20 h-20">
+                    {renderQRWithDesign(qr.data, qr.designOptions, {
+                      width: 80,
+                      height: 80,
+                    })}
+                  </div>
                 </div>
               ) : (
                 <QRCodeSVG
@@ -581,16 +592,17 @@ const QRListView: React.FC<{
                   size={32}
                   ref={(el) => (qrRefs.current[qr.id] = el)}
                   level="M"
+                  className="w-[32px] h-[32px] sm:w-[36px] sm:h-[36px]"
                 />
               )}
             </div>
-            <div>
+            <div className="min-w-0 flex-1 overflow-hidden">
               {editingId === qr.id ? (
                 <div className="flex items-center space-x-2">
                   <Input
                     value={editingName}
                     onChange={(e) => setEditingName(e.target.value)}
-                    className="h-8 w-32 md:w-48 text-sm"
+                    className="h-8 w-24 sm:w-32 md:w-48 text-sm"
                     onKeyDown={(e) => {
                       if (e.key === "Enter") handleSaveName(qr.id);
                       if (e.key === "Escape") handleCancelEdit();
@@ -601,7 +613,7 @@ const QRListView: React.FC<{
                     size="sm"
                     variant="ghost"
                     onClick={() => handleSaveName(qr.id)}
-                    className="h-8 w-8 p-0"
+                    className="h-8 w-8 p-0 flex-shrink-0"
                   >
                     <Check className="w-4 h-4 text-green-600" />
                   </Button>
@@ -609,15 +621,15 @@ const QRListView: React.FC<{
                     size="sm"
                     variant="ghost"
                     onClick={handleCancelEdit}
-                    className="h-8 w-8 p-0"
+                    className="h-8 w-8 p-0 flex-shrink-0"
                   >
                     <X className="w-4 h-4 text-red-600" />
                   </Button>
                 </div>
               ) : (
-                <div className="min-w-0 flex-1">
+                <div className="min-w-0 overflow-hidden max-w-[120px] sm:max-w-[180px] md:max-w-xs lg:max-w-md">
                   <h3
-                    className="font-medium text-sm md:text-base text-gray-900 cursor-pointer"
+                    className="font-medium text-sm md:text-base text-gray-900 cursor-pointer truncate"
                     onClick={() =>
                       isSelectionMode
                         ? toggleQRSelection(qr.id)
@@ -635,32 +647,24 @@ const QRListView: React.FC<{
           </div>
 
           {/* Right Section */}
-          <div className="flex items-center justify-between sm:justify-end space-x-2 md:space-x-4 lg:space-x-8 w-full sm:w-auto flex-shrink-0">
-            {/* Created Date */}
-            <div className="hidden lg:block text-sm text-gray-500 whitespace-nowrap">
-              {new Date(qr.created_at).toLocaleDateString()}
-            </div>
-
-            {/* Status Badge */}
+          <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0 ml-auto">
+            {/* Status Badge - Hidden on smallest mobile */}
             <Badge
               variant={qr.status === "Active" ? "default" : "secondary"}
-              className="text-[10px] md:text-xs px-1.5 py-0.5"
+              className="hidden xs:inline-flex text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5 whitespace-nowrap"
             >
               {qr.status}
             </Badge>
-
-            {/* Scan Count */}
-            <div className="hidden md:block text-xs md:text-sm text-gray-500 min-w-[60px] lg:min-w-[80px] text-center whitespace-nowrap">
-              {qr.dynamic
-                ? `${qr.scans?.toLocaleString() || 0} scans`
-                : "No tracking"}
-            </div>
 
             {/* Actions Menu */}
             {!isSelectionMode && (
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-8 w-8 p-0 flex-shrink-0"
+                  >
                     <MoreHorizontal className="w-4 h-4" />
                   </Button>
                 </DropdownMenuTrigger>
@@ -716,11 +720,11 @@ const QRCardView: React.FC<{
   qrRefs,
 }) => {
   return (
-    <div className="grid grid-cols-1 xs:grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 2xl:grid-cols-6 gap-4 md:gap-6">
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-4 md:gap-6">
       {qrCodes.map((qr) => (
         <div
           key={qr.id}
-          className={`group relative bg-white border-2 border-gray-200 rounded-xl p-4 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer ${
+          className={`group relative bg-white border-2 border-gray-200 rounded-lg sm:rounded-xl p-3 sm:p-4 hover:shadow-lg hover:border-blue-300 transition-all cursor-pointer ${
             selectedQRCodes.has(qr.id)
               ? "ring-2 ring-blue-500 bg-blue-50 border-blue-500"
               : ""
@@ -740,9 +744,9 @@ const QRCardView: React.FC<{
           )}
 
           {/* QR Code Preview */}
-          <div className="w-full aspect-square border border-gray-200 rounded-lg bg-gray-50 flex items-center justify-center mb-3">
+          <div className="w-full aspect-square border border-gray-200 rounded-lg bg-gray-50 flex items-center justify-center mb-2 sm:mb-3">
             {qr.designOptions ? (
-              <div className="scale-75 md:scale-90 origin-center">
+              <div className="scale-[0.6] sm:scale-75 md:scale-90 origin-center">
                 {renderQRWithDesign(qr.data, qr.designOptions, {
                   width: 100,
                   height: 100,
@@ -751,29 +755,36 @@ const QRCardView: React.FC<{
             ) : (
               <QRCodeSVG
                 value={qr.data}
-                size={80}
+                size={60}
                 ref={(el) => (qrRefs.current[qr.id] = el)}
                 level="M"
+                className="w-[60px] h-[60px] sm:w-[80px] sm:h-[80px]"
               />
             )}
           </div>
 
           {/* QR Info */}
-          <div className="space-y-2">
-            <h3 className="font-semibold text-sm md:text-base text-gray-900 truncate">
+          <div className="space-y-1 sm:space-y-2">
+            <h3
+              className="font-semibold text-xs sm:text-sm md:text-base text-gray-900 truncate"
+              title={qr.title}
+            >
               {qr.title}
             </h3>
-            <p className="text-xs md:text-sm text-gray-500 truncate">
+            <p
+              className="text-[10px] sm:text-xs md:text-sm text-gray-500 truncate"
+              title={qr.data}
+            >
               {qr.data}
             </p>
-            <div className="flex items-center justify-between gap-2 pt-1">
+            <div className="flex items-center justify-between gap-1 sm:gap-2 pt-0.5 sm:pt-1">
               <Badge
                 variant={qr.status === "Active" ? "default" : "secondary"}
-                className="text-xs px-2 py-0.5"
+                className="text-[10px] sm:text-xs px-1.5 sm:px-2 py-0.5"
               >
                 {qr.status}
               </Badge>
-              <span className="text-xs md:text-sm text-gray-500 font-medium">
+              <span className="text-[10px] sm:text-xs md:text-sm text-gray-500 font-medium">
                 {qr.dynamic ? `${qr.scans?.toLocaleString() || 0}` : "Static"}
               </span>
             </div>
