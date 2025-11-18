@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useCallback, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { authService } from "../services/auth";
 import { GoogleAuthButton } from "../components/GoogleAuthButton";
@@ -11,7 +11,55 @@ export default function Signup() {
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [suggestion, setSuggestion] = useState<string | null>(null);
+  const [emailValidating, setEmailValidating] = useState(false);
+  const [emailValid, setEmailValid] = useState<boolean | null>(null);
+  const [emailError, setEmailError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  // Debounce email validation
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      if (formData.email && formData.email.includes("@")) {
+        validateEmail(formData.email);
+      } else {
+        setEmailValid(null);
+        setEmailError(null);
+      }
+    }, 800); // Wait 800ms after user stops typing
+
+    return () => clearTimeout(timer);
+  }, [formData.email]);
+
+  const validateEmail = async (email: string) => {
+    setEmailValidating(true);
+    setEmailError(null);
+    setSuggestion(null);
+
+    try {
+      const result = await authService.verifyEmail(email);
+
+      if (result.valid) {
+        setEmailValid(true);
+        setEmailError(null);
+        if (result.suggestion) {
+          setSuggestion(result.suggestion);
+        }
+      } else {
+        setEmailValid(false);
+        setEmailError(result.error || "Invalid email address");
+        if (result.suggestion) {
+          setSuggestion(result.suggestion);
+        }
+      }
+    } catch (err) {
+      // If validation fails, don't block the user
+      setEmailValid(null);
+      setEmailError(null);
+    } finally {
+      setEmailValidating(false);
+    }
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -23,6 +71,13 @@ export default function Signup() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
+    setSuggestion(null);
+
+    // Check if email validation failed
+    if (emailValid === false) {
+      setError(emailError || "Please enter a valid email address");
+      return;
+    }
 
     // Validate passwords match
     if (formData.password !== formData.confirmPassword) {
@@ -56,10 +111,15 @@ export default function Signup() {
       // ...existing code...
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
-        const error = err as { response?: { data?: { error?: string } } };
+        const error = err as {
+          response?: { data?: { error?: string; suggestion?: string } };
+        };
         setError(
           error.response?.data?.error || "Signup failed. Please try again."
         );
+        if (error.response?.data?.suggestion) {
+          setSuggestion(error.response.data.suggestion);
+        }
       } else {
         setError("An unexpected error occurred. Please try again.");
       }
@@ -92,6 +152,11 @@ export default function Signup() {
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
               <p className="text-sm text-red-600">{error}</p>
+              {suggestion && (
+                <p className="text-sm text-blue-600 mt-2">
+                  Did you mean: <strong>{suggestion}</strong>?
+                </p>
+              )}
             </div>
           )}
 
@@ -103,17 +168,83 @@ export default function Signup() {
               >
                 Email Address
               </label>
-              <input
-                id="email"
-                name="email"
-                type="email"
-                value={formData.email}
-                onChange={handleChange}
-                className="w-full px-3 py-2.5 text-sm border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition-all duration-200 bg-gray-50 focus:bg-white"
-                placeholder="Enter your email"
-                required
-                disabled={loading}
-              />
+              <div className="relative">
+                <input
+                  id="email"
+                  name="email"
+                  type="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  className={`w-full px-3 py-2.5 text-sm border rounded-lg focus:outline-none focus:ring-2 transition-all duration-200 bg-gray-50 focus:bg-white pr-10 ${
+                    emailValid === true
+                      ? "border-green-500 focus:ring-green-600"
+                      : emailValid === false
+                      ? "border-red-500 focus:ring-red-600"
+                      : "border-gray-300 focus:ring-blue-600"
+                  }`}
+                  placeholder="Enter your email"
+                  required
+                  disabled={loading}
+                />
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
+                  {emailValidating && (
+                    <svg
+                      className="animate-spin h-5 w-5 text-blue-600"
+                      xmlns="http://www.w3.org/2000/svg"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                    >
+                      <circle
+                        className="opacity-25"
+                        cx="12"
+                        cy="12"
+                        r="10"
+                        stroke="currentColor"
+                        strokeWidth="4"
+                      ></circle>
+                      <path
+                        className="opacity-75"
+                        fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
+                      ></path>
+                    </svg>
+                  )}
+                  {!emailValidating && emailValid === true && (
+                    <svg
+                      className="h-5 w-5 text-green-500"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path d="M5 13l4 4L19 7"></path>
+                    </svg>
+                  )}
+                  {!emailValidating && emailValid === false && (
+                    <svg
+                      className="h-5 w-5 text-red-500"
+                      fill="none"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path d="M6 18L18 6M6 6l12 12"></path>
+                    </svg>
+                  )}
+                </div>
+              </div>
+              {emailError && (
+                <p className="mt-1 text-xs text-red-600">{emailError}</p>
+              )}
+              {suggestion && !emailError && (
+                <p className="mt-1 text-xs text-blue-600">
+                  Did you mean: <strong>{suggestion}</strong>?
+                </p>
+              )}
             </div>
 
             <div>

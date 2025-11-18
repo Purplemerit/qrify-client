@@ -71,6 +71,13 @@ export interface GetMeResponse {
   user: User;
 }
 
+export interface VerifyEmailResponse {
+  valid: boolean;
+  error?: string;
+  suggestion?: string;
+  result?: string;
+}
+
 class AuthService {
   /**
    * Register a new user account
@@ -184,6 +191,14 @@ class AuthService {
    */
   async deleteAccount(data: DeleteAccountRequest): Promise<{ message: string }> {
     const response = await api.delete<{ message: string }>('/auth/account', { data });
+    return response.data;
+  }
+
+  /**
+   * Verify email address in real-time
+   */
+  async verifyEmail(email: string): Promise<VerifyEmailResponse> {
+    const response = await api.post<VerifyEmailResponse>('/auth/verify-email', { email });
     return response.data;
   }
 
