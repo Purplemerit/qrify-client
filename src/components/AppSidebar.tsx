@@ -19,8 +19,11 @@ import {
   SidebarMenu,
   SidebarMenuButton,
   SidebarMenuItem,
+  SidebarTrigger,
   useSidebar,
 } from "@/components/ui/sidebar";
+
+export { SidebarTrigger };
 
 const mainItems = [
   { title: "New QR", url: "/new-qr", icon: Plus },

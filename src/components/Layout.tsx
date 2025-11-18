@@ -1,5 +1,5 @@
 import { SidebarProvider } from "@/components/ui/sidebar";
-import { AppSidebar } from "@/components/AppSidebar";
+import { AppSidebar, SidebarTrigger } from "@/components/AppSidebar";
 import { useLocation } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
 import { authService } from "../services/auth";
@@ -56,15 +56,17 @@ const UserProfile: React.FC<UserProfileProps> = ({ user }) => {
     <div className="relative" ref={dropdownRef}>
       <button
         onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-        className="flex items-center gap-3 p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className="flex items-center gap-2 md:gap-3 p-1.5 md:p-2 rounded-full hover:bg-gray-100 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500"
         aria-label="User menu"
       >
-        <div className="w-8 h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-sm font-medium">
+        <div className="w-7 h-7 md:w-8 md:h-8 bg-blue-600 text-white rounded-full flex items-center justify-center text-xs md:text-sm font-medium">
           {getInitials(user.email)}
         </div>
-        <span className="text-gray-700 font-medium">{user.email}</span>
+        <span className="text-gray-700 font-medium hidden sm:inline text-sm md:text-base">
+          {user.email}
+        </span>
         <svg
-          className={`w-4 h-4 text-gray-500 transition-transform ${
+          className={`w-3 h-3 md:w-4 md:h-4 text-gray-500 transition-transform hidden sm:block ${
             isDropdownOpen ? "rotate-180" : ""
           }`}
           fill="none"
@@ -190,30 +192,46 @@ export default function Layout({ children }: LayoutProps) {
 
         <div className="flex-1 flex flex-col">
           {/* Header */}
-          <header className="py-6 bg-white shadow-sm">
-            <div className="max-w-6xl mx-auto px-6 flex items-center justify-end">
-              <nav className="flex items-center gap-6 text-sm text-gray-600">
-                <a className="hover:text-gray-900">FAQ</a>
-                <div className="flex items-center gap-3">
+          <header className="py-4 md:py-6 bg-white shadow-sm sticky top-0 z-10">
+            <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
+              {/* Logo for mobile */}
+              <div className="md:hidden">
+                <img
+                  src="/logo.png"
+                  alt="QRify"
+                  className="h-8 w-auto object-contain"
+                />
+              </div>
+
+              <nav className="flex items-center gap-3 md:gap-6 text-sm text-gray-600 ml-auto">
+                <a className="hover:text-gray-900 hidden md:block">FAQ</a>
+                <div className="flex items-center gap-2 md:gap-3">
                   {user ? (
                     <UserProfile user={user} />
                   ) : (
                     <>
-                      <button className="px-4 py-2 rounded-full border">
+                      <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-full border text-xs md:text-sm">
                         Log In
                       </button>
-                      <button className="px-4 py-2 rounded-full bg-blue-600 text-white">
+                      <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-blue-600 text-white text-xs md:text-sm">
                         Register
                       </button>
                     </>
                   )}
+                </div>
+
+                {/* Mobile Hamburger Menu - Right Side */}
+                <div className="md:hidden">
+                  <SidebarTrigger />
                 </div>
               </nav>
             </div>
           </header>
 
           {/* Main Content */}
-          <main className="flex-1 p-6">{children}</main>
+          <main className="flex-1 p-4 md:p-6 overflow-x-hidden">
+            {children}
+          </main>
         </div>
       </div>
     </SidebarProvider>

@@ -292,23 +292,25 @@ const Templates = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4">
+    <div className="max-w-6xl mx-auto py-4 md:py-8 px-4 md:px-6">
       <PreviewModal />
       {!showCreateForm ? (
         // Templates List View
         <>
-          <div className="mb-8">
-            <h1 className="text-3xl font-semibold mb-2">QR Code Templates</h1>
-            <p className="text-muted-foreground">
+          <div className="mb-6 md:mb-8">
+            <h1 className="text-2xl md:text-3xl font-semibold mb-2">
+              QR Code Templates
+            </h1>
+            <p className="text-muted-foreground text-sm md:text-base">
               Create and manage your custom QR code design templates
             </p>
           </div>
 
           {/* Create New Template Button */}
-          <div className="mb-8">
+          <div className="mb-6 md:mb-8">
             <Button
               onClick={() => setShowCreateForm(true)}
-              className="flex items-center gap-2"
+              className="flex items-center gap-2 w-full sm:w-auto"
               disabled={loading}
             >
               <Plus className="h-4 w-4" />

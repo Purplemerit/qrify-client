@@ -113,13 +113,13 @@ const Stats = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-7xl mx-auto py-8 px-6">
-        <div className="mb-8 flex items-center justify-between fade-in">
+      <div className="max-w-7xl mx-auto py-4 md:py-8 px-4 md:px-6">
+        <div className="mb-6 md:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 fade-in">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
               Statistics
             </h1>
-            <p className="text-muted-foreground mt-2 text-lg">
+            <p className="text-muted-foreground mt-1 md:mt-2 text-sm md:text-lg">
               Overview of your QR code performance and analytics
             </p>
           </div>
@@ -128,7 +128,7 @@ const Stats = () => {
             size="sm"
             onClick={refetch}
             disabled={loading}
-            className="bg-white/80 hover:bg-white border-2 hover:border-primary/50 transition-all duration-300 shadow-md hover:shadow-lg px-6"
+            className="bg-white/80 hover:bg-white border-2 hover:border-primary/50 transition-all duration-300 shadow-md hover:shadow-lg px-4 md:px-6"
           >
             <RefreshCw
               className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
@@ -138,7 +138,7 @@ const Stats = () => {
         </div>
 
         {/* Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-slide-up">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mb-6 md:mb-8 animate-slide-up">
           <Card className="bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover-lift group">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
               <CardTitle className="text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors duration-300">

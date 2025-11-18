@@ -104,16 +104,16 @@ const Users = () => {
     );
   }
   return (
-    <div className="max-w-6xl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold">Users</h1>
-        <p className="text-muted-foreground mt-1">
+    <div className="max-w-6xl mx-auto px-4 md:px-6">
+      <div className="mb-4 md:mb-6">
+        <h1 className="text-xl md:text-2xl font-semibold">Users</h1>
+        <p className="text-muted-foreground mt-1 text-sm md:text-base">
           Manage team members and their permissions
         </p>
       </div>
 
       {/* Header Actions */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
+      <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-4 md:mb-6">
         <div className="flex-1">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -122,7 +122,7 @@ const Users = () => {
         </div>
         <div className="flex gap-2">
           <Select>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filter by role" />
             </SelectTrigger>
             <SelectContent>
@@ -132,9 +132,10 @@ const Users = () => {
               <SelectItem value="viewer">Viewer</SelectItem>
             </SelectContent>
           </Select>
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Invite User
+          <Button size="sm" className="whitespace-nowrap">
+            <Plus className="w-4 h-4 mr-1 md:mr-2" />
+            <span className="hidden sm:inline">Invite User</span>
+            <span className="sm:hidden">Invite</span>
           </Button>
         </div>
       </div>

@@ -1144,7 +1144,7 @@ const BulkQR = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-8xl mx-auto py-8">
+      <div className="max-w-8xl mx-auto py-4 md:py-8 px-4 md:px-6">
         {renderStepIndicator()}
         <div className="transition-all duration-700 ease-in-out">
           {currentStep === 1 && renderStep1()}
