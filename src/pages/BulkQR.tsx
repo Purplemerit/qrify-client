@@ -313,17 +313,17 @@ const BulkQR = () => {
   };
 
   const renderStepIndicator = () => (
-    <div className="mb-12 px-10">
+    <div className="mb-6 md:mb-12 px-4 md:px-10">
       {/* Step Indicator */}
-      <div className="flex items-center justify-center mb-8 mt-8">
-        <div className="flex items-center space-x-4 relative">
+      <div className="flex items-center justify-center mb-6 md:mb-8 mt-4 md:mt-8">
+        <div className="flex items-center space-x-2 md:space-x-4 relative">
           {/* Step 1 */}
           <div
-            className="flex items-center space-x-3 cursor-pointer transition-all duration-300"
+            className="flex items-center space-x-1 md:space-x-3 cursor-pointer transition-all duration-300"
             onClick={() => handleStepClick(1)}
           >
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
+              className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium transition-all duration-300 ${
                 currentStep === 1
                   ? "bg-primary text-primary-foreground shadow-lg scale-110"
                   : currentStep > 1
@@ -334,7 +334,7 @@ const BulkQR = () => {
               {currentStep > 1 ? "✓" : "1"}
             </div>
             <span
-              className={`text-sm transition-all duration-300 ${
+              className={`text-xs md:text-sm transition-all duration-300 hidden md:inline ${
                 currentStep >= 1
                   ? "font-medium text-foreground"
                   : "text-muted-foreground"
@@ -346,18 +346,18 @@ const BulkQR = () => {
 
           {/* Line */}
           <div
-            className={`h-px w-16 transition-colors duration-500 ${
+            className={`h-px w-8 md:w-16 transition-colors duration-500 ${
               currentStep > 1 ? "bg-green-500" : "bg-muted"
             }`}
           ></div>
 
           {/* Step 2 */}
           <div
-            className="flex items-center space-x-3 cursor-pointer transition-all duration-300"
+            className="flex items-center space-x-1 md:space-x-3 cursor-pointer transition-all duration-300"
             onClick={() => handleStepClick(2)}
           >
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
+              className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium transition-all duration-300 ${
                 currentStep === 2
                   ? "bg-primary text-primary-foreground shadow-lg scale-110"
                   : currentStep > 2
@@ -368,7 +368,7 @@ const BulkQR = () => {
               {currentStep > 2 ? "✓" : "2"}
             </div>
             <span
-              className={`text-sm transition-all duration-300 ${
+              className={`text-xs md:text-sm transition-all duration-300 hidden md:inline ${
                 currentStep >= 2
                   ? "font-medium text-foreground"
                   : "text-muted-foreground"
@@ -380,18 +380,18 @@ const BulkQR = () => {
 
           {/* Line */}
           <div
-            className={`h-px w-16 transition-colors duration-500 ${
+            className={`h-px w-8 md:w-16 transition-colors duration-500 ${
               currentStep > 2 ? "bg-green-500" : "bg-muted"
             }`}
           ></div>
 
           {/* Step 3 */}
           <div
-            className="flex items-center space-x-3 cursor-pointer transition-all duration-300"
+            className="flex items-center space-x-1 md:space-x-3 cursor-pointer transition-all duration-300"
             onClick={() => handleStepClick(3)}
           >
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
+              className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium transition-all duration-300 ${
                 currentStep === 3
                   ? "bg-primary text-primary-foreground shadow-lg scale-110"
                   : currentStep > 3
@@ -402,7 +402,7 @@ const BulkQR = () => {
               {currentStep > 3 ? "✓" : "3"}
             </div>
             <span
-              className={`text-sm transition-all duration-300 ${
+              className={`text-xs md:text-sm transition-all duration-300 hidden md:inline ${
                 currentStep >= 3
                   ? "font-medium text-foreground"
                   : "text-muted-foreground"
@@ -414,15 +414,15 @@ const BulkQR = () => {
 
           {/* Line */}
           <div
-            className={`h-px w-16 transition-colors duration-500 ${
+            className={`h-px w-8 md:w-16 transition-colors duration-500 ${
               currentStep > 3 ? "bg-green-500" : "bg-muted"
             }`}
           ></div>
 
           {/* Step 4 */}
-          <div className="flex items-center space-x-3">
+          <div className="flex items-center space-x-1 md:space-x-3">
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
+              className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium transition-all duration-300 ${
                 currentStep === 4
                   ? "bg-primary text-primary-foreground shadow-lg scale-110"
                   : "bg-muted text-muted-foreground"
@@ -431,7 +431,7 @@ const BulkQR = () => {
               4
             </div>
             <span
-              className={`text-sm transition-all duration-300 ${
+              className={`text-xs md:text-sm transition-all duration-300 hidden md:inline ${
                 currentStep === 4
                   ? "font-medium text-foreground"
                   : "text-muted-foreground"
@@ -446,17 +446,17 @@ const BulkQR = () => {
       {/* Navigation Buttons */}
       <div className="flex justify-center">
         {currentStep === 2 && (
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             <Button
               variant="outline"
               onClick={() => setCurrentStep(1)}
-              className="px-8 rounded-3xl"
+              className="px-4 md:px-8 rounded-3xl text-sm md:text-base"
             >
               ← Back
             </Button>
             <Button
               onClick={() => setCurrentStep(3)}
-              className="px-8 rounded-3xl"
+              className="px-4 md:px-8 rounded-3xl text-sm md:text-base"
             >
               Next →
             </Button>
@@ -464,23 +464,25 @@ const BulkQR = () => {
         )}
 
         {currentStep === 3 && (
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             <Button
               variant="outline"
               onClick={() => setCurrentStep(2)}
-              className="px-8 rounded-3xl"
+              className="px-4 md:px-8 rounded-3xl text-sm md:text-base"
             >
               ← Back
             </Button>
             <Button
               onClick={handleGenerateBulkQR}
               disabled={csvUrls.length === 0 || loading}
-              className="px-8 rounded-3xl"
+              className="px-4 md:px-8 rounded-3xl text-sm md:text-base"
             >
               {loading
                 ? "Generating..."
                 : csvUrls.length > 0
-                ? `Generate ${csvUrls.length} QR Codes`
+                ? `Generate ${csvUrls.length} QR${
+                    csvUrls.length > 1 ? "s" : ""
+                  }`
                 : "Generate QR Codes"}
             </Button>
           </div>
@@ -490,9 +492,9 @@ const BulkQR = () => {
           <Button
             onClick={handleCompleteAndNavigate}
             disabled={loading}
-            className="px-8 rounded-3xl"
+            className="px-4 md:px-8 rounded-3xl text-sm md:text-base"
           >
-            {loading ? "Saving Designs..." : "Complete & View QR Codes"}
+            {loading ? "Saving..." : "Complete & View"}
           </Button>
         )}
       </div>
@@ -500,7 +502,7 @@ const BulkQR = () => {
   );
 
   const renderStep1 = () => (
-    <div className="flex gap-12 w-full px-10 justify-between">
+    <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 w-full px-4 md:px-10 justify-between">
       {/* Main Content */}
       <div className="flex-1 max-w-4xl">
         {/* Dynamic Bulk QRs Section */}
@@ -645,7 +647,7 @@ const BulkQR = () => {
       </div>
 
       {/* Phone Mockup - Moved to right */}
-      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80">
+      <div className="hidden lg:flex flex-shrink-0 flex-col items-center sticky top-24 h-fit ml-8 w-80">
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-center">Preview Example</h3>
           <p className="text-sm text-muted-foreground text-center mt-2">
@@ -678,16 +680,38 @@ const BulkQR = () => {
   );
 
   const renderStep2 = () => (
-    <div className="flex gap-12 w-full px-10 justify-between">
+    <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 w-full px-4 md:px-10 justify-between">
       {/* Main Content */}
       <div className="flex-1 max-w-4xl">
-        <div className="space-y-8">
+        {/* Mobile Preview */}
+        <div className="lg:hidden mb-6">
+          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg p-6 border-2 border-blue-100">
+            <div className="flex items-center justify-between mb-4">
+              <div className="bg-white rounded-full px-4 py-1.5 shadow-sm">
+                <span className="text-xs font-semibold text-blue-600">
+                  Design Preview
+                </span>
+              </div>
+            </div>
+            <div className="flex justify-center">
+              {renderQRWithDesign("https://example.com", qrDesignOptions, {
+                width: 140,
+                height: 140,
+              })}
+            </div>
+            <p className="text-xs text-center text-muted-foreground mt-4">
+              This design will apply to all QR codes
+            </p>
+          </div>
+        </div>
+
+        <div className="space-y-6 md:space-y-8">
           <div>
-            <h1 className="text-2xl font-semibold mb-2">
+            <h1 className="text-xl md:text-2xl font-semibold mb-2">
               {selectedQRType} Bulk QR Codes{" "}
               {isStaticQR ? "(Static)" : "(Dynamic)"}
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-sm md:text-base text-muted-foreground">
               Choose the design options that will be applied to all QR codes
               {isStaticQR
                 ? " - These will be static QR codes with no tracking"
@@ -837,7 +861,7 @@ const BulkQR = () => {
       </div>
 
       {/* Phone Mockup */}
-      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80">
+      <div className="hidden lg:flex flex-shrink-0 flex-col items-center sticky top-24 h-fit ml-8 w-80">
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-center">Design Preview</h3>
           <p className="text-sm text-muted-foreground text-center mt-2">
@@ -866,13 +890,55 @@ const BulkQR = () => {
   );
 
   const renderStep3 = () => (
-    <div className="flex gap-12 w-full px-10 justify-between">
+    <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 w-full px-4 md:px-10 justify-between">
       {/* Main Content */}
       <div className="flex-1 max-w-4xl">
+        {/* Mobile Preview */}
+        <div className="lg:hidden mb-6">
+          {csvUrls.length > 0 ? (
+            <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-lg p-6 border-2 border-purple-100">
+              <div className="flex items-center justify-between mb-4">
+                <div className="bg-white rounded-full px-4 py-1.5 shadow-sm">
+                  <span className="text-xs font-semibold text-purple-600">
+                    Ready to Generate
+                  </span>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-2 mb-4">
+                {csvUrls.slice(0, 4).map((url, index) => (
+                  <div
+                    key={index}
+                    className="flex justify-center p-2 bg-white rounded-lg"
+                  >
+                    {renderQRWithDesign(url, qrDesignOptions, {
+                      width: 60,
+                      height: 60,
+                    })}
+                  </div>
+                ))}
+              </div>
+              <p className="text-xs text-center text-muted-foreground">
+                {csvUrls.length} URLs ready to generate
+              </p>
+            </div>
+          ) : (
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl shadow-lg p-8 border-2 border-gray-200">
+              <div className="flex flex-col items-center">
+                <Upload className="w-12 h-12 text-gray-400 mb-3" />
+                <p className="text-sm text-center text-muted-foreground">
+                  Upload CSV to see preview
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
+
         <div className="space-y-6">
           <div>
-            <h1 className="text-2xl font-semibold mb-2">Upload CSV File</h1>
-            <p className="text-muted-foreground">
+            <h1 className="text-xl md:text-2xl font-semibold mb-2">
+              Upload CSV File
+            </h1>
+            <p className="text-sm md:text-base text-muted-foreground">
               Upload a CSV file with URLs in the first column
             </p>
           </div>
@@ -981,7 +1047,7 @@ const BulkQR = () => {
       </div>
 
       {/* Phone Mockup */}
-      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80">
+      <div className="hidden lg:flex flex-shrink-0 flex-col items-center sticky top-24 h-fit ml-8 w-80">
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-center">Live Preview</h3>
           <p className="text-sm text-muted-foreground text-center mt-2">
@@ -1035,29 +1101,29 @@ const BulkQR = () => {
   );
 
   const renderStep4 = () => (
-    <div className="flex gap-12 w-full px-10 justify-between">
+    <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 w-full px-4 md:px-10 justify-between">
       {/* Main Content */}
       <div className="flex-1 max-w-4xl">
         <div className="space-y-6">
           <div>
-            <h1 className="text-2xl font-semibold mb-2">
+            <h1 className="text-xl md:text-2xl font-semibold mb-2">
               Bulk QR Generation Results
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-sm md:text-base text-muted-foreground">
               {bulkResults.filter((r) => r.status === "success").length} of{" "}
               {bulkResults.length} QR codes generated successfully
             </p>
           </div>
 
           {/* Results List */}
-          <div className="space-y-4">
+          <div className="space-y-3 md:space-y-4">
             {bulkResults.map((result, index) => (
               <div
                 key={result.id}
-                className="flex items-center justify-between p-4 bg-white border border-gray-200 rounded-lg"
+                className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 md:p-4 bg-white border border-gray-200 rounded-lg gap-3 sm:gap-0"
               >
-                <div className="flex items-center space-x-4">
-                  <div className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50">
+                <div className="flex items-center space-x-3 md:space-x-4 w-full sm:w-auto">
+                  <div className="w-10 h-10 md:w-12 md:h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 flex-shrink-0">
                     {result.status === "success" ? (
                       renderQRWithDesign(result.url, qrDesignOptions, {
                         width: 48,
@@ -1067,19 +1133,21 @@ const BulkQR = () => {
                       <X className="w-6 h-6 text-red-500" />
                     )}
                   </div>
-                  <div>
-                    <h3 className="font-medium text-gray-900">
+                  <div className="min-w-0 flex-1">
+                    <h3 className="font-medium text-sm md:text-base text-gray-900">
                       {result.title}
                     </h3>
-                    <p className="text-sm text-gray-500 truncate max-w-xs">
+                    <p className="text-xs md:text-sm text-gray-500 truncate">
                       {result.url}
                     </p>
                     {result.error && (
-                      <p className="text-sm text-red-500">{result.error}</p>
+                      <p className="text-xs md:text-sm text-red-500">
+                        {result.error}
+                      </p>
                     )}
                   </div>
                 </div>
-                <div className="flex items-center space-x-2">
+                <div className="flex items-center space-x-2 w-full sm:w-auto justify-end">
                   {result.status === "success" ? (
                     <Badge
                       variant="default"
@@ -1102,7 +1170,7 @@ const BulkQR = () => {
       </div>
 
       {/* Phone Mockup */}
-      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80">
+      <div className="hidden lg:flex flex-shrink-0 flex-col items-center sticky top-24 h-fit ml-8 w-80">
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-center">Final Preview</h3>
           <p className="text-sm text-muted-foreground text-center mt-2">
