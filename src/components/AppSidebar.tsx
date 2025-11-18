@@ -90,13 +90,16 @@ export function AppSidebar({ user }: AppSidebarProps = {}) {
         {/* Logo */}
         <div className="p-2 border-b">
           <div className="flex items-center justify-between gap-2 group-data-[collapsible=icon]:justify-center">
-            <div className="w-32 h-14 flex items-center justify-center overflow-hidden group-data-[collapsible=icon]:w-auto group-data-[collapsible=icon]:h-auto">
+            <a
+              href="/new-qr"
+              className="w-32 h-14 flex items-center justify-center overflow-hidden group-data-[collapsible=icon]:w-auto group-data-[collapsible=icon]:h-auto"
+            >
               <img
                 src="/logo.png"
                 alt="QRify Logo"
-                className="w-full h-full object-contain group-data-[collapsible=icon]:hidden"
+                className="w-full h-full object-contain group-data-[collapsible=icon]:hidden cursor-pointer"
               />
-            </div>
+            </a>
             {!isMobile && (
               <button
                 onClick={toggleSidebar}

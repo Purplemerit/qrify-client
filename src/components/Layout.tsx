@@ -220,13 +220,13 @@ export default function Layout({ children }: LayoutProps) {
           <header className="py-4 md:py-6 bg-white shadow-sm sticky top-0 z-10">
             <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
               {/* Logo for mobile */}
-              <div className="md:hidden">
+              <a href="/new-qr" className="md:hidden">
                 <img
                   src="/logo.png"
                   alt="QRify"
-                  className="h-12 w-auto object-contain"
+                  className="h-12 w-auto object-contain cursor-pointer"
                 />
-              </div>
+              </a>
 
               <nav className="flex items-center gap-3 md:gap-6 text-sm text-gray-600 ml-auto">
                 <a className="hover:text-gray-900 hidden md:block">FAQ</a>
