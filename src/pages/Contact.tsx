@@ -123,32 +123,34 @@ const Contact = () => {
     }
   };
   return (
-    <div className="max-w-4xl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold">Contact Support</h1>
-        <p className="text-muted-foreground mt-1">
-          Get help from our support team
+    <div className="w-full max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+      {/* Header */}
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold tracking-tight">Contact Support</h1>
+        <p className="text-muted-foreground mt-2">
+          Get help from our support team. We typically respond within 24 hours.
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
         {/* Contact Form */}
-        <div className="lg:col-span-2">
+        <div className="lg:col-span-8">
           <Card>
             <CardHeader>
               <CardTitle>Send us a message</CardTitle>
               <CardDescription>
-                We'll get back to you as soon as possible
+                Fill out the form below and we'll get back to you as soon as
+                possible
               </CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-2">
                     <Label htmlFor="firstName">First Name *</Label>
                     <Input
                       id="firstName"
-                      placeholder="Enter your first name"
+                      placeholder="John"
                       value={formData.firstName}
                       onChange={handleInputChange}
                       required
@@ -158,7 +160,7 @@ const Contact = () => {
                     <Label htmlFor="lastName">Last Name *</Label>
                     <Input
                       id="lastName"
-                      placeholder="Enter your last name"
+                      placeholder="Doe"
                       value={formData.lastName}
                       onChange={handleInputChange}
                       required
@@ -171,72 +173,81 @@ const Contact = () => {
                   <Input
                     id="email"
                     type="email"
-                    placeholder="Enter your email"
+                    placeholder="john@example.com"
                     value={formData.email}
                     onChange={handleInputChange}
                     required
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="subject">Subject *</Label>
-                  <Select
-                    value={formData.subject}
-                    onValueChange={(value) =>
-                      handleSelectChange("subject", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a topic" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="technical">
-                        Technical Support
-                      </SelectItem>
-                      <SelectItem value="billing">Billing Question</SelectItem>
-                      <SelectItem value="feature">Feature Request</SelectItem>
-                      <SelectItem value="bug">Bug Report</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="subject">Subject *</Label>
+                    <Select
+                      value={formData.subject}
+                      onValueChange={(value) =>
+                        handleSelectChange("subject", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select a topic" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="technical">
+                          Technical Support
+                        </SelectItem>
+                        <SelectItem value="billing">
+                          Billing Question
+                        </SelectItem>
+                        <SelectItem value="feature">Feature Request</SelectItem>
+                        <SelectItem value="bug">Bug Report</SelectItem>
+                        <SelectItem value="other">Other</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
 
-                <div className="space-y-2">
-                  <Label htmlFor="priority">Priority *</Label>
-                  <Select
-                    value={formData.priority}
-                    onValueChange={(value) =>
-                      handleSelectChange("priority", value)
-                    }
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select priority" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="low">Low</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                      <SelectItem value="urgent">Urgent</SelectItem>
-                    </SelectContent>
-                  </Select>
+                  <div className="space-y-2">
+                    <Label htmlFor="priority">Priority *</Label>
+                    <Select
+                      value={formData.priority}
+                      onValueChange={(value) =>
+                        handleSelectChange("priority", value)
+                      }
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select priority" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="low">Low</SelectItem>
+                        <SelectItem value="medium">Medium</SelectItem>
+                        <SelectItem value="high">High</SelectItem>
+                        <SelectItem value="urgent">Urgent</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
                 </div>
 
                 <div className="space-y-2">
                   <Label htmlFor="message">Message *</Label>
                   <Textarea
                     id="message"
-                    placeholder="Describe your issue or question in detail..."
-                    rows={6}
+                    placeholder="Please describe your issue or question in detail..."
+                    rows={5}
                     value={formData.message}
                     onChange={handleInputChange}
                     required
+                    className="resize-none"
                   />
+                  <p className="text-xs text-muted-foreground">
+                    Minimum 10 characters
+                  </p>
                 </div>
 
                 <Button
                   type="submit"
-                  className="w-full"
+                  className="w-full sm:w-auto"
                   disabled={isSubmitting}
+                  size="lg"
                 >
                   <MessageSquare className="w-4 h-4 mr-2" />
                   {isSubmitting ? "Sending..." : "Send Message"}
@@ -246,44 +257,43 @@ const Contact = () => {
           </Card>
         </div>
 
-        {/* Contact Information */}
-        <div className="space-y-6">
+        {/* Contact Information Sidebar */}
+        <div className="lg:col-span-4 space-y-5">
           <Card>
             <CardHeader>
-              <CardTitle>Contact Information</CardTitle>
-              <CardDescription>Other ways to reach us</CardDescription>
+              <CardTitle className="text-lg">Contact Info</CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Mail className="w-5 h-5 text-primary" />
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Mail className="w-4 h-4 text-primary" />
                 </div>
-                <div>
-                  <p className="font-medium">Email</p>
-                  <p className="text-sm text-muted-foreground">
+                <div className="min-w-0">
+                  <p className="font-medium text-sm">Email</p>
+                  <p className="text-sm text-muted-foreground break-all">
                     purplemerit9@gmail.com
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Phone className="w-5 h-5 text-primary" />
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Phone className="w-4 h-4 text-primary" />
                 </div>
-                <div>
-                  <p className="font-medium">Phone</p>
+                <div className="min-w-0">
+                  <p className="font-medium text-sm">Phone</p>
                   <p className="text-sm text-muted-foreground">
                     +1 (555) 123-4567
                   </p>
                 </div>
               </div>
 
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center">
-                  <Clock className="w-5 h-5 text-primary" />
+              <div className="flex items-start gap-3">
+                <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
+                  <Clock className="w-4 h-4 text-primary" />
                 </div>
-                <div>
-                  <p className="font-medium">Business Hours</p>
+                <div className="min-w-0">
+                  <p className="font-medium text-sm">Business Hours</p>
                   <p className="text-sm text-muted-foreground">
                     Mon-Fri 9AM-6PM PST
                   </p>
@@ -294,26 +304,23 @@ const Contact = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Response Times</CardTitle>
-              <CardDescription>
-                Expected response times by priority
-              </CardDescription>
+              <CardTitle className="text-lg">Response Times</CardTitle>
             </CardHeader>
-            <CardContent className="space-y-3">
-              <div className="flex justify-between">
-                <span className="text-sm">Urgent</span>
+            <CardContent className="space-y-2.5">
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Urgent</span>
                 <span className="text-sm font-medium">2-4 hours</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm">High</span>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">High</span>
                 <span className="text-sm font-medium">4-8 hours</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm">Medium</span>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Medium</span>
                 <span className="text-sm font-medium">1-2 days</span>
               </div>
-              <div className="flex justify-between">
-                <span className="text-sm">Low</span>
+              <div className="flex justify-between items-center">
+                <span className="text-sm text-muted-foreground">Low</span>
                 <span className="text-sm font-medium">3-5 days</span>
               </div>
             </CardContent>
@@ -321,23 +328,24 @@ const Contact = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle>Before contacting us</CardTitle>
-              <CardDescription>Common solutions to try first</CardDescription>
+              <CardTitle className="text-lg">Quick Help</CardTitle>
             </CardHeader>
             <CardContent className="space-y-2">
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full justify-start"
+                className="w-full justify-start text-sm"
               >
+                <CheckCircle2 className="w-4 h-4 mr-2" />
                 Check FAQ
               </Button>
               <Button
                 variant="outline"
                 size="sm"
-                className="w-full justify-start"
+                className="w-full justify-start text-sm"
               >
-                Check System Status
+                <AlertCircle className="w-4 h-4 mr-2" />
+                System Status
               </Button>
             </CardContent>
           </Card>
