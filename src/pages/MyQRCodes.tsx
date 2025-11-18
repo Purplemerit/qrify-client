@@ -185,9 +185,9 @@ const MyQRCodes = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 bg-gray-50/50 min-h-screen">
+    <div className="p-3 md:p-6 bg-gray-50/50 min-h-screen">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 gap-3">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800">
+        <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-800">
           My QR codes
         </h1>
         <div className="flex items-center gap-2 md:gap-3 flex-wrap">
@@ -236,16 +236,16 @@ const MyQRCodes = () => {
 
       {/* Bulk QR Codes Section */}
       {bulkQRCodes.length > 0 && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-6">
-          <div className="p-6 border-b border-gray-200">
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-3">
-                <h2 className="text-lg font-semibold text-gray-700">
+        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 md:mb-6">
+          <div className="p-4 md:p-6 border-b border-gray-200">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="flex items-center gap-2 md:gap-3">
+                <h2 className="text-base md:text-lg font-semibold text-gray-700">
                   Bulk QR Codes
                 </h2>
                 <Badge
                   variant="secondary"
-                  className="bg-blue-100 text-blue-800"
+                  className="bg-blue-100 text-blue-800 text-xs"
                 >
                   {bulkQRCodes.length} codes
                 </Badge>
@@ -274,12 +274,12 @@ const MyQRCodes = () => {
           </div>
 
           {/* Bulk QR Codes Grid */}
-          <div className="p-6">
-            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
+          <div className="p-3 md:p-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
               {bulkQRCodes.map((qr) => (
                 <div
                   key={qr.id}
-                  className={`group relative bg-gray-50 border border-gray-200 rounded-lg p-4 hover:shadow-md transition-all cursor-pointer ${
+                  className={`group relative bg-gray-50 border border-gray-200 rounded-lg p-3 md:p-4 hover:shadow-md transition-all cursor-pointer ${
                     selectedQRCodes.has(qr.id)
                       ? "ring-2 ring-blue-500 bg-blue-50"
                       : ""
@@ -320,18 +320,20 @@ const MyQRCodes = () => {
 
                   {/* QR Info */}
                   <div className="space-y-1">
-                    <h3 className="font-medium text-sm text-gray-900 truncate">
+                    <h3 className="font-medium text-xs md:text-sm text-gray-900 truncate">
                       {qr.title}
                     </h3>
-                    <p className="text-xs text-gray-500 truncate">{qr.data}</p>
+                    <p className="text-[10px] md:text-xs text-gray-500 truncate">
+                      {qr.data}
+                    </p>
                     <div className="flex items-center justify-between">
                       <Badge
                         variant="outline"
-                        className="text-xs border-blue-200 text-blue-800 bg-blue-50"
+                        className="text-[10px] md:text-xs border-blue-200 text-blue-800 bg-blue-50"
                       >
                         Bulk
                       </Badge>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-[10px] md:text-xs text-gray-400">
                         {qr.scans?.toLocaleString() || 0}
                       </span>
                     </div>
@@ -394,9 +396,11 @@ const MyQRCodes = () => {
 
       {/* Regular QR Codes Section */}
       <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-6 border-b border-gray-200">
-          <div className="flex items-center justify-between mb-4">
-            <h2 className="text-lg font-semibold text-gray-700">My folders</h2>
+        <div className="p-4 md:p-6 border-b border-gray-200">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
+            <h2 className="text-base md:text-lg font-semibold text-gray-700">
+              My folders
+            </h2>
             {isSelectionMode && regularQRCodes.length > 0 && (
               <div className="flex items-center gap-2">
                 <Checkbox
@@ -418,10 +422,10 @@ const MyQRCodes = () => {
               </div>
             )}
           </div>
-          <div className="flex justify-between items-center">
-            <div className="relative w-full max-w-xs">
+          <div className="flex justify-between items-center w-full">
+            <div className="relative w-full sm:max-w-xs">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input placeholder="Search..." className="pl-10" />
+              <Input placeholder="Search..." className="pl-10 text-sm" />
             </div>
           </div>
         </div>
@@ -431,14 +435,14 @@ const MyQRCodes = () => {
           {regularQRCodes.map((qr) => (
             <div
               key={qr.id}
-              className={`flex items-center justify-between p-4 hover:bg-gray-50 transition-colors ${
+              className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 md:p-4 hover:bg-gray-50 transition-colors gap-3 sm:gap-0 ${
                 selectedQRCodes.has(qr.id)
                   ? "bg-blue-50 border-l-4 border-blue-500"
                   : ""
               }`}
             >
               {/* Left Section: QR Name and Preview */}
-              <div className="flex items-center space-x-4">
+              <div className="flex items-center space-x-3 md:space-x-4 w-full sm:w-auto">
                 {isSelectionMode && (
                   <Checkbox
                     checked={selectedQRCodes.has(qr.id)}
@@ -446,7 +450,7 @@ const MyQRCodes = () => {
                   />
                 )}
                 <div
-                  className="w-12 h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 cursor-pointer"
+                  className="w-10 h-10 md:w-12 md:h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 cursor-pointer flex-shrink-0"
                   onClick={() =>
                     isSelectionMode
                       ? toggleQRSelection(qr.id)
@@ -500,9 +504,9 @@ const MyQRCodes = () => {
                       </Button>
                     </div>
                   ) : (
-                    <div>
+                    <div className="min-w-0 flex-1">
                       <h3
-                        className="font-medium text-gray-900 cursor-pointer"
+                        className="font-medium text-sm md:text-base text-gray-900 cursor-pointer"
                         onClick={() =>
                           isSelectionMode
                             ? toggleQRSelection(qr.id)
@@ -511,7 +515,7 @@ const MyQRCodes = () => {
                       >
                         {qr.title}
                       </h3>
-                      <p className="text-sm text-gray-500 truncate max-w-xs">
+                      <p className="text-xs md:text-sm text-gray-500 truncate">
                         {qr.data}
                       </p>
                     </div>
@@ -520,14 +524,14 @@ const MyQRCodes = () => {
               </div>
 
               {/* Right Section: Metadata and Actions */}
-              <div className="flex items-center space-x-8">
-                {/* Created Date */}
-                <div className="text-sm text-gray-500">
+              <div className="flex items-center justify-between sm:justify-end space-x-3 sm:space-x-8 w-full sm:w-auto">
+                {/* Created Date - Hidden on mobile */}
+                <div className="hidden lg:block text-sm text-gray-500">
                   {new Date(qr.created_at).toLocaleDateString()}
                 </div>
 
                 {/* Status */}
-                <div className="flex flex-col gap-1">
+                <div className="flex flex-row sm:flex-col gap-1">
                   <Badge
                     variant={qr.status === "Active" ? "default" : "secondary"}
                     className="text-xs"
@@ -546,8 +550,8 @@ const MyQRCodes = () => {
                   </Badge>
                 </div>
 
-                {/* Scan Count */}
-                <div className="text-sm text-gray-500 min-w-[80px] text-center">
+                {/* Scan Count - Hidden on mobile */}
+                <div className="hidden md:block text-xs md:text-sm text-gray-500 min-w-[80px] text-center">
                   {qr.dynamic
                     ? `${qr.scans?.toLocaleString() || 0} scans`
                     : "No tracking"}
