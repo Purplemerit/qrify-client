@@ -39,21 +39,21 @@ export default function Signup() {
     setLoading(true);
 
     try {
-      console.log("🚀 Starting signup request...");
+      // ...existing code...
 
       const response = await authService.signup({
         email: formData.email,
         password: formData.password,
       });
 
-      console.log("✅ Signup response received:", response);
+      // ...existing code...
 
       // Navigate directly to My QR Codes page after successful signup
-      console.log("🔄 About to navigate to /my-qr-codes");
+      // ...existing code...
 
       navigate("/my-qr-codes");
 
-      console.log("🎯 Navigation completed");
+      // ...existing code...
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
         const error = err as { response?: { data?: { error?: string } } };

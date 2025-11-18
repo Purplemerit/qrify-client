@@ -16,18 +16,18 @@ export default function Login() {
     setLoading(true);
 
     try {
-      console.log("🚀 Starting login request...");
+      // ...existing code...
 
       const loginResponse = await authService.login({ email, password });
 
-      console.log("✅ Login response received:", loginResponse);
+      // ...existing code...
 
       // Redirect to My QR Codes page after successful login
-      console.log("🔄 About to navigate to /my-qr-codes");
+      // ...existing code...
 
       navigate("/my-qr-codes");
 
-      console.log("🎯 Navigation completed");
+      // ...existing code...
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
         const error = err as { response?: { data?: { error?: string } } };

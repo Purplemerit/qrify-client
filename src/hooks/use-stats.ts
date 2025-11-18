@@ -11,11 +11,11 @@ export const useStats = (): UseStatsReturn => {
     try {
       setLoading(true);
       setError(null);
-      console.log('🎯 useStats: Starting fetch...');
+      // ...existing code...
       const statsData = await statsApi.getStats();
-      console.log('🎯 useStats: Received data:', statsData);
+      // ...existing code...
       setData(statsData);
-      console.log('🎯 useStats: Data set in state');
+      // ...existing code...
     } catch (err: unknown) {
       console.error('Failed to fetch stats:', err);
       // Provide more detailed error information
@@ -42,10 +42,10 @@ export const useStats = (): UseStatsReturn => {
         errorMessage = err.message;
       }
       setError(errorMessage);
-      console.log('🎯 useStats: Error set:', errorMessage);
+      // ...existing code...
     } finally {
       setLoading(false);
-      console.log('🎯 useStats: Loading set to false');
+      // ...existing code...
     }
   };
 

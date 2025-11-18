@@ -159,8 +159,7 @@ const BulkQR = () => {
             return url && url.includes(".") && url.length > 4;
           });
 
-        console.log("All lines:", lines);
-        console.log("Parsed URLs:", urls);
+        // ...existing code...
         resolve(urls);
       };
       reader.onerror = () => reject(new Error("Failed to read file"));
@@ -182,8 +181,7 @@ const BulkQR = () => {
     setCsvFile(file);
     try {
       const urls = await parseCsvFile(file);
-      console.log("Parsed URLs:", urls); // Debug log
-      console.log("Setting csvUrls state with:", urls.length, "URLs");
+      // ...existing code...
       setCsvUrls(urls);
       setError("");
     } catch (err) {
@@ -269,7 +267,7 @@ const BulkQR = () => {
     try {
       setLoading(true);
 
-      console.log("Updating bulk QRs with design options:", qrDesignOptions);
+      // ...existing code...
 
       // Update all generated QR codes with the applied design options
       const updatePromises = generatedQRs.map(async (qr) => {

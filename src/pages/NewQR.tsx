@@ -173,10 +173,10 @@ const NewQR = () => {
 
     try {
       // Debug: Check authentication status
-      console.log("Checking authentication status...");
+      // ...existing code...
       try {
         const authStatus = await authService.getCurrentUser();
-        console.log("User authenticated:", authStatus.user);
+        // ...existing code...
       } catch (authError) {
         console.error("Authentication check failed:", authError);
         setError("Authentication required. Please log in again.");
@@ -186,8 +186,7 @@ const NewQR = () => {
 
       // Create QR code - cookies are sent automatically
       // Server will handle authentication check
-      console.log("Form data being sent:", formData);
-      console.log("Is static QR:", isStaticQR);
+      // ...existing code...
 
       const response = await api.post("/qr/url", {
         name: formData.qrName || "Website QR",
@@ -196,7 +195,7 @@ const NewQR = () => {
       });
 
       const createdQr = response.data;
-      console.log("QR created:", createdQr);
+      // ...existing code...
 
       // Get the QR image - cookies are sent automatically
       const imageResponse = await api.get(`/qr/${createdQr.id}/image`);
@@ -249,7 +248,7 @@ const NewQR = () => {
     try {
       setLoading(true);
 
-      console.log("Completing QR with design options:", qrDesignOptions);
+      // ...existing code...
       // Update the QR code with the applied design options
       await api.put(`/qr/${generatedQR.id}`, {
         designOptions: qrDesignOptions,

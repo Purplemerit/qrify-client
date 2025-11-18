@@ -106,12 +106,11 @@ api.interceptors.response.use(
         // Try to refresh the token using cookie-based endpoint
         const refreshResponse = await api.post('/auth/refresh');
         
-        console.log('✅ Token refresh successful:', refreshResponse);
-        console.log('🍪 Cookies after refresh:', document.cookie);
+        // ...existing code...
         
         processQueue(null, 'refreshed');
         
-        console.log('🔄 Retrying original request after refresh...');
+        // ...existing code...
         return api(originalRequest);
       } catch (refreshError) {
         console.error('❌ Token refresh failed:', refreshError);
@@ -124,13 +123,13 @@ api.interceptors.response.use(
         const currentPath = window.location.pathname;
         const publicPaths = ['/', '/home', '/login', '/signup', '/forgot-password'];
 
-        console.log('🚪 Current path:', currentPath, 'Public paths:', publicPaths);
+        // ...existing code...
         
         if (!publicPaths.includes(currentPath)) {
-          console.log('🚪 Redirecting to login...');
+          // ...existing code...
           window.location.href = '/login';
         } else {
-          console.log('🏠 Staying on public page');
+          // ...existing code...
         }
 
         return Promise.reject(refreshError);
@@ -146,10 +145,10 @@ api.interceptors.response.use(
 // Stats API functions
 export const statsApi = {
   getStats: async () => {
-    console.log('📊 Fetching stats from:', `${baseURL}/qr/stats`);
+    // ...existing code...
     try {
       const response = await api.get('/qr/stats');
-      console.log('📊 Stats response received:', response.status, response.data);
+      // ...existing code...
       
       // Validate response data
       if (!response.data || typeof response.data !== 'object') {
