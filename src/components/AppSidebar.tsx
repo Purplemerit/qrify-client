@@ -38,9 +38,15 @@ const mainItems = [
 const bottomItems = [{ title: "Contact", url: "/contact", icon: Phone }];
 
 export function AppSidebar() {
-  const { open } = useSidebar();
+  const { open, isMobile, setOpenMobile } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
+
+  const handleMenuItemClick = () => {
+    if (isMobile) {
+      setOpenMobile(false);
+    }
+  };
 
   const isActive = (path: string) => currentPath === path;
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
@@ -78,6 +84,7 @@ export function AppSidebar() {
                       <NavLink
                         to={item.url}
                         className={getNavCls({ isActive: active })}
+                        onClick={handleMenuItemClick}
                       >
                         <item.icon
                           className={`w-5 h-5 ${
@@ -116,6 +123,7 @@ export function AppSidebar() {
                       <NavLink
                         to={item.url}
                         className={getNavCls({ isActive: active })}
+                        onClick={handleMenuItemClick}
                       >
                         <item.icon
                           className={`w-5 h-5 ${
