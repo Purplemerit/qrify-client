@@ -156,7 +156,7 @@ const App = () => (
               element={<EmailVerification />}
             />
 
-            {/* Protected routes */}
+            
             <Route element={<ProtectedRoute />}>
               <Route
                 element={
