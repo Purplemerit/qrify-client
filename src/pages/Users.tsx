@@ -104,16 +104,16 @@ const Users = () => {
     );
   }
   return (
-    <div className="max-w-6xl">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold">Users</h1>
-        <p className="text-muted-foreground mt-1">
+    <div className="max-w-6xl mx-auto px-4 md:px-6">
+      <div className="mb-4 md:mb-6">
+        <h1 className="text-xl md:text-2xl font-semibold">Users</h1>
+        <p className="text-muted-foreground mt-1 text-sm md:text-base">
           Manage team members and their permissions
         </p>
       </div>
 
       {/* Header Actions */}
-      <div className="flex flex-col md:flex-row gap-4 mb-6">
+      <div className="flex flex-col md:flex-row gap-3 md:gap-4 mb-4 md:mb-6">
         <div className="flex-1">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -122,7 +122,7 @@ const Users = () => {
         </div>
         <div className="flex gap-2">
           <Select>
-            <SelectTrigger className="w-[180px]">
+            <SelectTrigger className="w-full sm:w-[180px]">
               <SelectValue placeholder="Filter by role" />
             </SelectTrigger>
             <SelectContent>
@@ -132,39 +132,42 @@ const Users = () => {
               <SelectItem value="viewer">Viewer</SelectItem>
             </SelectContent>
           </Select>
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Invite User
+          <Button size="sm" className="whitespace-nowrap">
+            <Plus className="w-4 h-4 mr-1 md:mr-2" />
+            <span className="hidden sm:inline">Invite User</span>
+            <span className="sm:hidden">Invite</span>
           </Button>
         </div>
       </div>
 
       {/* Users List */}
-      <div className="space-y-4">
+      <div className="space-y-3 md:space-y-4">
         {users.map((user) => (
           <Card key={user.id}>
-            <CardContent className="pt-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <Avatar className="h-12 w-12">
+            <CardContent className="p-4 md:pt-6">
+              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+                <div className="flex items-center gap-3 md:gap-4 w-full sm:w-auto">
+                  <Avatar className="h-10 w-10 md:h-12 md:w-12 flex-shrink-0">
                     <AvatarImage src={user.avatar || undefined} />
-                    <AvatarFallback>
+                    <AvatarFallback className="text-sm md:text-base">
                       {user.name
                         .split(" ")
                         .map((n) => n[0])
                         .join("")}
                     </AvatarFallback>
                   </Avatar>
-                  <div className="space-y-1">
-                    <h3 className="font-medium">{user.name}</h3>
-                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                      <Mail className="w-4 h-4" />
-                      {user.email}
+                  <div className="space-y-1 min-w-0 flex-1">
+                    <h3 className="font-medium text-sm md:text-base">
+                      {user.name}
+                    </h3>
+                    <div className="flex items-center gap-2 text-xs md:text-sm text-muted-foreground">
+                      <Mail className="w-3 h-3 md:w-4 md:h-4 flex-shrink-0" />
+                      <span className="truncate">{user.email}</span>
                     </div>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-6">
+                <div className="flex items-center gap-4 md:gap-6 w-full sm:w-auto justify-between sm:justify-end">
                   <div className="text-center">
                     <p className="text-sm font-medium">{user.qrCodes}</p>
                     <p className="text-xs text-muted-foreground">QR Codes</p>
@@ -179,17 +182,19 @@ const Users = () => {
                           ? "secondary"
                           : "outline"
                       }
+                      className="text-xs"
                     >
                       {user.role}
                     </Badge>
                     <p className="text-xs text-muted-foreground mt-1">Role</p>
                   </div>
 
-                  <div className="text-center">
+                  <div className="text-center hidden md:block">
                     <Badge
                       variant={
                         user.status === "Active" ? "default" : "secondary"
                       }
+                      className="text-xs"
                     >
                       {user.status}
                     </Badge>
@@ -200,7 +205,7 @@ const Users = () => {
 
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
+                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
                         <MoreHorizontal className="w-4 h-4" />
                       </Button>
                     </DropdownMenuTrigger>
@@ -225,18 +230,24 @@ const Users = () => {
       </div>
 
       {/* Invite New User */}
-      <Card className="mt-6">
-        <CardHeader>
-          <CardTitle>Invite New User</CardTitle>
-          <CardDescription>
+      <Card className="mt-4 md:mt-6">
+        <CardHeader className="p-4 md:p-6">
+          <CardTitle className="text-base md:text-lg">
+            Invite New User
+          </CardTitle>
+          <CardDescription className="text-xs md:text-sm">
             Send an invitation to join your team
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-            <Input placeholder="Email address" type="email" />
+        <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6 pt-0">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
+            <Input
+              placeholder="Email address"
+              type="email"
+              className="text-sm"
+            />
             <Select>
-              <SelectTrigger>
+              <SelectTrigger className="text-sm">
                 <SelectValue placeholder="Select role" />
               </SelectTrigger>
               <SelectContent>
@@ -245,9 +256,9 @@ const Users = () => {
                 <SelectItem value="viewer">Viewer</SelectItem>
               </SelectContent>
             </Select>
-            <Button>Send Invitation</Button>
+            <Button className="text-sm">Send Invitation</Button>
           </div>
-          <div className="text-xs text-muted-foreground">
+          <div className="text-xs text-muted-foreground space-y-1">
             <p>
               <strong>Admin:</strong> Full access to all features and settings
             </p>

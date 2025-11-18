@@ -76,31 +76,30 @@ const Stats = () => {
   if (error) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-        <div className="max-w-7xl mx-auto py-8 px-6">
-          <div className="mb-8 fade-in">
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+        <div className="max-w-7xl mx-auto py-4 md:py-8 px-4 md:px-6">
+          <div className="mb-6 md:mb-8 fade-in">
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
               Statistics
             </h1>
-            <p className="text-muted-foreground mt-2 text-lg">
+            <p className="text-muted-foreground mt-1 md:mt-2 text-sm md:text-lg">
               Overview of your QR code performance
             </p>
-          </div>
-
-          <div className="max-w-2xl mx-auto animate-slide-up">
+          </div>{" "}
+          <div className="max-w-2xl mx-auto animate-slide-up px-2">
             <Alert variant="destructive" className="shadow-lg border-red-300">
-              <AlertCircle className="h-5 w-5" />
-              <AlertTitle className="text-base">
+              <AlertCircle className="h-4 w-4 md:h-5 md:w-5" />
+              <AlertTitle className="text-sm md:text-base">
                 Error loading statistics
               </AlertTitle>
               <AlertDescription className="mt-2">
-                <p className="mb-3">{error}</p>
+                <p className="mb-3 text-sm">{error}</p>
                 <Button
                   variant="outline"
                   size="sm"
-                  className="bg-white hover:bg-gray-50 border-red-300 hover:border-red-400"
+                  className="bg-white hover:bg-gray-50 border-red-300 hover:border-red-400 text-xs md:text-sm"
                   onClick={refetch}
                 >
-                  <RefreshCw className="h-4 w-4 mr-2" />
+                  <RefreshCw className="h-3 w-3 md:h-4 md:w-4 mr-2" />
                   Try Again
                 </Button>
               </AlertDescription>
@@ -113,13 +112,13 @@ const Stats = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-7xl mx-auto py-8 px-6">
-        <div className="mb-8 flex items-center justify-between fade-in">
+      <div className="max-w-7xl mx-auto py-4 md:py-8 px-4 md:px-6">
+        <div className="mb-6 md:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 fade-in">
           <div>
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
+            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
               Statistics
             </h1>
-            <p className="text-muted-foreground mt-2 text-lg">
+            <p className="text-muted-foreground mt-1 md:mt-2 text-sm md:text-lg">
               Overview of your QR code performance and analytics
             </p>
           </div>
@@ -128,7 +127,7 @@ const Stats = () => {
             size="sm"
             onClick={refetch}
             disabled={loading}
-            className="bg-white/80 hover:bg-white border-2 hover:border-primary/50 transition-all duration-300 shadow-md hover:shadow-lg px-6"
+            className="bg-white/80 hover:bg-white border-2 hover:border-primary/50 transition-all duration-300 shadow-md hover:shadow-lg px-4 md:px-6"
           >
             <RefreshCw
               className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`}
@@ -138,28 +137,28 @@ const Stats = () => {
         </div>
 
         {/* Overview Stats */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8 animate-slide-up">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8 animate-slide-up">
           <Card className="bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover-lift group">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 md:pb-3 p-3 md:p-6">
+              <CardTitle className="text-xs md:text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
                 Total QR Codes
               </CardTitle>
-              <div className="p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors duration-300">
-                <QrCode className="h-5 w-5 text-blue-600" />
+              <div className="p-1.5 md:p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors duration-300">
+                <QrCode className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 md:p-6 pt-0">
               {loading ? (
-                <div className="space-y-3">
-                  <Skeleton className="h-8 w-16 bg-gray-200 animate-pulse" />
-                  <Skeleton className="h-4 w-24 bg-gray-100 animate-pulse" />
+                <div className="space-y-2">
+                  <Skeleton className="h-6 md:h-8 w-12 md:w-16 bg-gray-200 animate-pulse" />
+                  <Skeleton className="h-3 md:h-4 w-20 md:w-24 bg-gray-100 animate-pulse" />
                 </div>
               ) : (
                 <>
-                  <div className="text-3xl font-bold text-gray-900 mb-2">
+                  <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
                     {data?.overview.totalQrCodes.value || 0}
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-sm text-muted-foreground">
                     {data?.overview.totalQrCodes.change || "No data available"}
                   </p>
                 </>
@@ -168,26 +167,26 @@ const Stats = () => {
           </Card>
 
           <Card className="bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover-lift group">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 md:pb-3 p-3 md:p-6">
+              <CardTitle className="text-xs md:text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
                 Total Scans
               </CardTitle>
-              <div className="p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors duration-300">
-                <Eye className="h-5 w-5 text-green-600" />
+              <div className="p-1.5 md:p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors duration-300">
+                <Eye className="h-4 w-4 md:h-5 md:w-5 text-green-600" />
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 md:p-6 pt-0">
               {loading ? (
-                <div className="space-y-3">
-                  <Skeleton className="h-8 w-16 bg-gray-200 animate-pulse" />
-                  <Skeleton className="h-4 w-24 bg-gray-100 animate-pulse" />
+                <div className="space-y-2">
+                  <Skeleton className="h-6 md:h-8 w-12 md:w-16 bg-gray-200 animate-pulse" />
+                  <Skeleton className="h-3 md:h-4 w-20 md:w-24 bg-gray-100 animate-pulse" />
                 </div>
               ) : (
                 <>
-                  <div className="text-3xl font-bold text-gray-900 mb-2">
+                  <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
                     {data?.overview.totalScans.value.toLocaleString() || 0}
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-sm text-muted-foreground">
                     {data?.overview.totalScans.change || "No data available"}
                   </p>
                 </>
@@ -196,26 +195,26 @@ const Stats = () => {
           </Card>
 
           <Card className="bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover-lift group">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 md:pb-3 p-3 md:p-6">
+              <CardTitle className="text-xs md:text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
                 Unique Visitors
               </CardTitle>
-              <div className="p-2 bg-purple-50 rounded-lg group-hover:bg-purple-100 transition-colors duration-300">
-                <Users className="h-5 w-5 text-purple-600" />
+              <div className="p-1.5 md:p-2 bg-purple-50 rounded-lg group-hover:bg-purple-100 transition-colors duration-300">
+                <Users className="h-4 w-4 md:h-5 md:w-5 text-purple-600" />
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 md:p-6 pt-0">
               {loading ? (
-                <div className="space-y-3">
-                  <Skeleton className="h-8 w-16 bg-gray-200 animate-pulse" />
-                  <Skeleton className="h-4 w-24 bg-gray-100 animate-pulse" />
+                <div className="space-y-2">
+                  <Skeleton className="h-6 md:h-8 w-12 md:w-16 bg-gray-200 animate-pulse" />
+                  <Skeleton className="h-3 md:h-4 w-20 md:w-24 bg-gray-100 animate-pulse" />
                 </div>
               ) : (
                 <>
-                  <div className="text-3xl font-bold text-gray-900 mb-2">
+                  <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
                     {data?.overview.uniqueVisitors.value.toLocaleString() || 0}
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-sm text-muted-foreground">
                     {data?.overview.uniqueVisitors.change ||
                       "No data available"}
                   </p>
@@ -225,26 +224,26 @@ const Stats = () => {
           </Card>
 
           <Card className="bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover-lift group">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-3">
-              <CardTitle className="text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2 md:pb-3 p-3 md:p-6">
+              <CardTitle className="text-xs md:text-sm font-medium text-gray-600 group-hover:text-gray-800 transition-colors duration-300">
                 Downloads
               </CardTitle>
-              <div className="p-2 bg-orange-50 rounded-lg group-hover:bg-orange-100 transition-colors duration-300">
-                <Download className="h-5 w-5 text-orange-600" />
+              <div className="p-1.5 md:p-2 bg-orange-50 rounded-lg group-hover:bg-orange-100 transition-colors duration-300">
+                <Download className="h-4 w-4 md:h-5 md:w-5 text-orange-600" />
               </div>
             </CardHeader>
-            <CardContent>
+            <CardContent className="p-3 md:p-6 pt-0">
               {loading ? (
-                <div className="space-y-3">
-                  <Skeleton className="h-8 w-16 bg-gray-200 animate-pulse" />
-                  <Skeleton className="h-4 w-24 bg-gray-100 animate-pulse" />
+                <div className="space-y-2">
+                  <Skeleton className="h-6 md:h-8 w-12 md:w-16 bg-gray-200 animate-pulse" />
+                  <Skeleton className="h-3 md:h-4 w-20 md:w-24 bg-gray-100 animate-pulse" />
                 </div>
               ) : (
                 <>
-                  <div className="text-3xl font-bold text-gray-900 mb-2">
+                  <div className="text-2xl md:text-3xl font-bold text-gray-900 mb-1 md:mb-2">
                     {data?.overview.downloads.value || 0}
                   </div>
-                  <p className="text-sm text-muted-foreground">
+                  <p className="text-xs md:text-sm text-muted-foreground">
                     {data?.overview.downloads.change || "No data available"}
                   </p>
                 </>
@@ -253,25 +252,25 @@ const Stats = () => {
           </Card>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 animate-scale-in">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8 animate-scale-in">
           {/* Top Performing QR Codes */}
           <Card className="bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover-lift group">
-            <CardHeader className="pb-4">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg group-hover:from-blue-100 group-hover:to-blue-200 transition-all duration-300">
-                  <TrendingUp className="h-5 w-5 text-blue-600" />
+            <CardHeader className="pb-3 md:pb-4 p-4 md:p-6">
+              <div className="flex items-center space-x-2 md:space-x-3">
+                <div className="p-1.5 md:p-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg group-hover:from-blue-100 group-hover:to-blue-200 transition-all duration-300">
+                  <TrendingUp className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold text-gray-800">
+                  <CardTitle className="text-base md:text-lg font-semibold text-gray-800">
                     Top Performing QR Codes
                   </CardTitle>
-                  <CardDescription className="text-gray-600">
+                  <CardDescription className="text-xs md:text-sm text-gray-600">
                     Your most scanned QR codes this month
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6 pt-0">
               {loading ? (
                 Array.from({ length: 5 }).map((_, index) => (
                   <div
@@ -290,10 +289,10 @@ const Stats = () => {
                 data.topPerformingQrCodes.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg hover:from-blue-50 hover:to-blue-100 transition-all duration-300 group border border-gray-200 hover:border-blue-300"
+                    className="flex items-center justify-between p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg hover:from-blue-50 hover:to-blue-100 transition-all duration-300 group border border-gray-200 hover:border-blue-300"
                   >
-                    <div className="space-y-1">
-                      <p className="text-sm font-medium text-gray-800 group-hover:text-blue-800">
+                    <div className="space-y-0.5 md:space-y-1">
+                      <p className="text-xs md:text-sm font-medium text-gray-800 group-hover:text-blue-800">
                         {item.name}
                       </p>
                       <p className="text-xs text-muted-foreground">
@@ -328,22 +327,22 @@ const Stats = () => {
 
           {/* Device Analytics */}
           <Card className="bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover-lift group">
-            <CardHeader className="pb-4">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-gradient-to-br from-green-50 to-green-100 rounded-lg group-hover:from-green-100 group-hover:to-green-200 transition-all duration-300">
-                  <BarChart3 className="h-5 w-5 text-green-600" />
+            <CardHeader className="pb-3 md:pb-4 p-4 md:p-6">
+              <div className="flex items-center space-x-2 md:space-x-3">
+                <div className="p-1.5 md:p-2 bg-gradient-to-br from-green-50 to-green-100 rounded-lg group-hover:from-green-100 group-hover:to-green-200 transition-all duration-300">
+                  <BarChart3 className="h-4 w-4 md:h-5 md:w-5 text-green-600" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold text-gray-800">
+                  <CardTitle className="text-base md:text-lg font-semibold text-gray-800">
                     Device Analytics
                   </CardTitle>
-                  <CardDescription className="text-gray-600">
+                  <CardDescription className="text-xs md:text-sm text-gray-600">
                     Breakdown of scans by device type
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-5">
+            <CardContent className="space-y-3 md:space-y-5 p-4 md:p-6 pt-0">
               {loading ? (
                 Array.from({ length: 3 }).map((_, index) => (
                   <div
@@ -364,9 +363,9 @@ const Stats = () => {
                 data.deviceAnalytics.map((item, index) => (
                   <div
                     key={index}
-                    className="space-y-3 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg hover:from-green-50 hover:to-green-100 transition-all duration-300 border border-gray-200 hover:border-green-300"
+                    className="space-y-2 md:space-y-3 p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg hover:from-green-50 hover:to-green-100 transition-all duration-300 border border-gray-200 hover:border-green-300"
                   >
-                    <div className="flex items-center justify-between text-sm">
+                    <div className="flex items-center justify-between text-xs md:text-sm">
                       <span className="font-medium text-gray-800">
                         {item.device}
                       </span>
@@ -376,7 +375,7 @@ const Stats = () => {
                     </div>
                     <Progress
                       value={item.percentage}
-                      className="h-3 bg-gray-200"
+                      className="h-2 md:h-3 bg-gray-200"
                     />
                     <p className="text-xs text-muted-foreground text-right font-medium">
                       {item.percentage}%
@@ -396,22 +395,22 @@ const Stats = () => {
 
           {/* Geographic Data */}
           <Card className="bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover-lift group">
-            <CardHeader className="pb-4">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg group-hover:from-purple-100 group-hover:to-purple-200 transition-all duration-300">
-                  <Users className="h-5 w-5 text-purple-600" />
+            <CardHeader className="pb-3 md:pb-4 p-4 md:p-6">
+              <div className="flex items-center space-x-2 md:space-x-3">
+                <div className="p-1.5 md:p-2 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg group-hover:from-purple-100 group-hover:to-purple-200 transition-all duration-300">
+                  <Users className="h-4 w-4 md:h-5 md:w-5 text-purple-600" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold text-gray-800">
+                  <CardTitle className="text-base md:text-lg font-semibold text-gray-800">
                     Top Locations
                   </CardTitle>
-                  <CardDescription className="text-gray-600">
+                  <CardDescription className="text-xs md:text-sm text-gray-600">
                     Countries with the most scans
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6 pt-0">
               {loading ? (
                 Array.from({ length: 5 }).map((_, index) => (
                   <div
@@ -429,20 +428,22 @@ const Stats = () => {
                 data.topLocations.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg hover:from-purple-50 hover:to-purple-100 transition-all duration-300 border border-gray-200 hover:border-purple-300 group"
+                    className="flex items-center justify-between p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg hover:from-purple-50 hover:to-purple-100 transition-all duration-300 border border-gray-200 hover:border-purple-300 group"
                   >
-                    <div className="flex items-center gap-3">
+                    <div className="flex items-center gap-2 md:gap-3">
                       {item.flag ? (
-                        <span className="text-xl bg-white rounded-full p-1 shadow-sm group-hover:shadow-md transition-shadow duration-300">
+                        <span className="text-base md:text-xl bg-white rounded-full p-1 shadow-sm group-hover:shadow-md transition-shadow duration-300">
                           {item.flag}
                         </span>
                       ) : (
-                        <div className="w-8 h-8 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center shadow-sm">
-                          <span className="text-sm text-gray-500">🌍</span>
+                        <div className="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center shadow-sm">
+                          <span className="text-xs md:text-sm text-gray-500">
+                            🌍
+                          </span>
                         </div>
                       )}
                       <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-800 group-hover:text-purple-800">
+                        <span className="text-xs md:text-sm font-medium text-gray-800 group-hover:text-purple-800">
                           {item.country}
                         </span>
                         {item.city && (
@@ -452,7 +453,7 @@ const Stats = () => {
                         )}
                       </div>
                     </div>
-                    <span className="text-sm text-muted-foreground font-medium">
+                    <span className="text-xs md:text-sm text-muted-foreground font-medium">
                       {item.scans} scans
                     </span>
                   </div>
@@ -470,22 +471,22 @@ const Stats = () => {
 
           {/* Recent Activity */}
           <Card className="bg-white/80 backdrop-blur-sm border-2 border-gray-100 shadow-lg hover:shadow-xl transition-all duration-300 hover-lift group">
-            <CardHeader className="pb-4">
-              <div className="flex items-center space-x-3">
-                <div className="p-2 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg group-hover:from-orange-100 group-hover:to-orange-200 transition-all duration-300">
-                  <Eye className="h-5 w-5 text-orange-600" />
+            <CardHeader className="pb-3 md:pb-4 p-4 md:p-6">
+              <div className="flex items-center space-x-2 md:space-x-3">
+                <div className="p-1.5 md:p-2 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg group-hover:from-orange-100 group-hover:to-orange-200 transition-all duration-300">
+                  <Eye className="h-4 w-4 md:h-5 md:w-5 text-orange-600" />
                 </div>
                 <div>
-                  <CardTitle className="text-lg font-semibold text-gray-800">
+                  <CardTitle className="text-base md:text-lg font-semibold text-gray-800">
                     Recent Activity
                   </CardTitle>
-                  <CardDescription className="text-gray-600">
+                  <CardDescription className="text-xs md:text-sm text-gray-600">
                     Latest QR code interactions
                   </CardDescription>
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6 pt-0">
               {loading ? (
                 Array.from({ length: 5 }).map((_, index) => (
                   <div
@@ -503,13 +504,13 @@ const Stats = () => {
                 data.recentActivity.map((item, index) => (
                   <div
                     key={index}
-                    className="space-y-2 p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg hover:from-orange-50 hover:to-orange-100 transition-all duration-300 border border-gray-200 hover:border-orange-300 group"
+                    className="space-y-1.5 md:space-y-2 p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg hover:from-orange-50 hover:to-orange-100 transition-all duration-300 border border-gray-200 hover:border-orange-300 group"
                   >
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium text-gray-800 group-hover:text-orange-800">
+                      <p className="text-xs md:text-sm font-medium text-gray-800 group-hover:text-orange-800">
                         {item.action}
                       </p>
-                      <p className="text-xs text-muted-foreground bg-white px-2 py-1 rounded-full shadow-sm">
+                      <p className="text-xs text-muted-foreground bg-white px-2 py-0.5 md:py-1 rounded-full shadow-sm">
                         {item.time}
                       </p>
                     </div>

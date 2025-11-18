@@ -74,7 +74,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
 const CallToAction: React.FC = () => {
   const handleAnswerQuestions = () => {
     // Handle navigation to FAQ or contact page
-    console.log("Navigate to FAQ answers");
+    // ...existing code...
   };
 
   return (

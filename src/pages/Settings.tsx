@@ -178,15 +178,15 @@ const Settings = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-6 space-y-8">
-      <div className="mb-6">
-        <h1 className="text-2xl font-semibold">Settings</h1>
-        <p className="text-sm text-muted-foreground mt-1">
+    <div className="max-w-6xl mx-auto px-4 md:px-6 py-4 md:py-6 space-y-6 md:space-y-8">
+      <div className="mb-4 md:mb-6">
+        <h1 className="text-xl md:text-2xl font-semibold">Settings</h1>
+        <p className="text-xs md:text-sm text-muted-foreground mt-1">
           Manage your account preferences and security settings
         </p>
       </div>
 
-      <div className="space-y-6">
+      <div className="space-y-4 md:space-y-6">
         {/* Current Email Information */}
         <Card>
           <div className="flex flex-col lg:flex-row">

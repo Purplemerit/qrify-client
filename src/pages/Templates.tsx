@@ -154,19 +154,19 @@ const Templates = () => {
 
     return (
       <div
-        className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-4 backdrop-blur-sm"
+        className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50 p-3 md:p-4 backdrop-blur-sm"
         onClick={handleBackdropClick}
       >
-        <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full max-h-[85vh] overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200">
+        <div className="bg-white rounded-xl md:rounded-2xl shadow-2xl max-w-xl w-full max-h-[90vh] md:max-h-[85vh] overflow-hidden animate-in fade-in-0 zoom-in-95 duration-200">
           {/* Header */}
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-8 py-6 border-b border-gray-100">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 px-4 py-4 md:px-8 md:py-6 border-b border-gray-100">
             <div className="flex items-start justify-between">
-              <div>
-                <h2 className="text-2xl font-bold text-gray-900 mb-1">
+              <div className="flex-1 pr-2">
+                <h2 className="text-lg md:text-2xl font-bold text-gray-900 mb-1">
                   {previewTemplate.name}
                 </h2>
                 {previewTemplate.description && (
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 text-xs md:text-sm">
                     {previewTemplate.description}
                   </p>
                 )}
@@ -175,35 +175,35 @@ const Templates = () => {
                 variant="ghost"
                 size="sm"
                 onClick={closePreview}
-                className="p-2 hover:bg-white/50 rounded-full"
+                className="p-1.5 md:p-2 hover:bg-white/50 rounded-full flex-shrink-0"
               >
-                <X className="h-5 w-5" />
+                <X className="h-4 w-4 md:h-5 md:w-5" />
               </Button>
             </div>
           </div>
 
           {/* Content */}
-          <div className="p-8 overflow-y-auto">
+          <div className="p-4 md:p-8 overflow-y-auto max-h-[calc(90vh-80px)] md:max-h-[calc(85vh-100px)]">
             {/* QR Code Preview */}
-            <div className="text-center mb-8">
-              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-10 inline-block shadow-inner">
+            <div className="text-center mb-6 md:mb-8">
+              <div className="bg-gradient-to-br from-gray-50 to-gray-100 rounded-xl md:rounded-2xl p-6 md:p-10 inline-block shadow-inner">
                 <QRPreview
                   designOptions={previewTemplate.designOptions}
-                  size={240}
+                  size={200}
                 />
               </div>
-              <p className="text-sm text-gray-500 mt-4">
+              <p className="text-xs md:text-sm text-gray-500 mt-3 md:mt-4">
                 Template Preview • Sample QR Code
               </p>
             </div>
 
             {/* Design Options */}
-            <div className="space-y-6">
+            <div className="space-y-4 md:space-y-6">
               <div>
-                <h4 className="font-semibold text-gray-900 mb-3 text-lg">
+                <h4 className="font-semibold text-gray-900 mb-2 md:mb-3 text-base md:text-lg">
                   Design Configuration
                 </h4>
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-2 gap-2 md:gap-3">
                   <Badge
                     variant="secondary"
                     className="justify-center py-2 text-sm"
@@ -252,21 +252,21 @@ const Templates = () => {
               </div>
 
               {/* Template Info */}
-              <div className="bg-gray-50 rounded-xl p-6">
-                <h4 className="font-semibold text-gray-900 mb-3">
+              <div className="bg-gray-50 rounded-lg md:rounded-xl p-4 md:p-6">
+                <h4 className="font-semibold text-gray-900 mb-2 md:mb-3 text-sm md:text-base">
                   Template Information
                 </h4>
-                <div className="space-y-3">
+                <div className="space-y-2 md:space-y-3">
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-600">
+                    <span className="text-xs md:text-sm font-medium text-gray-600">
                       Created
                     </span>
-                    <span className="text-sm text-gray-900 font-medium">
+                    <span className="text-xs md:text-sm text-gray-900 font-medium">
                       {formatDate(previewTemplate.createdAt)}
                     </span>
                   </div>
                   <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium text-gray-600">
+                    <span className="text-xs md:text-sm font-medium text-gray-600">
                       Background
                     </span>
                     <div className="flex items-center gap-2">
@@ -277,7 +277,7 @@ const Templates = () => {
                             previewTemplate.designOptions.bgColor,
                         }}
                       />
-                      <span className="text-sm text-gray-900 font-mono">
+                      <span className="text-xs md:text-sm text-gray-900 font-mono">
                         {previewTemplate.designOptions.bgColor}
                       </span>
                     </div>
@@ -292,23 +292,25 @@ const Templates = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-8 px-4">
+    <div className="max-w-6xl mx-auto py-4 md:py-8 px-3 md:px-6">
       <PreviewModal />
       {!showCreateForm ? (
         // Templates List View
         <>
-          <div className="mb-8">
-            <h1 className="text-3xl font-semibold mb-2">QR Code Templates</h1>
-            <p className="text-muted-foreground">
+          <div className="mb-4 md:mb-8">
+            <h1 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-1 md:mb-2">
+              QR Code Templates
+            </h1>
+            <p className="text-muted-foreground text-xs md:text-sm lg:text-base">
               Create and manage your custom QR code design templates
             </p>
           </div>
 
           {/* Create New Template Button */}
-          <div className="mb-8">
+          <div className="mb-4 md:mb-6 lg:mb-8">
             <Button
               onClick={() => setShowCreateForm(true)}
-              className="flex items-center gap-2"
+              className="flex items-center justify-center gap-2 w-full sm:w-auto text-sm md:text-base"
               disabled={loading}
             >
               <Plus className="h-4 w-4" />
@@ -318,13 +320,13 @@ const Templates = () => {
 
           {/* Error Message */}
           {error && (
-            <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-              <p className="text-red-600 text-sm">{error}</p>
+            <div className="mb-4 md:mb-6 bg-red-50 border border-red-200 rounded-lg p-3 md:p-4">
+              <p className="text-red-600 text-xs md:text-sm">{error}</p>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={loadTemplates}
-                className="mt-2"
+                className="mt-2 text-xs md:text-sm"
               >
                 Retry
               </Button>
@@ -340,20 +342,24 @@ const Templates = () => {
 
           {/* Templates Grid */}
           <div>
-            <h2 className="text-xl font-semibold mb-4">Your Templates</h2>
+            <h2 className="text-lg md:text-xl font-semibold mb-3 md:mb-4">
+              Your Templates
+            </h2>
             {templates.length === 0 ? (
               <Card>
-                <CardContent className="flex flex-col items-center justify-center py-12">
-                  <div className="w-16 h-16 bg-muted rounded-lg flex items-center justify-center mb-4">
-                    <Plus className="h-8 w-8 text-muted-foreground" />
+                <CardContent className="flex flex-col items-center justify-center py-8 md:py-12 px-4">
+                  <div className="w-12 h-12 md:w-16 md:h-16 bg-muted rounded-lg flex items-center justify-center mb-3 md:mb-4">
+                    <Plus className="h-6 w-6 md:h-8 md:w-8 text-muted-foreground" />
                   </div>
-                  <h3 className="text-lg font-medium mb-2">No templates yet</h3>
-                  <p className="text-muted-foreground text-center max-w-md">
+                  <h3 className="text-base md:text-lg font-medium mb-2">
+                    No templates yet
+                  </h3>
+                  <p className="text-muted-foreground text-center max-w-md text-xs md:text-sm px-2">
                     Create your first QR code template to save time when
                     generating QR codes with consistent designs
                   </p>
                   <Button
-                    className="mt-4"
+                    className="mt-3 md:mt-4 text-sm md:text-base"
                     onClick={() => setShowCreateForm(true)}
                   >
                     Create Your First Template
@@ -361,73 +367,38 @@ const Templates = () => {
                 </CardContent>
               </Card>
             ) : (
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 md:gap-6">
                 {templates.map((template) => (
                   <Card
                     key={template.id}
-                    className="hover:shadow-lg transition-all duration-300"
+                    className="hover:shadow-lg transition-all duration-300 cursor-pointer group"
+                    onClick={() => handlePreviewTemplate(template)}
                   >
-                    <CardHeader>
-                      <div className="flex items-start justify-between">
-                        <div>
-                          <CardTitle className="text-lg">
-                            {template.name}
-                          </CardTitle>
-                          {template.description && (
-                            <CardDescription className="mt-1">
-                              {template.description}
-                            </CardDescription>
-                          )}
-                        </div>
-                      </div>
-                      <div className="flex gap-2 mt-2">
-                        <Badge variant="secondary">
-                          Frame {template.designOptions.frame}
-                        </Badge>
-                        <Badge variant="secondary">
-                          Shape {template.designOptions.shape}
-                        </Badge>
-                        {template.designOptions.logo > 0 && (
-                          <Badge variant="secondary">
-                            Logo {template.designOptions.logo}
-                          </Badge>
-                        )}
-                        {template.designOptions.dotStyle &&
-                          template.designOptions.dotStyle > 1 && (
-                            <Badge variant="secondary">
-                              Dot Style {template.designOptions.dotStyle}
-                            </Badge>
-                          )}
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <div className="space-y-4">
+                    <CardContent className="p-4">
+                      <div className="space-y-3">
                         <div className="flex justify-center">
                           <QRPreview
                             designOptions={template.designOptions}
-                            size={96}
+                            size={100}
                           />
                         </div>
-                        <div className="text-xs text-muted-foreground text-center">
-                          Created {formatDate(template.createdAt)}
+                        <div className="text-center">
+                          <h3 className="font-semibold text-sm md:text-base text-gray-900 line-clamp-1">
+                            {template.name}
+                          </h3>
                         </div>
-                        <div className="flex gap-2">
+                        <div className="flex justify-center">
                           <Button
                             variant="outline"
                             size="sm"
-                            className="flex-1"
-                            onClick={() => handlePreviewTemplate(template)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              handleDeleteTemplate(template.id);
+                            }}
+                            className="text-red-600 hover:text-red-700 text-xs w-full"
                           >
-                            <Eye className="h-4 w-4 mr-2" />
-                            Preview
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => handleDeleteTemplate(template.id)}
-                            className="text-red-600 hover:text-red-700"
-                          >
-                            <Trash2 className="h-4 w-4" />
+                            <Trash2 className="h-3 w-3 mr-1.5" />
+                            Delete
                           </Button>
                         </div>
                       </div>
@@ -440,22 +411,24 @@ const Templates = () => {
         </>
       ) : (
         // Create Template Editor View - Two Column Layout
-        <div className="h-screen flex bg-gray-50 -m-8">
+        <div className="min-h-screen flex flex-col lg:flex-row bg-gray-50 -m-3 md:-m-6">
           {/* Left Sidebar - Scrollable Selection Panel */}
-          <div className="w-1/2 overflow-y-auto border-r border-gray-200 bg-white">
-            <div className="p-6">
-              <div className="mb-8">
-                <div className="flex items-center justify-between">
+          <div className="w-full lg:w-1/2 overflow-y-auto border-b lg:border-b-0 lg:border-r border-gray-200 bg-white">
+            <div className="p-4 md:p-6">
+              <div className="mb-4 md:mb-8">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
                   <div>
-                    <h1 className="text-2xl font-semibold mb-2">
+                    <h1 className="text-lg md:text-xl lg:text-2xl font-semibold mb-1 md:mb-2">
                       Create Template
                     </h1>
-                    <p className="text-muted-foreground">
+                    <p className="text-muted-foreground text-xs md:text-sm">
                       Design your custom QR code template
                     </p>
                   </div>
                   <Button
                     variant="outline"
+                    size="sm"
+                    className="text-xs md:text-sm w-full sm:w-auto"
                     onClick={() => {
                       setShowCreateForm(false);
                       setNewTemplateName("");
@@ -480,25 +453,52 @@ const Templates = () => {
 
               {/* Error Message */}
               {error && (
-                <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
-                  <p className="text-red-600 text-sm">{error}</p>
+                <div className="mb-4 md:mb-6 bg-red-50 border border-red-200 rounded-lg p-3 md:p-4">
+                  <p className="text-red-600 text-xs md:text-sm">{error}</p>
                 </div>
               )}
 
+              {/* Mobile Preview Area */}
+              <div className="lg:hidden mb-4 md:mb-6 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-4 md:p-6">
+                <div className="text-center">
+                  <h3 className="text-sm md:text-base font-semibold text-gray-800 mb-3">
+                    Preview
+                  </h3>
+                  <div className="bg-white rounded-xl shadow-lg p-4 inline-block">
+                    <QRPreview designOptions={designOptions} size={150} />
+                  </div>
+                  <div className="mt-3">
+                    <p className="font-medium text-gray-800 text-sm mb-1">
+                      {newTemplateName || "Untitled Template"}
+                    </p>
+                    {newTemplateDescription && (
+                      <p className="text-gray-600 text-xs">
+                        {newTemplateDescription}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              </div>
+
               {/* Template Info Form */}
-              <div className="space-y-4 mb-6">
+              <div className="space-y-3 md:space-y-4 mb-4 md:mb-6">
                 <div>
-                  <Label htmlFor="template-name">Template Name</Label>
+                  <Label htmlFor="template-name" className="text-xs md:text-sm">
+                    Template Name
+                  </Label>
                   <Input
                     id="template-name"
                     value={newTemplateName}
                     onChange={(e) => setNewTemplateName(e.target.value)}
                     placeholder="Enter template name..."
-                    className="mt-1"
+                    className="mt-1 text-sm"
                   />
                 </div>
                 <div>
-                  <Label htmlFor="template-description">
+                  <Label
+                    htmlFor="template-description"
+                    className="text-xs md:text-sm"
+                  >
                     Description (Optional)
                   </Label>
                   <Input
@@ -506,7 +506,7 @@ const Templates = () => {
                     value={newTemplateDescription}
                     onChange={(e) => setNewTemplateDescription(e.target.value)}
                     placeholder="Enter template description..."
-                    className="mt-1"
+                    className="mt-1 text-sm"
                   />
                 </div>
               </div>
@@ -519,11 +519,11 @@ const Templates = () => {
               />
 
               {/* Save/Cancel Buttons */}
-              <div className="flex gap-4 pt-6 border-t mt-6">
+              <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4 md:pt-6 border-t mt-4 md:mt-6">
                 <Button
                   onClick={handleCreateTemplate}
                   disabled={!newTemplateName.trim() || saving}
-                  className="flex-1"
+                  className="flex-1 text-sm md:text-base"
                 >
                   {saving ? (
                     <div className="flex items-center space-x-2">
@@ -536,6 +536,7 @@ const Templates = () => {
                 </Button>
                 <Button
                   variant="outline"
+                  className="text-sm md:text-base"
                   onClick={() => {
                     setShowCreateForm(false);
                     setNewTemplateName("");
@@ -560,42 +561,50 @@ const Templates = () => {
           </div>
 
           {/* Right Panel - Fixed Preview Area */}
-          <div className="w-1/2 bg-gradient-to-br from-blue-50 to-indigo-100">
-            <div className="h-full flex flex-col justify-center items-center p-8">
-              <div className="text-center mb-8">
-                <h2 className="text-2xl font-bold text-gray-800 mb-2">
+          <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-50 to-indigo-100">
+            <div className="h-full w-full flex flex-col justify-center items-center p-6 lg:p-8">
+              <div className="text-center mb-6 lg:mb-8">
+                <h2 className="text-xl lg:text-2xl font-bold text-gray-800 mb-2">
                   Live Preview
                 </h2>
-                <p className="text-gray-600">See how your template will look</p>
+                <p className="text-gray-600 text-sm lg:text-base">
+                  See how your template will look
+                </p>
               </div>
 
-              <div className="bg-white rounded-2xl shadow-2xl p-8 max-w-md">
-                <QRPreview designOptions={designOptions} size={280} />
+              <div className="bg-white rounded-2xl shadow-2xl p-6 lg:p-8 max-w-md">
+                <QRPreview designOptions={designOptions} size={240} />
               </div>
 
-              <div className="mt-8 text-center">
-                <h3 className="font-semibold text-gray-800 mb-2">
+              <div className="mt-6 lg:mt-8 text-center">
+                <h3 className="font-semibold text-gray-800 mb-2 text-sm lg:text-base">
                   {newTemplateName || "Untitled Template"}
                 </h3>
                 {newTemplateDescription && (
-                  <p className="text-gray-600 text-sm">
+                  <p className="text-gray-600 text-xs lg:text-sm">
                     {newTemplateDescription}
                   </p>
                 )}
-                <div className="flex gap-2 mt-4 justify-center flex-wrap">
-                  <Badge variant="secondary">Frame {designOptions.frame}</Badge>
-                  <Badge variant="secondary">Shape {designOptions.shape}</Badge>
+                <div className="flex gap-1.5 lg:gap-2 mt-3 lg:mt-4 justify-center flex-wrap">
+                  <Badge variant="secondary" className="text-xs">
+                    Frame {designOptions.frame}
+                  </Badge>
+                  <Badge variant="secondary" className="text-xs">
+                    Shape {designOptions.shape}
+                  </Badge>
                   {designOptions.logo > 0 && (
-                    <Badge variant="secondary">Logo {designOptions.logo}</Badge>
+                    <Badge variant="secondary" className="text-xs">
+                      Logo {designOptions.logo}
+                    </Badge>
                   )}
                   {designOptions.dotStyle && designOptions.dotStyle > 1 && (
-                    <Badge variant="secondary">
+                    <Badge variant="secondary" className="text-xs">
                       Dot Style {designOptions.dotStyle}
                     </Badge>
                   )}
                   {designOptions.outerBorder &&
                     designOptions.outerBorder > 1 && (
-                      <Badge variant="secondary">
+                      <Badge variant="secondary" className="text-xs">
                         Border {designOptions.outerBorder}
                       </Badge>
                     )}

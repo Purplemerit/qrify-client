@@ -2,8 +2,6 @@ import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from 'axio
 
 // Create axios instance with base URL
 const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
-console.log('🌐 API Base URL:', baseURL);
-console.log('🌐 Environment variables:', import.meta.env);
 
 export const api: AxiosInstance = axios.create({
   baseURL,
@@ -49,24 +47,13 @@ export const tokenStorage = {
   },
 };
 
-// Request interceptor (cookies are sent automatically, no manual authorization needed)
+// Request interceptor for cookies-based authentication
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
-    console.log('📡 Making API request:', {
-      method: config.method?.toUpperCase(),
-      url: config.url,
-      baseURL: config.baseURL,
-      fullURL: `${config.baseURL}${config.url}`,
-      headers: config.headers,
-      withCredentials: config.withCredentials,
-      data: config.data
-    });
-    
     // Cookies are automatically included due to withCredentials: true
     return config;
   },
   (error) => {
-    console.error('❌ Request interceptor error:', error);
     return Promise.reject(error);
   }
 );
@@ -92,41 +79,22 @@ const processQueue = (error: unknown = null, token: string | null = null) => {
 
 api.interceptors.response.use(
   (response) => {
-    console.log('✅ API Response success:', {
-      method: response.config.method?.toUpperCase(),
-      url: response.config.url,
-      status: response.status,
-      data: response.data
-    });
     return response;
   },
   async (error) => {
-    console.error('❌ API Response error:', {
-      method: error.config?.method?.toUpperCase(),
-      url: error.config?.url,
-      status: error.response?.status,
-      statusText: error.response?.statusText,
-      data: error.response?.data
-    });
-    
     const originalRequest = error.config;
 
     // If error is 401 and we haven't tried to refresh yet
     if (error.response?.status === 401 && !originalRequest._retry) {
-      console.log('🔄 Got 401 error, attempting token refresh...');
-      
       if (isRefreshing) {
-        console.log('⏳ Already refreshing, queueing request...');
         // If already refreshing, queue this request
         return new Promise((resolve, reject) => {
           failedQueue.push({ resolve, reject });
         })
           .then(() => {
-            console.log('🔄 Retrying queued request after refresh...');
             return api(originalRequest);
           })
           .catch((err) => {
-            console.error('❌ Queued request failed:', err);
             return Promise.reject(err);
           });
       }
@@ -135,18 +103,14 @@ api.interceptors.response.use(
       isRefreshing = true;
 
       try {
-        console.log('🔄 Making refresh token request...');
-        console.log('🍪 Cookies before refresh:', document.cookie);
-        
         // Try to refresh the token using cookie-based endpoint
         const refreshResponse = await api.post('/auth/refresh');
         
-        console.log('✅ Token refresh successful:', refreshResponse);
-        console.log('🍪 Cookies after refresh:', document.cookie);
+        // ...existing code...
         
         processQueue(null, 'refreshed');
         
-        console.log('🔄 Retrying original request after refresh...');
+        // ...existing code...
         return api(originalRequest);
       } catch (refreshError) {
         console.error('❌ Token refresh failed:', refreshError);
@@ -159,13 +123,13 @@ api.interceptors.response.use(
         const currentPath = window.location.pathname;
         const publicPaths = ['/', '/home', '/login', '/signup', '/forgot-password'];
 
-        console.log('🚪 Current path:', currentPath, 'Public paths:', publicPaths);
+        // ...existing code...
         
         if (!publicPaths.includes(currentPath)) {
-          console.log('🚪 Redirecting to login...');
+          // ...existing code...
           window.location.href = '/login';
         } else {
-          console.log('🏠 Staying on public page');
+          // ...existing code...
         }
 
         return Promise.reject(refreshError);
@@ -181,10 +145,10 @@ api.interceptors.response.use(
 // Stats API functions
 export const statsApi = {
   getStats: async () => {
-    console.log('📊 Fetching stats from:', `${baseURL}/qr/stats`);
+    // ...existing code...
     try {
       const response = await api.get('/qr/stats');
-      console.log('📊 Stats response received:', response.status, response.data);
+      // ...existing code...
       
       // Validate response data
       if (!response.data || typeof response.data !== 'object') {

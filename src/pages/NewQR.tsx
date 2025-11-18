@@ -173,10 +173,10 @@ const NewQR = () => {
 
     try {
       // Debug: Check authentication status
-      console.log("Checking authentication status...");
+      // ...existing code...
       try {
         const authStatus = await authService.getCurrentUser();
-        console.log("User authenticated:", authStatus.user);
+        // ...existing code...
       } catch (authError) {
         console.error("Authentication check failed:", authError);
         setError("Authentication required. Please log in again.");
@@ -186,8 +186,7 @@ const NewQR = () => {
 
       // Create QR code - cookies are sent automatically
       // Server will handle authentication check
-      console.log("Form data being sent:", formData);
-      console.log("Is static QR:", isStaticQR);
+      // ...existing code...
 
       const response = await api.post("/qr/url", {
         name: formData.qrName || "Website QR",
@@ -196,7 +195,7 @@ const NewQR = () => {
       });
 
       const createdQr = response.data;
-      console.log("QR created:", createdQr);
+      // ...existing code...
 
       // Get the QR image - cookies are sent automatically
       const imageResponse = await api.get(`/qr/${createdQr.id}/image`);
@@ -249,7 +248,7 @@ const NewQR = () => {
     try {
       setLoading(true);
 
-      console.log("Completing QR with design options:", qrDesignOptions);
+      // ...existing code...
       // Update the QR code with the applied design options
       await api.put(`/qr/${generatedQR.id}`, {
         designOptions: qrDesignOptions,
@@ -267,17 +266,17 @@ const NewQR = () => {
   };
 
   const renderStepIndicator = () => (
-    <div className="mb-12 px-10">
+    <div className="mb-6 md:mb-12 px-4 md:px-10">
       {/* Step Indicator */}
-      <div className="flex items-center justify-center mb-8 mt-8">
-        <div className="flex items-center space-x-4 relative">
+      <div className="flex items-center justify-center mb-6 md:mb-8 mt-4 md:mt-8">
+        <div className="flex items-center space-x-2 md:space-x-4 relative">
           {/* Step 1 */}
           <div
-            className="flex items-center space-x-3 cursor-pointer transition-all duration-300"
+            className="flex items-center space-x-1 md:space-x-3 cursor-pointer transition-all duration-300"
             onClick={() => handleStepClick(1)}
           >
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
+              className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium transition-all duration-300 ${
                 currentStep === 1
                   ? "bg-primary text-primary-foreground shadow-lg"
                   : currentStep > 1
@@ -287,31 +286,22 @@ const NewQR = () => {
             >
               {currentStep > 1 ? "✓" : "1"}
             </div>
-            <span
-              className={`text-sm transition-colors duration-300 ${
-                currentStep >= 1
-                  ? "font-medium text-foreground"
-                  : "text-muted-foreground"
-              }`}
-            >
-              Type of QR code
-            </span>
           </div>
 
           {/* Connecting line 1 */}
           <div
-            className={`h-px w-16 transition-colors duration-500 ${
+            className={`h-px w-8 md:w-16 transition-colors duration-500 ${
               currentStep > 1 ? "bg-green-500" : "bg-muted"
             }`}
           ></div>
 
           {/* Step 2 */}
           <div
-            className="flex items-center space-x-3 cursor-pointer transition-all duration-300"
+            className="flex items-center space-x-1 md:space-x-3 cursor-pointer transition-all duration-300"
             onClick={() => handleStepClick(2)}
           >
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
+              className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium transition-all duration-300 ${
                 currentStep === 2
                   ? "bg-primary text-primary-foreground shadow-lg"
                   : currentStep > 2
@@ -323,33 +313,22 @@ const NewQR = () => {
             >
               {currentStep > 2 ? "✓" : "2"}
             </div>
-            <span
-              className={`text-sm transition-colors duration-300 ${
-                currentStep === 2
-                  ? "font-medium text-foreground"
-                  : selectedQRType
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-              }`}
-            >
-              Content
-            </span>
           </div>
 
           {/* Connecting line 2 */}
           <div
-            className={`h-px w-16 transition-colors duration-500 ${
+            className={`h-px w-8 md:w-16 transition-colors duration-500 ${
               currentStep > 2 ? "bg-green-500" : "bg-muted"
             }`}
           ></div>
 
           {/* Step 3 */}
           <div
-            className="flex items-center space-x-3 cursor-pointer transition-all duration-300"
+            className="flex items-center space-x-1 md:space-x-3 cursor-pointer transition-all duration-300"
             onClick={() => handleStepClick(3)}
           >
             <div
-              className={`w-10 h-10 rounded-full flex items-center justify-center text-sm font-medium transition-all duration-300 ${
+              className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium transition-all duration-300 ${
                 currentStep === 3
                   ? "bg-primary text-primary-foreground shadow-lg"
                   : currentStep > 3
@@ -361,17 +340,6 @@ const NewQR = () => {
             >
               {currentStep > 3 ? "✓" : "3"}
             </div>
-            <span
-              className={`text-sm transition-colors duration-300 ${
-                currentStep === 3
-                  ? "font-medium text-foreground"
-                  : generatedQR
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-              }`}
-            >
-              QR Design
-            </span>
           </div>
         </div>
       </div>
@@ -379,18 +347,20 @@ const NewQR = () => {
       {/* Navigation Buttons */}
       <div className="flex justify-center">
         {currentStep === 2 && (
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             <Button
               variant="outline"
               onClick={() => setCurrentStep(1)}
-              className="px-8 py-2 rounded-full border-2 hover:border-primary/50 transition-all duration-300"
+              size="sm"
+              className="px-4 md:px-8 py-2 rounded-full border-2 hover:border-primary/50 transition-all duration-300"
             >
               ← Back
             </Button>
             <Button
               onClick={handleNextFromStep2}
               disabled={loading}
-              className="px-8 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50"
+              size="sm"
+              className="px-4 md:px-8 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50"
             >
               {loading ? (
                 <div className="flex items-center space-x-2">
@@ -405,18 +375,20 @@ const NewQR = () => {
         )}
 
         {currentStep === 3 && (
-          <div className="flex items-center space-x-4">
+          <div className="flex items-center space-x-2 md:space-x-4">
             <Button
               variant="outline"
               onClick={() => setCurrentStep(2)}
-              className="px-8 py-2 rounded-full border-2 hover:border-primary/50 transition-all duration-300"
+              size="sm"
+              className="px-4 md:px-8 py-2 rounded-full border-2 hover:border-primary/50 transition-all duration-300"
             >
               ← Back
             </Button>
             <Button
               onClick={handleCompleteQR}
               disabled={loading || !generatedQR?.id}
-              className="px-8 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50"
+              size="sm"
+              className="px-4 md:px-8 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50"
             >
               {loading ? "Saving..." : "Complete"}
             </Button>
@@ -427,9 +399,9 @@ const NewQR = () => {
   );
 
   const renderStep1 = () => (
-    <div className="flex gap-12 w-full px-10 justify-between">
+    <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 w-full px-4 md:px-10 justify-between">
       {/* Main Content */}
-      <div className="flex-1 max-w-4xl">
+      <div className="flex-1 w-full lg:max-w-4xl">
         {/* Dynamic QRs Section */}
         <div className="mb-8">
           <div
@@ -468,7 +440,7 @@ const NewQR = () => {
             }`}
             style={{ overflow: isDynamicCollapsed ? "hidden" : "visible" }}
           >
-            <div className="grid grid-cols-2 gap-6 p-2">
+            <div className="grid grid-cols-1 gap-4 p-2">
               {dynamicQrTypes.map((type, index) => (
                 <Card
                   key={index}
@@ -540,7 +512,7 @@ const NewQR = () => {
             }`}
             style={{ overflow: isStaticCollapsed ? "hidden" : "visible" }}
           >
-            <div className="grid grid-cols-2 gap-6 p-2">
+            <div className="grid grid-cols-1 gap-4 p-2">
               {staticQrTypes.map((type, index) => (
                 <Card
                   key={index}
@@ -573,8 +545,8 @@ const NewQR = () => {
         </div>
       </div>
 
-      {/* Phone Mockup - Moved to right */}
-      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80">
+      {/* Phone Mockup - Hidden on mobile, shown on large screens */}
+      <div className="hidden lg:flex flex-shrink-0 flex-col items-center sticky top-24 h-fit ml-8 w-80">
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-center">Preview Example</h3>
           <p className="text-sm text-muted-foreground text-center mt-2">
@@ -690,15 +662,88 @@ const NewQR = () => {
   };
 
   const renderStep2 = () => (
-    <div className="flex gap-12 w-full px-10 justify-between items-start">
+    <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 w-full px-4 md:px-10 justify-between items-start">
+      {/* Mobile Preview Area - Top */}
+      <div className="lg:hidden w-full mb-6">
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg p-6 border-2 border-blue-100">
+          <div className="flex items-center justify-center mb-4">
+            <div className="bg-white rounded-full px-4 py-1.5 shadow-sm">
+              <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">
+                Live Preview
+              </h3>
+            </div>
+          </div>
+          <div className="flex justify-center">
+            {loading ? (
+              <div className="w-40 h-40 flex items-center justify-center bg-white rounded-xl shadow-inner">
+                <div className="flex flex-col items-center gap-2">
+                  <div className="animate-spin rounded-full h-10 w-10 border-3 border-primary border-t-transparent"></div>
+                  <p className="text-xs text-gray-500 font-medium">
+                    Generating...
+                  </p>
+                </div>
+              </div>
+            ) : generatedQR ? (
+              <div className="flex flex-col items-center gap-3">
+                <div className="bg-white p-4 rounded-xl shadow-md">
+                  {renderQRWithDesign(
+                    generatedQR.scanUrl ||
+                      `${
+                        import.meta.env.VITE_API_URL || "http://localhost:4000"
+                      }/scan/${generatedQR.slug}`,
+                    qrDesignOptions,
+                    {
+                      width: 140,
+                      height: 140,
+                    }
+                  )}
+                </div>
+                {generatedQR.scanUrl && (
+                  <a
+                    href={generatedQR.scanUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-white rounded-full text-xs font-medium text-primary hover:bg-primary hover:text-white transition-colors shadow-sm"
+                  >
+                    <span>{isStaticQR ? "Test Website" : "Test Scan"}</span>
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      />
+                    </svg>
+                  </a>
+                )}
+              </div>
+            ) : (
+              <div className="w-40 h-40 border-2 border-dashed border-blue-200 rounded-xl flex items-center justify-center bg-white/50">
+                <div className="flex flex-col items-center gap-2">
+                  <div className="w-12 h-12 border-2 border-dashed border-blue-300 rounded-lg"></div>
+                  <p className="text-xs text-gray-500 font-medium text-center px-4">
+                    QR code will appear here
+                  </p>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Main Content */}
-      <div className="flex-1 max-w-3xl min-w-0">
+      <div className="flex-1 w-full lg:max-w-3xl min-w-0">
         <div className="space-y-6">
           <div className="fade-in">
-            <h1 className="text-2xl font-semibold mb-2">
+            <h1 className="text-xl md:text-2xl font-semibold mb-2">
               {selectedQRType} QR Code
             </h1>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground text-sm md:text-base">
               Fill in the details to generate your QR code
             </p>
           </div>
@@ -715,8 +760,8 @@ const NewQR = () => {
         </div>
       </div>
 
-      {/* Phone Mockup */}
-      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80 min-w-[320px]">
+      {/* Phone Mockup - Hidden on mobile */}
+      <div className="hidden lg:flex flex-shrink-0 flex-col items-center sticky top-24 h-fit ml-8 w-80 min-w-[320px]">
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-center">Live Preview</h3>
           <p className="text-sm text-muted-foreground text-center mt-2">
@@ -788,9 +833,64 @@ const NewQR = () => {
   );
 
   const renderStep3 = () => (
-    <div className="flex gap-12 w-full px-10 justify-between">
+    <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 w-full px-4 md:px-10 justify-between">
+      {/* Mobile Preview Area - Top */}
+      <div className="lg:hidden w-full mb-6">
+        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-lg p-6 border-2 border-purple-100">
+          <div className="flex items-center justify-center mb-4">
+            <div className="bg-white rounded-full px-4 py-1.5 shadow-sm">
+              <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">
+                Final Preview
+              </h3>
+            </div>
+          </div>
+          <div className="flex justify-center">
+            {generatedQR && (
+              <div className="flex flex-col items-center gap-3">
+                <div className="bg-white p-4 rounded-xl shadow-md">
+                  {renderQRWithDesign(
+                    generatedQR.scanUrl ||
+                      `${
+                        import.meta.env.VITE_API_URL || "http://localhost:4000"
+                      }/scan/${generatedQR.slug}`,
+                    qrDesignOptions,
+                    {
+                      width: 140,
+                      height: 140,
+                    }
+                  )}
+                </div>
+                {generatedQR.scanUrl && (
+                  <a
+                    href={generatedQR.scanUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1 px-3 py-1.5 bg-white rounded-full text-xs font-medium text-primary hover:bg-primary hover:text-white transition-colors shadow-sm"
+                  >
+                    <span>{isStaticQR ? "Test Website" : "Test Scan"}</span>
+                    <svg
+                      className="w-3 h-3"
+                      fill="none"
+                      stroke="currentColor"
+                      viewBox="0 0 24 24"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth={2}
+                        d="M14 5l7 7m0 0l-7 7m7-7H3"
+                      />
+                    </svg>
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
       {/* Main Content */}
-      <div className="flex-1 max-w-4xl">
+      <div className="flex-1 w-full lg:max-w-4xl">
         <div className="space-y-8">
           <div className="fade-in">
             <h1 className="text-2xl font-semibold mb-2">Design Your QR Code</h1>
@@ -957,8 +1057,8 @@ const NewQR = () => {
         </div>
       </div>
 
-      {/* Phone Mockup */}
-      <div className="flex-shrink-0 flex flex-col items-center sticky top-24 h-fit ml-8 w-80">
+      {/* Phone Mockup - Hidden on mobile, shown on large screens */}
+      <div className="hidden lg:flex flex-shrink-0 flex-col items-center sticky top-24 h-fit ml-8 w-80">
         <div className="mb-6">
           <h3 className="text-xl font-semibold text-center">Final Preview</h3>
           <p className="text-sm text-muted-foreground text-center mt-2">
@@ -1005,7 +1105,7 @@ const NewQR = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
-      <div className="max-w-8xl mx-auto py-8">
+      <div className="max-w-8xl mx-auto py-4 md:py-8 px-4 md:px-6">
         {renderStepIndicator()}
         <div className="transition-all duration-700 ease-in-out">
           {currentStep === 1 && (

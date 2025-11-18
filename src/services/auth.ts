@@ -71,19 +71,21 @@ export interface GetMeResponse {
   user: User;
 }
 
+export interface VerifyEmailResponse {
+  valid: boolean;
+  error?: string;
+  suggestion?: string;
+  result?: string;
+}
+
 class AuthService {
   /**
    * Register a new user account
    */
   async signup(data: SignupRequest): Promise<SignupResponse> {
-    console.log('📝 AuthService: Making signup API call with:', { email: data.email });
     
     const response = await api.post<SignupResponse>('/auth/signup', data);
     
-    console.log('📝 AuthService: Signup API response:', response);
-    console.log('📝 AuthService: Response status:', response.status);
-    console.log('📝 AuthService: Response headers:', response.headers);
-    console.log('📝 AuthService: Response data:', response.data);
     
     // Cookies are set automatically by the server
     return response.data;
@@ -93,18 +95,11 @@ class AuthService {
    * Login with email and password
    */
   async login(data: LoginRequest): Promise<LoginResponse> {
-    console.log('🔐 AuthService: Making login API call with:', { email: data.email });
     
     const response = await api.post<LoginResponse>('/auth/login', data);
     
-    console.log('🔐 AuthService: Login API response:', response);
-    console.log('🔐 AuthService: Response status:', response.status);
-    console.log('🔐 AuthService: Response headers:', response.headers);
-    console.log('🔐 AuthService: Response data:', response.data);
     
     // Check cookies after login
-    console.log('🍪 All cookies after login:', document.cookie);
-    console.log('🍪 Set-Cookie headers:', response.headers['set-cookie']);
     
     // Cookies are set automatically by the server
     return response.data;
@@ -167,16 +162,10 @@ class AuthService {
    * Get current authenticated user
    */
   async getCurrentUser(): Promise<GetMeResponse> {
-    console.log('👤 Getting current user...');
-    console.log('🍪 Cookies before /auth/me call:', document.cookie);
-    
     try {
       const response = await api.get<GetMeResponse>('/auth/me');
-      console.log('✅ getCurrentUser success:', response.data);
       return response.data;
     } catch (error) {
-      console.error('❌ getCurrentUser failed:', error);
-      console.log('🍪 Cookies after failed /auth/me call:', document.cookie);
       throw error;
     }
   }
@@ -206,18 +195,22 @@ class AuthService {
   }
 
   /**
+   * Verify email address in real-time
+   */
+  async verifyEmail(email: string): Promise<VerifyEmailResponse> {
+    const response = await api.post<VerifyEmailResponse>('/auth/verify-email', { email });
+    return response.data;
+  }
+
+  /**
    * Check if user is authenticated
    */
   async isAuthenticated(): Promise<boolean> {
-    console.log('🔍 Checking if user is authenticated...');
-    
     try {
       // Try to fetch current user to verify authentication
       await this.getCurrentUser();
-      console.log('✅ User is authenticated');
       return true;
     } catch (error) {
-      console.log('❌ User is not authenticated:', error);
       return false;
     }
   }
@@ -230,7 +223,6 @@ class AuthService {
     // Since cookies are httpOnly, we cannot access them from JavaScript
     // This method is kept for compatibility but should be avoided
     // Always prefer the async isAuthenticated() method
-    console.warn('isAuthenticatedSync() is unreliable with httpOnly cookies. Use isAuthenticated() instead.');
     return true; // Assume authenticated and let server validate
   }
 }
