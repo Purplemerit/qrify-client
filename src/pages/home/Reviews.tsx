@@ -127,7 +127,7 @@ export function Reviews() {
   const handleSeeMoreReviews = () => {
     setShowingMore(!showingMore);
     // In a real app, this would load more reviews from an API
-    console.log("Loading more reviews...");
+    // ...existing code...
   };
 
   return (

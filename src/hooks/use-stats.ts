@@ -11,8 +11,11 @@ export const useStats = (): UseStatsReturn => {
     try {
       setLoading(true);
       setError(null);
+      // ...existing code...
       const statsData = await statsApi.getStats();
+      // ...existing code...
       setData(statsData);
+      // ...existing code...
     } catch (err: unknown) {
       console.error('Failed to fetch stats:', err);
       // Provide more detailed error information
@@ -39,14 +42,38 @@ export const useStats = (): UseStatsReturn => {
         errorMessage = err.message;
       }
       setError(errorMessage);
+      // ...existing code...
     } finally {
       setLoading(false);
+      // ...existing code...
     }
   };
 
   useEffect(() => {
     fetchStats();
-  }, []);
+  }, []); // Initial fetch only
+
+  // Separate effect for loading timeout
+  useEffect(() => {
+    if (loading) {
+      const timeout = setTimeout(() => {
+        console.warn('🎯 Stats loading timeout - forcing loading to false');
+        setLoading(false);
+      }, 10000); // 10 second timeout
+      
+      return () => clearTimeout(timeout);
+    }
+  }, [loading]);
+
+  // Debug: Log state changes
+  useEffect(() => {
+    console.log('🎯 useStats state changed:', { 
+      hasData: !!data, 
+      loading, 
+      error: !!error,
+      dataKeys: data ? Object.keys(data) : null 
+    });
+  }, [data, loading, error]);
 
   return {
     data,

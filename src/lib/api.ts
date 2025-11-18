@@ -1,8 +1,10 @@
 import axios, { type AxiosInstance, type InternalAxiosRequestConfig } from 'axios';
 
 // Create axios instance with base URL
+const baseURL = import.meta.env.VITE_API_URL || 'http://localhost:4000';
+
 export const api: AxiosInstance = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:4000',
+  baseURL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -45,7 +47,7 @@ export const tokenStorage = {
   },
 };
 
-// Request interceptor (cookies are sent automatically, no manual authorization needed)
+// Request interceptor for cookies-based authentication
 api.interceptors.request.use(
   (config: InternalAxiosRequestConfig) => {
     // Cookies are automatically included due to withCredentials: true
@@ -76,7 +78,9 @@ const processQueue = (error: unknown = null, token: string | null = null) => {
 };
 
 api.interceptors.response.use(
-  (response) => response,
+  (response) => {
+    return response;
+  },
   async (error) => {
     const originalRequest = error.config;
 
@@ -100,11 +104,17 @@ api.interceptors.response.use(
 
       try {
         // Try to refresh the token using cookie-based endpoint
-        await api.post('/auth/refresh');
+        const refreshResponse = await api.post('/auth/refresh');
+        
+        // ...existing code...
         
         processQueue(null, 'refreshed');
+        
+        // ...existing code...
         return api(originalRequest);
       } catch (refreshError) {
+        console.error('❌ Token refresh failed:', refreshError);
+        
         // Refresh failed, clear any client-side auth state
         processQueue(refreshError, null);
         tokenStorage.clearTokens();
@@ -113,8 +123,13 @@ api.interceptors.response.use(
         const currentPath = window.location.pathname;
         const publicPaths = ['/', '/home', '/login', '/signup', '/forgot-password'];
 
+        // ...existing code...
+        
         if (!publicPaths.includes(currentPath)) {
+          // ...existing code...
           window.location.href = '/login';
+        } else {
+          // ...existing code...
         }
 
         return Promise.reject(refreshError);
@@ -130,8 +145,21 @@ api.interceptors.response.use(
 // Stats API functions
 export const statsApi = {
   getStats: async () => {
-    const response = await api.get('/qr/stats');
-    return response.data;
+    // ...existing code...
+    try {
+      const response = await api.get('/qr/stats');
+      // ...existing code...
+      
+      // Validate response data
+      if (!response.data || typeof response.data !== 'object') {
+        throw new Error('Invalid stats data received from server');
+      }
+      
+      return response.data;
+    } catch (error) {
+      console.error('📊 Stats API error:', error);
+      throw error;
+    }
   }
 };
 

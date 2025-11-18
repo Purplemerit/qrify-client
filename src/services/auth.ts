@@ -5,6 +5,9 @@ export interface User {
   email: string;
   emailVerified: boolean;
   role: string;
+  language?: string;
+  dateFormat?: string;
+  timeFormat?: string;
   createdAt?: string;
   updatedAt?: string;
 }
@@ -54,17 +57,25 @@ export interface ChangePasswordRequest {
   newPassword: string;
 }
 
-export interface ChangeEmailRequest {
-  newEmail: string;
-  password: string;
+export interface UpdatePreferencesRequest {
+  language?: string;
+  dateFormat?: string;
+  timeFormat?: string;
 }
 
-export interface VerifyEmailChangeRequest {
-  token: string;
+export interface DeleteAccountRequest {
+  password: string;
 }
 
 export interface GetMeResponse {
   user: User;
+}
+
+export interface VerifyEmailResponse {
+  valid: boolean;
+  error?: string;
+  suggestion?: string;
+  result?: string;
 }
 
 class AuthService {
@@ -72,7 +83,10 @@ class AuthService {
    * Register a new user account
    */
   async signup(data: SignupRequest): Promise<SignupResponse> {
+    
     const response = await api.post<SignupResponse>('/auth/signup', data);
+    
+    
     // Cookies are set automatically by the server
     return response.data;
   }
@@ -81,7 +95,12 @@ class AuthService {
    * Login with email and password
    */
   async login(data: LoginRequest): Promise<LoginResponse> {
+    
     const response = await api.post<LoginResponse>('/auth/login', data);
+    
+    
+    // Check cookies after login
+    
     // Cookies are set automatically by the server
     return response.data;
   }
@@ -143,8 +162,12 @@ class AuthService {
    * Get current authenticated user
    */
   async getCurrentUser(): Promise<GetMeResponse> {
-    const response = await api.get<GetMeResponse>('/auth/me');
-    return response.data;
+    try {
+      const response = await api.get<GetMeResponse>('/auth/me');
+      return response.data;
+    } catch (error) {
+      throw error;
+    }
   }
 
   /**
@@ -156,18 +179,26 @@ class AuthService {
   }
 
   /**
-   * Request email change (sends verification to new email)
+   * Update user preferences
    */
-  async changeEmail(data: ChangeEmailRequest): Promise<{ message: string }> {
-    const response = await api.post<{ message: string }>('/auth/change-email', data);
+  async updatePreferences(data: UpdatePreferencesRequest): Promise<{ message: string; user: User }> {
+    const response = await api.put<{ message: string; user: User }>('/auth/preferences', data);
     return response.data;
   }
 
   /**
-   * Confirm email change with token
+   * Delete user account
    */
-  async confirmEmailChange(data: VerifyEmailChangeRequest): Promise<{ message: string }> {
-    const response = await api.post<{ message: string }>('/auth/change-email/verify', data);
+  async deleteAccount(data: DeleteAccountRequest): Promise<{ message: string }> {
+    const response = await api.delete<{ message: string }>('/auth/account', { data });
+    return response.data;
+  }
+
+  /**
+   * Verify email address in real-time
+   */
+  async verifyEmail(email: string): Promise<VerifyEmailResponse> {
+    const response = await api.post<VerifyEmailResponse>('/auth/verify-email', { email });
     return response.data;
   }
 
@@ -179,7 +210,7 @@ class AuthService {
       // Try to fetch current user to verify authentication
       await this.getCurrentUser();
       return true;
-    } catch {
+    } catch (error) {
       return false;
     }
   }
@@ -192,7 +223,6 @@ class AuthService {
     // Since cookies are httpOnly, we cannot access them from JavaScript
     // This method is kept for compatibility but should be avoided
     // Always prefer the async isAuthenticated() method
-    console.warn('isAuthenticatedSync() is unreliable with httpOnly cookies. Use isAuthenticated() instead.');
     return true; // Assume authenticated and let server validate
   }
 }

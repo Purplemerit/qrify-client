@@ -278,7 +278,7 @@ export const Navigation: React.FC<NavigationProps> = ({
     } else if (item.onClick) {
       item.onClick();
     } else {
-      console.log(`${item.label} clicked`);
+      // ...existing code...
     }
   };
 

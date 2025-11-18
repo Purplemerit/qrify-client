@@ -171,38 +171,44 @@ const QRDetail = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <div className="max-w-6xl mx-auto py-8 px-4">
+      <div className="max-w-6xl mx-auto py-4 md:py-8 px-4 md:px-6">
         {/* Header */}
-        <div className="flex items-center justify-between mb-8">
-          <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-6 md:mb-8 gap-3">
+          <div className="flex items-center space-x-2 md:space-x-4">
             <Button
               variant="ghost"
               size="sm"
               onClick={() => navigate("/my-qr-codes")}
               className="flex items-center"
             >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to My QR Codes
+              <ArrowLeft className="w-4 h-4 mr-1 md:mr-2" />
+              <span className="hidden sm:inline">Back to My QR Codes</span>
+              <span className="sm:hidden">Back</span>
             </Button>
           </div>
-          <div className="flex items-center space-x-2">
-            <Button variant="outline" size="sm" onClick={handleDownload}>
-              <Download className="w-4 h-4 mr-2" />
+          <div className="flex items-center space-x-2 w-full sm:w-auto">
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={handleDownload}
+              className="flex-1 sm:flex-none"
+            >
+              <Download className="w-4 h-4 mr-1 md:mr-2" />
               Download
             </Button>
             <Button
               variant="outline"
               size="sm"
-              className="text-red-600"
+              className="text-red-600 flex-1 sm:flex-none"
               onClick={handleDelete}
             >
-              <Trash2 className="w-4 h-4 mr-2" />
+              <Trash2 className="w-4 h-4 mr-1 md:mr-2" />
               Delete
             </Button>
           </div>
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 md:gap-8">
           {/* QR Code Preview */}
           <div className="lg:col-span-1">
             <Card>
