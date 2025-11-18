@@ -18,6 +18,8 @@ import {
   Folder,
   Check,
   X,
+  List,
+  Grid3x3,
 } from "lucide-react";
 import { Checkbox } from "@/components/ui/checkbox";
 import { QRCodeSVG } from "qrcode.react";
@@ -28,6 +30,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import {
   type QRDesignOptions,
   renderQRWithDesign,
@@ -58,11 +61,37 @@ const MyQRCodes = () => {
     new Set()
   );
   const [isSelectionMode, setIsSelectionMode] = useState(false);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeTab, setActiveTab] = useState("all");
+  const [viewMode, setViewMode] = useState<"list" | "card">("list");
   const qrRefs = useRef<{ [key: string]: SVGSVGElement | null }>({});
 
-  // Separate regular and bulk QR codes
-  const regularQRCodes = qrCodes.filter((qr) => !qr.bulk);
-  const bulkQRCodes = qrCodes.filter((qr) => qr.bulk);
+  // Filter QR codes based on search query
+  const filteredQRCodes = qrCodes.filter((qr) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      qr.title.toLowerCase().includes(query) ||
+      qr.data.toLowerCase().includes(query) ||
+      qr.type.toLowerCase().includes(query)
+    );
+  });
+
+  // Filter by tab type
+  const getFilteredByTab = (codes: QRCodeData[]) => {
+    switch (activeTab) {
+      case "dynamic":
+        return codes.filter((qr) => qr.dynamic && !qr.bulk);
+      case "static":
+        return codes.filter((qr) => !qr.dynamic && !qr.bulk);
+      case "bulk":
+        return codes.filter((qr) => qr.bulk);
+      case "all":
+      default:
+        return codes;
+    }
+  };
+
+  const displayedQRCodes = getFilteredByTab(filteredQRCodes);
 
   useEffect(() => {
     const fetchQRCodes = async () => {
@@ -151,7 +180,7 @@ const MyQRCodes = () => {
 
   const selectAllQRCodes = (checked: boolean) => {
     if (checked) {
-      const allIds = new Set(qrCodes.map((qr) => qr.id));
+      const allIds = new Set(displayedQRCodes.map((qr) => qr.id));
       setSelectedQRCodes(allIds);
     } else {
       setSelectedQRCodes(new Set());
@@ -186,13 +215,14 @@ const MyQRCodes = () => {
 
   return (
     <div className="p-3 md:p-6 bg-gray-50/50 min-h-screen">
+      {/* Header */}
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 md:mb-6 gap-3">
         <h1 className="text-xl md:text-2xl lg:text-3xl font-bold text-gray-800">
           My QR codes
         </h1>
-        <div className="flex items-center gap-2 md:gap-3 flex-wrap">
+        <div className="flex items-center gap-2 flex-wrap w-full sm:w-auto">
           {isSelectionMode ? (
-            <div className="flex items-center gap-2">
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
               <span className="text-xs md:text-sm text-gray-600">
                 {selectedQRCodes.size} selected
               </span>
@@ -211,404 +241,580 @@ const MyQRCodes = () => {
               </Button>
             </div>
           ) : (
-            <>
+            <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
               <Button onClick={toggleSelectionMode} variant="outline" size="sm">
                 Select
               </Button>
-              <Button
-                onClick={() => navigate("/bulk-qr")}
-                variant="outline"
-                size="sm"
-              >
-                <Plus className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
-                <span className="hidden sm:inline">Bulk QR</span>
-                <span className="sm:hidden">Bulk</span>
-              </Button>
-              <Button onClick={() => navigate("/new-qr")} size="sm">
-                <Plus className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
-                <span className="hidden sm:inline">Create New</span>
-                <span className="sm:hidden">New</span>
-              </Button>
-            </>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button size="sm">
+                    <Plus className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                    Create New
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => navigate("/new-qr")}>
+                    <QrCode className="w-4 h-4 mr-2" />
+                    Single QR Code
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => navigate("/bulk-qr")}>
+                    <Folder className="w-4 h-4 mr-2" />
+                    Bulk QR Codes
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
           )}
         </div>
       </div>
 
-      {/* Bulk QR Codes Section */}
-      {bulkQRCodes.length > 0 && (
-        <div className="bg-white rounded-lg shadow-sm border border-gray-200 mb-4 md:mb-6">
-          <div className="p-4 md:p-6 border-b border-gray-200">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="flex items-center gap-2 md:gap-3">
-                <h2 className="text-base md:text-lg font-semibold text-gray-700">
-                  Bulk QR Codes
-                </h2>
-                <Badge
-                  variant="secondary"
-                  className="bg-blue-100 text-blue-800 text-xs"
-                >
-                  {bulkQRCodes.length} codes
-                </Badge>
+      {/* Main Content */}
+      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
+        <div className="p-4 md:p-6 border-b border-gray-200">
+          {/* Search and View Toggle */}
+          <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 mb-4">
+            <div className="relative w-full sm:max-w-xs">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
+              <Input
+                placeholder="Search QR codes..."
+                className="pl-10 text-sm"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+
+            {/* View Mode Toggle */}
+            <div className="flex items-center gap-1 bg-gray-100 rounded-lg p-1">
+              <Button
+                variant={viewMode === "list" ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("list")}
+                className="h-8 px-3"
+              >
+                <List className="w-4 h-4 mr-1" />
+                <span className="hidden sm:inline">List</span>
+              </Button>
+              <Button
+                variant={viewMode === "card" ? "secondary" : "ghost"}
+                size="sm"
+                onClick={() => setViewMode("card")}
+                className="h-8 px-3"
+              >
+                <Grid3x3 className="w-4 h-4 mr-1" />
+                <span className="hidden sm:inline">Card</span>
+              </Button>
+            </div>
+          </div>
+
+          {/* Tabs */}
+          <Tabs value={activeTab} onValueChange={setActiveTab}>
+            <TabsList className="w-full sm:w-auto">
+              <TabsTrigger value="all" className="flex-1 sm:flex-none">
+                All ({filteredQRCodes.length})
+              </TabsTrigger>
+              <TabsTrigger value="dynamic" className="flex-1 sm:flex-none">
+                Dynamic (
+                {filteredQRCodes.filter((qr) => qr.dynamic && !qr.bulk).length})
+              </TabsTrigger>
+              <TabsTrigger value="static" className="flex-1 sm:flex-none">
+                Static (
+                {filteredQRCodes.filter((qr) => !qr.dynamic && !qr.bulk).length}
+                )
+              </TabsTrigger>
+              <TabsTrigger value="bulk" className="flex-1 sm:flex-none">
+                Bulk ({filteredQRCodes.filter((qr) => qr.bulk).length})
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Select All Checkbox */}
+            {isSelectionMode && displayedQRCodes.length > 0 && (
+              <div className="flex items-center gap-2 mt-4">
+                <Checkbox
+                  checked={displayedQRCodes.every((qr) =>
+                    selectedQRCodes.has(qr.id)
+                  )}
+                  onCheckedChange={(checked) => selectAllQRCodes(!!checked)}
+                />
+                <span className="text-sm text-gray-600">Select All</span>
               </div>
-              {isSelectionMode && bulkQRCodes.length > 0 && (
-                <div className="flex items-center gap-2">
-                  <Checkbox
-                    checked={bulkQRCodes.every((qr) =>
-                      selectedQRCodes.has(qr.id)
-                    )}
-                    onCheckedChange={(checked) => {
-                      const bulkIds = bulkQRCodes.map((qr) => qr.id);
-                      const newSelected = new Set(selectedQRCodes);
-                      if (checked) {
-                        bulkIds.forEach((id) => newSelected.add(id));
-                      } else {
-                        bulkIds.forEach((id) => newSelected.delete(id));
-                      }
-                      setSelectedQRCodes(newSelected);
+            )}
+
+            <TabsContent value="all" className="mt-0">
+              {viewMode === "list" ? (
+                <QRListView
+                  qrCodes={displayedQRCodes}
+                  isSelectionMode={isSelectionMode}
+                  selectedQRCodes={selectedQRCodes}
+                  toggleQRSelection={toggleQRSelection}
+                  handleQRClick={handleQRClick}
+                  editingId={editingId}
+                  editingName={editingName}
+                  setEditingName={setEditingName}
+                  handleSaveName={handleSaveName}
+                  handleCancelEdit={handleCancelEdit}
+                  handleDownload={handleDownload}
+                  handleEditName={handleEditName}
+                  handleDelete={handleDelete}
+                  qrRefs={qrRefs}
+                />
+              ) : (
+                <QRCardView
+                  qrCodes={displayedQRCodes}
+                  isSelectionMode={isSelectionMode}
+                  selectedQRCodes={selectedQRCodes}
+                  toggleQRSelection={toggleQRSelection}
+                  handleQRClick={handleQRClick}
+                  handleDownload={handleDownload}
+                  handleEditName={handleEditName}
+                  handleDelete={handleDelete}
+                  qrRefs={qrRefs}
+                />
+              )}
+            </TabsContent>
+
+            <TabsContent value="dynamic" className="mt-0">
+              {viewMode === "list" ? (
+                <QRListView
+                  qrCodes={displayedQRCodes}
+                  isSelectionMode={isSelectionMode}
+                  selectedQRCodes={selectedQRCodes}
+                  toggleQRSelection={toggleQRSelection}
+                  handleQRClick={handleQRClick}
+                  editingId={editingId}
+                  editingName={editingName}
+                  setEditingName={setEditingName}
+                  handleSaveName={handleSaveName}
+                  handleCancelEdit={handleCancelEdit}
+                  handleDownload={handleDownload}
+                  handleEditName={handleEditName}
+                  handleDelete={handleDelete}
+                  qrRefs={qrRefs}
+                />
+              ) : (
+                <QRCardView
+                  qrCodes={displayedQRCodes}
+                  isSelectionMode={isSelectionMode}
+                  selectedQRCodes={selectedQRCodes}
+                  toggleQRSelection={toggleQRSelection}
+                  handleQRClick={handleQRClick}
+                  handleDownload={handleDownload}
+                  handleEditName={handleEditName}
+                  handleDelete={handleDelete}
+                  qrRefs={qrRefs}
+                />
+              )}
+            </TabsContent>
+
+            <TabsContent value="static" className="mt-0">
+              {viewMode === "list" ? (
+                <QRListView
+                  qrCodes={displayedQRCodes}
+                  isSelectionMode={isSelectionMode}
+                  selectedQRCodes={selectedQRCodes}
+                  toggleQRSelection={toggleQRSelection}
+                  handleQRClick={handleQRClick}
+                  editingId={editingId}
+                  editingName={editingName}
+                  setEditingName={setEditingName}
+                  handleSaveName={handleSaveName}
+                  handleCancelEdit={handleCancelEdit}
+                  handleDownload={handleDownload}
+                  handleEditName={handleEditName}
+                  handleDelete={handleDelete}
+                  qrRefs={qrRefs}
+                />
+              ) : (
+                <QRCardView
+                  qrCodes={displayedQRCodes}
+                  isSelectionMode={isSelectionMode}
+                  selectedQRCodes={selectedQRCodes}
+                  toggleQRSelection={toggleQRSelection}
+                  handleQRClick={handleQRClick}
+                  handleDownload={handleDownload}
+                  handleEditName={handleEditName}
+                  handleDelete={handleDelete}
+                  qrRefs={qrRefs}
+                />
+              )}
+            </TabsContent>
+
+            <TabsContent value="bulk" className="mt-0">
+              {viewMode === "list" ? (
+                <QRListView
+                  qrCodes={displayedQRCodes}
+                  isSelectionMode={isSelectionMode}
+                  selectedQRCodes={selectedQRCodes}
+                  toggleQRSelection={toggleQRSelection}
+                  handleQRClick={handleQRClick}
+                  editingId={editingId}
+                  editingName={editingName}
+                  setEditingName={setEditingName}
+                  handleSaveName={handleSaveName}
+                  handleCancelEdit={handleCancelEdit}
+                  handleDownload={handleDownload}
+                  handleEditName={handleEditName}
+                  handleDelete={handleDelete}
+                  qrRefs={qrRefs}
+                />
+              ) : (
+                <QRCardView
+                  qrCodes={displayedQRCodes}
+                  isSelectionMode={isSelectionMode}
+                  selectedQRCodes={selectedQRCodes}
+                  toggleQRSelection={toggleQRSelection}
+                  handleQRClick={handleQRClick}
+                  handleDownload={handleDownload}
+                  handleEditName={handleEditName}
+                  handleDelete={handleDelete}
+                  qrRefs={qrRefs}
+                />
+              )}
+            </TabsContent>
+          </Tabs>
+        </div>
+
+        {/* Empty State */}
+        {displayedQRCodes.length === 0 && (
+          <div className="p-12 text-center">
+            <QrCode className="w-16 h-16 text-gray-300 mx-auto mb-4" />
+            <h3 className="text-lg font-medium text-gray-900 mb-2">
+              {searchQuery ? "No QR codes found" : "No QR codes yet"}
+            </h3>
+            <p className="text-gray-500 mb-6">
+              {searchQuery
+                ? "Try a different search term"
+                : "Create your first QR code to get started"}
+            </p>
+            {!searchQuery && (
+              <Button onClick={() => navigate("/new-qr")}>
+                <Plus className="w-4 h-4 mr-2" />
+                Create New QR Code
+              </Button>
+            )}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+};
+
+// List View Component
+const QRListView: React.FC<{
+  qrCodes: QRCodeData[];
+  isSelectionMode: boolean;
+  selectedQRCodes: Set<string>;
+  toggleQRSelection: (id: string) => void;
+  handleQRClick: (qr: QRCodeData) => void;
+  editingId: string | null;
+  editingName: string;
+  setEditingName: (name: string) => void;
+  handleSaveName: (id: string) => void;
+  handleCancelEdit: () => void;
+  handleDownload: (id: string, title: string) => void;
+  handleEditName: (qr: QRCodeData) => void;
+  handleDelete: (id: string) => void;
+  qrRefs: React.MutableRefObject<{ [key: string]: SVGSVGElement | null }>;
+}> = ({
+  qrCodes,
+  isSelectionMode,
+  selectedQRCodes,
+  toggleQRSelection,
+  handleQRClick,
+  editingId,
+  editingName,
+  setEditingName,
+  handleSaveName,
+  handleCancelEdit,
+  handleDownload,
+  handleEditName,
+  handleDelete,
+  qrRefs,
+}) => {
+  return (
+    <div className="divide-y divide-gray-200">
+      {qrCodes.map((qr) => (
+        <div
+          key={qr.id}
+          className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 md:p-4 hover:bg-gray-50 transition-colors gap-3 sm:gap-0 ${
+            selectedQRCodes.has(qr.id)
+              ? "bg-blue-50 border-l-4 border-blue-500"
+              : ""
+          }`}
+        >
+          {/* Left Section */}
+          <div className="flex items-center space-x-2 md:space-x-4 w-full sm:w-auto min-w-0">
+            {isSelectionMode && (
+              <Checkbox
+                checked={selectedQRCodes.has(qr.id)}
+                onCheckedChange={() => toggleQRSelection(qr.id)}
+                className="flex-shrink-0"
+              />
+            )}
+            <div
+              className="w-10 h-10 md:w-12 md:h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 cursor-pointer flex-shrink-0"
+              onClick={() =>
+                isSelectionMode ? toggleQRSelection(qr.id) : handleQRClick(qr)
+              }
+            >
+              {qr.designOptions ? (
+                <div className="scale-[0.4] md:scale-50 origin-center w-[80px] h-[80px] flex items-center justify-center">
+                  {renderQRWithDesign(qr.data, qr.designOptions, {
+                    width: 80,
+                    height: 80,
+                  })}
+                </div>
+              ) : (
+                <QRCodeSVG
+                  value={qr.data}
+                  size={32}
+                  ref={(el) => (qrRefs.current[qr.id] = el)}
+                  level="M"
+                />
+              )}
+            </div>
+            <div>
+              {editingId === qr.id ? (
+                <div className="flex items-center space-x-2">
+                  <Input
+                    value={editingName}
+                    onChange={(e) => setEditingName(e.target.value)}
+                    className="h-8 w-32 md:w-48 text-sm"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") handleSaveName(qr.id);
+                      if (e.key === "Escape") handleCancelEdit();
                     }}
+                    autoFocus
                   />
-                  <span className="text-sm text-gray-600">Select All Bulk</span>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => handleSaveName(qr.id)}
+                    className="h-8 w-8 p-0"
+                  >
+                    <Check className="w-4 h-4 text-green-600" />
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={handleCancelEdit}
+                    className="h-8 w-8 p-0"
+                  >
+                    <X className="w-4 h-4 text-red-600" />
+                  </Button>
+                </div>
+              ) : (
+                <div className="min-w-0 flex-1">
+                  <h3
+                    className="font-medium text-sm md:text-base text-gray-900 cursor-pointer"
+                    onClick={() =>
+                      isSelectionMode
+                        ? toggleQRSelection(qr.id)
+                        : handleQRClick(qr)
+                    }
+                  >
+                    {qr.title}
+                  </h3>
+                  <p className="text-xs md:text-sm text-gray-500 truncate">
+                    {qr.data}
+                  </p>
                 </div>
               )}
             </div>
           </div>
 
-          {/* Bulk QR Codes Grid */}
-          <div className="p-3 md:p-6">
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4">
-              {bulkQRCodes.map((qr) => (
-                <div
-                  key={qr.id}
-                  className={`group relative bg-gray-50 border border-gray-200 rounded-lg p-3 md:p-4 hover:shadow-md transition-all cursor-pointer ${
-                    selectedQRCodes.has(qr.id)
-                      ? "ring-2 ring-blue-500 bg-blue-50"
-                      : ""
-                  }`}
-                  onClick={() =>
-                    isSelectionMode
-                      ? toggleQRSelection(qr.id)
-                      : handleQRClick(qr)
-                  }
-                >
-                  {isSelectionMode && (
-                    <div className="absolute top-2 left-2 z-10">
-                      <Checkbox
-                        checked={selectedQRCodes.has(qr.id)}
-                        onCheckedChange={() => toggleQRSelection(qr.id)}
-                        className="bg-white"
-                      />
-                    </div>
-                  )}
-                  {/* QR Code Preview */}
-                  <div className="w-full aspect-square border border-gray-200 rounded bg-white flex items-center justify-center mb-3">
-                    {qr.designOptions ? (
-                      <div className="scale-75 origin-center">
-                        {renderQRWithDesign(qr.data, qr.designOptions, {
-                          width: 80,
-                          height: 80,
-                        })}
-                      </div>
-                    ) : (
-                      <QRCodeSVG
-                        value={qr.data}
-                        size={60}
-                        ref={(el) => (qrRefs.current[qr.id] = el)}
-                        level="M"
-                      />
-                    )}
-                  </div>
-
-                  {/* QR Info */}
-                  <div className="space-y-1">
-                    <h3 className="font-medium text-xs md:text-sm text-gray-900 truncate">
-                      {qr.title}
-                    </h3>
-                    <p className="text-[10px] md:text-xs text-gray-500 truncate">
-                      {qr.data}
-                    </p>
-                    <div className="flex items-center justify-between">
-                      <Badge
-                        variant="outline"
-                        className="text-[10px] md:text-xs border-blue-200 text-blue-800 bg-blue-50"
-                      >
-                        Bulk
-                      </Badge>
-                      <span className="text-[10px] md:text-xs text-gray-400">
-                        {qr.scans?.toLocaleString() || 0}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Actions Menu - appears on hover */}
-                  {!isSelectionMode && (
-                    <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button
-                            variant="ghost"
-                            size="sm"
-                            className="h-6 w-6 p-0 bg-white/90 hover:bg-white"
-                            onClick={(e) => e.stopPropagation()}
-                          >
-                            <MoreHorizontal className="w-3 h-3" />
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuItem onClick={() => handleQRClick(qr)}>
-                            <Eye className="w-4 h-4 mr-2" /> View Details
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDownload(qr.id, qr.title);
-                            }}
-                          >
-                            <Download className="w-4 h-4 mr-2" /> Download
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleEditName(qr);
-                            }}
-                          >
-                            <Edit className="w-4 h-4 mr-2" /> Edit Name
-                          </DropdownMenuItem>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem
-                            className="text-red-600"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDelete(qr.id);
-                            }}
-                          >
-                            <Trash2 className="w-4 h-4 mr-2" /> Delete
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                  )}
-                </div>
-              ))}
+          {/* Right Section */}
+          <div className="flex items-center justify-between sm:justify-end space-x-2 md:space-x-4 lg:space-x-8 w-full sm:w-auto flex-shrink-0">
+            {/* Created Date */}
+            <div className="hidden lg:block text-sm text-gray-500 whitespace-nowrap">
+              {new Date(qr.created_at).toLocaleDateString()}
             </div>
-          </div>
-        </div>
-      )}
 
-      {/* Regular QR Codes Section */}
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200">
-        <div className="p-4 md:p-6 border-b border-gray-200">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between mb-4 gap-3">
-            <h2 className="text-base md:text-lg font-semibold text-gray-700">
-              My folders
-            </h2>
-            {isSelectionMode && regularQRCodes.length > 0 && (
-              <div className="flex items-center gap-2">
-                <Checkbox
-                  checked={regularQRCodes.every((qr) =>
-                    selectedQRCodes.has(qr.id)
-                  )}
-                  onCheckedChange={(checked) => {
-                    const regularIds = regularQRCodes.map((qr) => qr.id);
-                    const newSelected = new Set(selectedQRCodes);
-                    if (checked) {
-                      regularIds.forEach((id) => newSelected.add(id));
-                    } else {
-                      regularIds.forEach((id) => newSelected.delete(id));
-                    }
-                    setSelectedQRCodes(newSelected);
-                  }}
-                />
-                <span className="text-sm text-gray-600">Select All</span>
-              </div>
+            {/* Status Badge */}
+            <Badge
+              variant={qr.status === "Active" ? "default" : "secondary"}
+              className="text-[10px] md:text-xs px-1.5 py-0.5"
+            >
+              {qr.status}
+            </Badge>
+
+            {/* Scan Count */}
+            <div className="hidden md:block text-xs md:text-sm text-gray-500 min-w-[60px] lg:min-w-[80px] text-center whitespace-nowrap">
+              {qr.dynamic
+                ? `${qr.scans?.toLocaleString() || 0} scans`
+                : "No tracking"}
+            </div>
+
+            {/* Actions Menu */}
+            {!isSelectionMode && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
+                    <MoreHorizontal className="w-4 h-4" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => handleQRClick(qr)}>
+                    <Eye className="w-4 h-4 mr-2" /> View Details
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={() => handleDownload(qr.id, qr.title)}
+                  >
+                    <Download className="w-4 h-4 mr-2" /> Download
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => handleEditName(qr)}>
+                    <Edit className="w-4 h-4 mr-2" /> Edit Name
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="text-red-600"
+                    onClick={() => handleDelete(qr.id)}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" /> Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
             )}
           </div>
-          <div className="flex justify-between items-center w-full">
-            <div className="relative w-full sm:max-w-xs">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
-              <Input placeholder="Search..." className="pl-10 text-sm" />
+        </div>
+      ))}
+    </div>
+  );
+};
+
+// Card View Component
+const QRCardView: React.FC<{
+  qrCodes: QRCodeData[];
+  isSelectionMode: boolean;
+  selectedQRCodes: Set<string>;
+  toggleQRSelection: (id: string) => void;
+  handleQRClick: (qr: QRCodeData) => void;
+  handleDownload: (id: string, title: string) => void;
+  handleEditName: (qr: QRCodeData) => void;
+  handleDelete: (id: string) => void;
+  qrRefs: React.MutableRefObject<{ [key: string]: SVGSVGElement | null }>;
+}> = ({
+  qrCodes,
+  isSelectionMode,
+  selectedQRCodes,
+  toggleQRSelection,
+  handleQRClick,
+  handleDownload,
+  handleEditName,
+  handleDelete,
+  qrRefs,
+}) => {
+  return (
+    <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-3 md:gap-4 p-4">
+      {qrCodes.map((qr) => (
+        <div
+          key={qr.id}
+          className={`group relative bg-gray-50 border border-gray-200 rounded-lg p-2 md:p-3 hover:shadow-md transition-all cursor-pointer ${
+            selectedQRCodes.has(qr.id) ? "ring-2 ring-blue-500 bg-blue-50" : ""
+          }`}
+          onClick={() =>
+            isSelectionMode ? toggleQRSelection(qr.id) : handleQRClick(qr)
+          }
+        >
+          {isSelectionMode && (
+            <div className="absolute top-2 left-2 z-10">
+              <Checkbox
+                checked={selectedQRCodes.has(qr.id)}
+                onCheckedChange={() => toggleQRSelection(qr.id)}
+                className="bg-white"
+              />
             </div>
+          )}
+
+          {/* QR Code Preview */}
+          <div className="w-full aspect-square border border-gray-200 rounded bg-white flex items-center justify-center mb-2">
+            {qr.designOptions ? (
+              <div className="scale-[0.6] md:scale-75 origin-center">
+                {renderQRWithDesign(qr.data, qr.designOptions, {
+                  width: 80,
+                  height: 80,
+                })}
+              </div>
+            ) : (
+              <QRCodeSVG
+                value={qr.data}
+                size={50}
+                ref={(el) => (qrRefs.current[qr.id] = el)}
+                level="M"
+              />
+            )}
           </div>
-        </div>
 
-        {/* QR Codes List */}
-        <div className="divide-y divide-gray-200">
-          {regularQRCodes.map((qr) => (
-            <div
-              key={qr.id}
-              className={`flex flex-col sm:flex-row items-start sm:items-center justify-between p-3 md:p-4 hover:bg-gray-50 transition-colors gap-3 sm:gap-0 ${
-                selectedQRCodes.has(qr.id)
-                  ? "bg-blue-50 border-l-4 border-blue-500"
-                  : ""
-              }`}
-            >
-              {/* Left Section: QR Name and Preview */}
-              <div className="flex items-center space-x-3 md:space-x-4 w-full sm:w-auto">
-                {isSelectionMode && (
-                  <Checkbox
-                    checked={selectedQRCodes.has(qr.id)}
-                    onCheckedChange={() => toggleQRSelection(qr.id)}
-                  />
-                )}
-                <div
-                  className="w-10 h-10 md:w-12 md:h-12 border border-gray-200 rounded flex items-center justify-center bg-gray-50 cursor-pointer flex-shrink-0"
-                  onClick={() =>
-                    isSelectionMode
-                      ? toggleQRSelection(qr.id)
-                      : handleQRClick(qr)
-                  }
-                >
-                  {qr.designOptions ? (
-                    <div className="scale-50 origin-center w-[80px] h-[80px] flex items-center justify-center">
-                      {renderQRWithDesign(qr.data, qr.designOptions, {
-                        width: 80,
-                        height: 80,
-                      })}
-                    </div>
-                  ) : (
-                    <QRCodeSVG
-                      value={qr.data}
-                      size={40}
-                      ref={(el) => (qrRefs.current[qr.id] = el)}
-                      level="M"
-                    />
-                  )}
-                </div>
-                <div>
-                  {editingId === qr.id ? (
-                    <div className="flex items-center space-x-2">
-                      <Input
-                        value={editingName}
-                        onChange={(e) => setEditingName(e.target.value)}
-                        className="h-8 w-48"
-                        onKeyDown={(e) => {
-                          if (e.key === "Enter") handleSaveName(qr.id);
-                          if (e.key === "Escape") handleCancelEdit();
-                        }}
-                        autoFocus
-                      />
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={() => handleSaveName(qr.id)}
-                        className="h-8 w-8 p-0"
-                      >
-                        <Check className="w-4 h-4 text-green-600" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        variant="ghost"
-                        onClick={handleCancelEdit}
-                        className="h-8 w-8 p-0"
-                      >
-                        <X className="w-4 h-4 text-red-600" />
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="min-w-0 flex-1">
-                      <h3
-                        className="font-medium text-sm md:text-base text-gray-900 cursor-pointer"
-                        onClick={() =>
-                          isSelectionMode
-                            ? toggleQRSelection(qr.id)
-                            : handleQRClick(qr)
-                        }
-                      >
-                        {qr.title}
-                      </h3>
-                      <p className="text-xs md:text-sm text-gray-500 truncate">
-                        {qr.data}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              {/* Right Section: Metadata and Actions */}
-              <div className="flex items-center justify-between sm:justify-end space-x-3 sm:space-x-8 w-full sm:w-auto">
-                {/* Created Date - Hidden on mobile */}
-                <div className="hidden lg:block text-sm text-gray-500">
-                  {new Date(qr.created_at).toLocaleDateString()}
-                </div>
-
-                {/* Status */}
-                <div className="flex flex-row sm:flex-col gap-1">
-                  <Badge
-                    variant={qr.status === "Active" ? "default" : "secondary"}
-                    className="text-xs"
-                  >
-                    {qr.status}
-                  </Badge>
-                  <Badge
-                    variant="outline"
-                    className={`text-xs ${
-                      qr.dynamic
-                        ? "border-green-200 text-green-800 bg-green-50"
-                        : "border-orange-200 text-orange-800 bg-orange-50"
-                    }`}
-                  >
-                    {qr.dynamic ? "Dynamic" : "Static"}
-                  </Badge>
-                </div>
-
-                {/* Scan Count - Hidden on mobile */}
-                <div className="hidden md:block text-xs md:text-sm text-gray-500 min-w-[80px] text-center">
-                  {qr.dynamic
-                    ? `${qr.scans?.toLocaleString() || 0} scans`
-                    : "No tracking"}
-                </div>
-
-                {/* Actions Menu */}
-                {!isSelectionMode && (
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm" className="h-8 w-8 p-0">
-                        <MoreHorizontal className="w-4 h-4" />
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuItem onClick={() => handleQRClick(qr)}>
-                        <Eye className="w-4 h-4 mr-2" /> View Details
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleDownload(qr.id, qr.title)}
-                      >
-                        <Download className="w-4 h-4 mr-2" /> Download
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleEditName(qr)}>
-                        <Edit className="w-4 h-4 mr-2" /> Edit Name
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        className="text-red-600"
-                        onClick={() => handleDelete(qr.id)}
-                      >
-                        <Trash2 className="w-4 h-4 mr-2" /> Delete
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                )}
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Empty State */}
-        {regularQRCodes.length === 0 && bulkQRCodes.length === 0 && (
-          <div className="p-12 text-center">
-            <QrCode className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">
-              No QR codes yet
+          {/* QR Info */}
+          <div className="space-y-1">
+            <h3 className="font-medium text-[11px] md:text-sm text-gray-900 truncate">
+              {qr.title}
             </h3>
-            <p className="text-gray-500 mb-6">
-              Create your first QR code to get started
+            <p className="text-[9px] md:text-xs text-gray-500 truncate">
+              {qr.data}
             </p>
-            <Button onClick={() => navigate("/new-qr")}>
-              <Plus className="w-4 h-4 mr-2" />
-              Create New QR Code
-            </Button>
+            <div className="flex items-center justify-between gap-1">
+              <Badge
+                variant={qr.status === "Active" ? "default" : "secondary"}
+                className="text-[9px] md:text-xs px-1 py-0"
+              >
+                {qr.status}
+              </Badge>
+              <span className="text-[9px] md:text-xs text-gray-400">
+                {qr.dynamic ? `${qr.scans?.toLocaleString() || 0}` : "Static"}
+              </span>
+            </div>
           </div>
-        )}
-      </div>
+
+          {/* Actions Menu */}
+          {!isSelectionMode && (
+            <div className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 w-6 p-0 bg-white/90 hover:bg-white"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <MoreHorizontal className="w-3 h-3" />
+                  </Button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end">
+                  <DropdownMenuItem onClick={() => handleQRClick(qr)}>
+                    <Eye className="w-4 h-4 mr-2" /> View Details
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDownload(qr.id, qr.title);
+                    }}
+                  >
+                    <Download className="w-4 h-4 mr-2" /> Download
+                  </DropdownMenuItem>
+                  <DropdownMenuItem
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleEditName(qr);
+                    }}
+                  >
+                    <Edit className="w-4 h-4 mr-2" /> Edit Name
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    className="text-red-600"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDelete(qr.id);
+                    }}
+                  >
+                    <Trash2 className="w-4 h-4 mr-2" /> Delete
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          )}
+        </div>
+      ))}
     </div>
   );
 };
