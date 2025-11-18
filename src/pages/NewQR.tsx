@@ -286,15 +286,6 @@ const NewQR = () => {
             >
               {currentStep > 1 ? "✓" : "1"}
             </div>
-            <span
-              className={`text-sm transition-colors duration-300 hidden md:inline ${
-                currentStep >= 1
-                  ? "font-medium text-foreground"
-                  : "text-muted-foreground"
-              }`}
-            >
-              Type of QR code
-            </span>
           </div>
 
           {/* Connecting line 1 */}
@@ -322,17 +313,6 @@ const NewQR = () => {
             >
               {currentStep > 2 ? "✓" : "2"}
             </div>
-            <span
-              className={`text-xs md:text-sm transition-colors duration-300 hidden sm:inline ${
-                currentStep === 2
-                  ? "font-medium text-foreground"
-                  : selectedQRType
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-              }`}
-            >
-              Content
-            </span>
           </div>
 
           {/* Connecting line 2 */}
@@ -360,17 +340,6 @@ const NewQR = () => {
             >
               {currentStep > 3 ? "✓" : "3"}
             </div>
-            <span
-              className={`text-sm transition-colors duration-300 hidden md:inline ${
-                currentStep === 3
-                  ? "font-medium text-foreground"
-                  : generatedQR
-                  ? "text-foreground"
-                  : "text-muted-foreground"
-              }`}
-            >
-              QR Design
-            </span>
           </div>
         </div>
       </div>

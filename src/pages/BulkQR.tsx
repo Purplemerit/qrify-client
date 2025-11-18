@@ -513,7 +513,7 @@ const BulkQR = () => {
           >
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-semibold group-hover:text-primary transition-colors duration-300">
-                Dynamic Bulk QRs
+                Dynamic QRs
               </h1>
               <Badge
                 variant="secondary"
@@ -582,7 +582,7 @@ const BulkQR = () => {
           >
             <div className="flex items-center gap-3">
               <h1 className="text-2xl font-semibold group-hover:text-primary transition-colors duration-300">
-                Static Bulk QRs
+                Static QRs
               </h1>
               <Badge
                 variant="secondary"
