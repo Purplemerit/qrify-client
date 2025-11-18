@@ -8,6 +8,8 @@ import {
   Users,
   Phone,
   Layers,
+  PanelLeftClose,
+  PanelLeft,
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 
@@ -38,7 +40,7 @@ const mainItems = [
 const bottomItems = [{ title: "Contact", url: "/contact", icon: Phone }];
 
 export function AppSidebar() {
-  const { open, isMobile, setOpenMobile } = useSidebar();
+  const { open, isMobile, setOpenMobile, toggleSidebar, state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
 
@@ -61,7 +63,7 @@ export function AppSidebar() {
       <SidebarContent className="flex flex-col overflow-y-auto scrollbar-hide">
         {/* Logo */}
         <div className="p-2 border-b">
-          <div className="flex items-center justify-center">
+          <div className="flex items-center justify-between gap-2">
             <div className="w-32 h-14 flex items-center justify-center overflow-hidden">
               <img
                 src="/logo.png"
@@ -69,6 +71,21 @@ export function AppSidebar() {
                 className="w-full h-full object-contain"
               />
             </div>
+            {!isMobile && (
+              <button
+                onClick={toggleSidebar}
+                className="p-2 rounded-lg hover:bg-sidebar-accent transition-colors"
+                title={
+                  state === "expanded" ? "Collapse sidebar" : "Expand sidebar"
+                }
+              >
+                {state === "expanded" ? (
+                  <PanelLeftClose className="w-5 h-5 text-sidebar-foreground" />
+                ) : (
+                  <PanelLeft className="w-5 h-5 text-sidebar-foreground" />
+                )}
+              </button>
+            )}
           </div>
         </div>
 
