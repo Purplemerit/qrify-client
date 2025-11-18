@@ -1,8 +1,29 @@
+import urlMockup from '../../../assets/mockups/mockup_url_preview-i3QzH1FZ.webp';
+import pdfMockup from '../../../assets/mockups/mockup_pdf_preview-39sBQaO9.webp';
+import imagesMockup from '../../../assets/mockups/mockup_images_preview-CNN_kiU7.webp';
+import vcardMockup from '../../../assets/mockups/mockup_vcard-plus_preview-CHbXtv3E.webp';
+import textMockup from '../../../assets/mockups/mockup_text_preview-DZkAXwdb.webp';
+import videoMockup from '../../../assets/mockups/mockup_video_preview-QRhqtSVg.webp';
+import productMockup from '../../../assets/mockups/mockup_product_preview-DeqSMsiZ.webp';
+
 interface ShowcaseProps {
   activeType: string;
 }
 
 export function Showcase({ activeType }: ShowcaseProps) {
+  // map each activeType to its corresponding mockup image
+  const mockupMap: Record<string, string> = {
+    Website: urlMockup,
+    PDF: pdfMockup,
+    Images: imagesMockup,
+    "vCard Plus": vcardMockup,
+    Text: textMockup,
+    Video: videoMockup,
+    Business: productMockup,
+  };
+
+  const selectedMockup = mockupMap[activeType] || mockupMap.Website;
+
   const showcaseContent = {
     Website: {
       title: "Website",
@@ -70,20 +91,19 @@ export function Showcase({ activeType }: ShowcaseProps) {
         {/* Center Section - Phone Mock */}
         <div className="lg:col-span-6 flex items-center justify-center">
           <div className="relative w-72 h-[32rem] flex items-center justify-center">
+            {/* Mockup overlay positioned on phone screen - adjusted to fit iPhone 15 screen area */}
+            <div className="absolute top-[4%] left-1/2 -translate-x-1/2 w-[216px] h-[420px] flex items-center justify-center overflow-hidden rounded-[28px] z-10">
+              <img
+                src={selectedMockup}
+                alt="Mockup preview"
+                className="w-full h-full object-cover"
+              />
+            </div>
             <img
               src="/iphone15.png"
               alt="iPhone 15"
-              className="w-full h-full object-contain"
+              className="w-full h-full object-contain relative z-20"
             />
-            {/* QR code overlay positioned on phone screen */}
-            <div
-              className="absolute inset-0 flex items-center justify-center"
-              style={{ marginTop: "-10px" }}
-            >
-              <div className="w-36 h-36 bg-white p-2 rounded-lg shadow-lg">
-                  <img src="/QR_code.svg" alt="QR Code" className="w-32 h-32"/>
-              </div>
-            </div>
           </div>
         </div>
 

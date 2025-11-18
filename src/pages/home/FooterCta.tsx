@@ -18,7 +18,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({
   onTabChange,
 }) => {
   return (
-    <nav className="flex w-[620px] max-w-full items-stretch gap-5 text-sm text-[rgba(104,103,108,1)] font-bold flex-wrap justify-between mt-10">
+    <nav className="flex w-full max-w-[620px] items-stretch gap-3 md:gap-5 text-xs md:text-sm text-[rgba(104,103,108,1)] font-bold flex-wrap justify-center md:justify-between mt-6 md:mt-10">
       {tabs.map((tab) => (
         <button
           key={tab.id}
@@ -51,7 +51,7 @@ const AccordionItem: React.FC<AccordionItemProps> = ({
   onClick,
 }) => {
   return (
-    <article className="relative w-[800px] max-w-full text-base text-[rgba(34,14,39,1)] font-semibold py-[23px] border-[rgba(224,224,224,1)] border-b">
+    <article className="relative w-full max-w-[800px] text-sm md:text-base text-[rgba(34,14,39,1)] font-semibold py-4 md:py-[23px] border-[rgba(224,224,224,1)] border-b">
       <button
         className="flex w-full items-center justify-between text-left"
         onClick={onClick}
@@ -91,29 +91,29 @@ const CallToAction: React.FC = () => {
   };
 
   return (
-    <section className="self-stretch mt-[88px] max-md:max-w-full max-md:mt-10">
-      <div className="gap-5 flex max-md:flex-col max-md:items-stretch">
-        <div className="w-2/5 max-md:w-full max-md:ml-0">
+    <section className="self-stretch mt-12 md:mt-[88px] max-md:max-w-full">
+      <div className="gap-5 flex flex-col md:flex-row items-center md:items-stretch">
+        <div className="w-full md:w-2/5">
           <img
             src="/footerfaq.svg"
             alt="FAQ illustration"
-            className="aspect-[0.94] object-contain w-full grow max-md:mt-10"
+            className="aspect-[0.94] object-contain w-full max-w-xs md:max-w-full mx-auto"
           />
         </div>
-        <div className="w-3/5 ml-5 max-md:w-full max-md:ml-0">
-          <div className="flex w-full flex-col self-stretch items-stretch my-auto max-md:mt-10">
-            <h2 className="text-[rgba(34,14,39,1)] text-[40px] font-normal">
+        <div className="w-full md:w-3/5 md:ml-5">
+          <div className="flex w-full flex-col items-stretch my-auto">
+            <h2 className="text-[rgba(34,14,39,1)] text-2xl md:text-[40px] font-normal">
               Want to know more?
             </h2>
-            <p className="text-[rgba(88,91,112,1)] text-sm font-semibold leading-6 mt-4 max-md:mr-2.5">
+            <p className="text-[rgba(88,91,112,1)] text-xs md:text-sm font-semibold leading-5 md:leading-6 mt-3 md:mt-4">
               Check our FAQs to find an answer to any questions you may have
               about our QR codes.
             </p>
             <button
               onClick={handleAnswerQuestions}
-              className="bg-[rgba(29,89,249,1)] flex min-h-10 items-center gap-3 text-base text-white font-bold justify-center mt-7 px-5 py-[11px] rounded-3xl hover:bg-blue-600 transition-colors"
+              className="bg-[rgba(29,89,249,1)] flex min-h-10 items-center gap-3 text-sm md:text-base text-white font-bold justify-center mt-5 md:mt-7 px-4 md:px-5 py-2.5 md:py-[11px] rounded-3xl hover:bg-blue-600 transition-colors w-full md:w-auto"
             >
-              <span className="self-stretch my-auto">
+              <span>
                 Answer all your questions
               </span>
             </button>
@@ -224,13 +224,13 @@ export function FooterCta() {
     faqData[activeTab as keyof typeof faqData] || faqData.basic;
 
   return (
-    <main className="bg-[rgba(247,247,247,1)] flex flex-col overflow-hidden items-center justify-center px-20 py-[126px] max-md:px-5 max-md:py-[100px]">
-      <div className="flex w-[836px] max-w-full flex-col items-center">
-        <header className="text-center">
-          <h1 className="text-[rgba(34,14,39,1)] text-[40px] font-bold max-md:max-w-full">
+    <main className="bg-[rgba(247,247,247,1)] flex flex-col overflow-hidden items-center justify-center px-5 md:px-10 lg:px-20 py-16 md:py-24 lg:py-[126px]">
+      <div className="flex w-full max-w-[836px] flex-col items-center">
+        <header className="text-center px-4">
+          <h1 className="text-[rgba(34,14,39,1)] text-2xl md:text-3xl lg:text-[40px] font-bold">
             Do not leave with doubt
           </h1>
-          <p className="text-[rgba(88,91,112,1)] text-base font-semibold leading-6 text-center w-[573px] mt-4 max-md:max-w-full">
+          <p className="text-[rgba(88,91,112,1)] text-sm md:text-base font-semibold leading-5 md:leading-6 text-center max-w-[573px] mx-auto mt-3 md:mt-4">
             In this section you will find the basic concepts and the necessary
             steps to start enjoying the benefits of using QR.
           </p>
@@ -243,7 +243,7 @@ export function FooterCta() {
         />
 
         <section
-          className="w-full mt-12 max-md:mt-10"
+          className="w-full mt-8 md:mt-12 px-4"
           aria-label="Frequently Asked Questions"
         >
           {currentFAQs.map((faq, index) => (
