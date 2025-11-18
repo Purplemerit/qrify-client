@@ -1,4 +1,16 @@
 import React, { useState, useRef, useEffect } from "react";
+import completeIcon from '../../../assets/header/complete.svg';
+import dynamicIcon from '../../../assets/header/dynamic.svg';
+import varietyIcon from '../../../assets/header/variety.svg';
+import limitedIcon from '../../../assets/header/limited.svg';
+import integrationIcon from '../../../assets/header/integration.svg';
+import editingIcon from '../../../assets/header/editing.svg';
+import bulkIcon from '../../../assets/header/bulk.svg';
+import customIcon from '../../../assets/header/custom.svg';
+import templatesIcon from '../../../assets/header/templates.svg';
+import eventIcon from '../../../assets/header/event.svg';
+import passwordIcon from '../../../assets/header/password.svg';
+import { Link } from "react-router-dom";
 
 // Utility function for conditional className joining
 const cn = (...classes: (string | undefined | null | false)[]): string => {
@@ -42,7 +54,7 @@ export const ResourcesList: React.FC = () => {
         {resources.map((resource) => (
           <article
             key={resource.id}
-            className="flex w-full items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+            className="flex w-full items-start gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
           >
             <div className="w-11 h-11 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
               <svg
@@ -79,27 +91,31 @@ interface FeatureCardProps {
   icon: string;
   title: string;
   description: string;
+  link: string;
 }
 
 export const FeatureCard: React.FC<FeatureCardProps> = ({
   icon,
   title,
   description,
+  link,
 }) => {
   return (
-    <article className="flex w-full items-center gap-3 p-2">
-      <img
-        src={icon}
-        alt={`${title} icon`}
-        className="aspect-[1] object-contain w-11 self-stretch shrink-0 my-auto rounded-lg"
-      />
-      <div className="self-stretch flex flex-col w-[233px] my-auto">
-        <h3 className="text-black text-sm font-semibold">{title}</h3>
-        <p className="text-[rgba(96,96,96,1)] text-[13px] font-normal mt-[11px]">
-          {description}
-        </p>
-      </div>
-    </article>
+    <Link to={link} className="block">
+      <article className="flex w-full items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+        <img
+          src={icon}
+          alt={`${title} icon`}
+          className="aspect-[1] object-contain w-11 self-stretch shrink-0 my-auto rounded-lg"
+        />
+        <div className="self-stretch flex flex-col flex-1 my-auto">
+          <h3 className="text-black text-sm font-semibold">{title}</h3>
+          <p className="text-[rgba(96,96,96,1)] text-[13px] font-normal mt-[11px]">
+            {description}
+          </p>
+        </div>
+      </article>
+    </Link>
   );
 };
 
@@ -109,80 +125,93 @@ interface Feature {
   icon: string;
   title: string;
   description: string;
+  link: string;
 }
 
 const features: Feature[] = [
   {
     id: "static-qr",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: completeIcon,
     title: "Static QR",
     description: "Permanent and unalterable QR codes.",
+    link: "/features/static-qr",
   },
   {
     id: "dynamic-qr",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: dynamicIcon,
     title: "Dynamic QR",
     description: "QR codes updatable in real times.",
+    link: "/features/dynamic-qr",
   },
   {
     id: "download-formats",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: varietyIcon,
     title: "Variety of download formats.",
     description: "Expand the possibilities of use of QRs.",
+    link: "/features/download-formats",
   },
   {
     id: "team-users",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: limitedIcon,
     title: "Limited contributing users",
     description: "Manage QRs as a team.",
+    link: "/features/team-users",
   },
   {
     id: "analytics",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: integrationIcon,
     title: "Complete analytics",
     description: "Understand performance with detailed data.",
+    link: "/features/analytics",
   },
   {
     id: "editing-management",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: editingIcon,
     title: "Editing and management of QRs",
     description: "Customize and organize your QRs.",
+    link: "/features/editing-management",
   },
   {
     id: "bulk-creation",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: bulkIcon,
     title: "Bulk creation and download",
     description: "Generate and download QRs on large scale.",
+    link: "/features/bulk-creation",
   },
   {
     id: "google-pixel",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: integrationIcon,
     title: "Google pixel integration",
     description: "Improve the analysis of your digital campaigns.",
+    link: "/features/google-pixel",
   },
   {
     id: "custom-domain",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: customIcon,
     title: "Custom Domain",
     description: "Strengthen your brand with your own domain",
+    link: "/features/custom-domain",
   },
   {
     id: "templates",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: templatesIcon,
     title: "Templates",
     description: "Save and reuse your own designs",
+    link: "/features/templates",
   },
   {
     id: "event-tracking",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: eventIcon,
     title: "Event tracking",
     description: "Track interactions",
+    link: "/features/event-tracking",
   },
   {
     id: "password-protection",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: passwordIcon,
     title: "Password access protection",
     description: "Secure your codes.",
+    link: "/features/password-protection",
   },
 ];
 
@@ -191,24 +220,26 @@ export const FeaturesList: React.FC = () => {
   const secondColumnFeatures = features.slice(6, 12);
 
   return (
-    <section className="bg-white flex items-start gap-10 p-8 rounded-lg">
-      <div className="flex-1 min-w-[350px] space-y-3">
+    <section className="bg-white flex flex-col md:flex-row items-start gap-4 md:gap-10 p-4 md:p-8 rounded-lg max-h-[80vh] overflow-y-auto">
+      <div className="flex-1 w-full md:min-w-0 space-y-3">
         {firstColumnFeatures.map((feature) => (
           <FeatureCard
             key={feature.id}
             icon={feature.icon}
             title={feature.title}
             description={feature.description}
+            link={feature.link}
           />
         ))}
       </div>
-      <div className="flex-1 min-w-[350px] space-y-3">
+      <div className="flex-1 w-full md:min-w-0 space-y-3">
         {secondColumnFeatures.map((feature) => (
           <FeatureCard
             key={feature.id}
             icon={feature.icon}
             title={feature.title}
             description={feature.description}
+            link={feature.link}
           />
         ))}
       </div>
@@ -323,7 +354,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             {/* Products Dropdown for this specific item */}
             {activeDropdown === "Products" && item.label === "Products" && (
               <div
-                className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-2xl min-w-[750px]"
+                className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-2xl w-[95vw] md:w-auto md:min-w-[600px] lg:min-w-[750px] max-w-[750px]"
                 style={{ zIndex: 999999 }}
               >
                 <FeaturesList />
@@ -333,7 +364,7 @@ export const Navigation: React.FC<NavigationProps> = ({
             {/* Resources Dropdown for this specific item */}
             {activeDropdown === "Resources" && item.label === "Resources" && (
               <div
-                className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-2xl min-w-[600px]"
+                className="absolute top-full left-0 mt-2 bg-white border border-gray-200 rounded-lg shadow-2xl w-[95vw] md:w-auto md:min-w-[400px] lg:min-w-[600px] max-w-[600px]"
                 style={{ zIndex: 999999 }}
               >
                 <ResourcesList />
@@ -373,20 +404,20 @@ export const AuthButtons: React.FC<AuthButtonsProps> = ({
   };
 
   return (
-    <div className="flex items-center gap-3">
+    <div className="flex items-center gap-2 md:gap-3">
       <button
         onClick={handleLogin}
-        className="bg-white border self-stretch flex min-h-10 items-center gap-2 text-[rgba(29,89,249,1)] justify-center w-40 my-auto px-2 py-3 rounded-[20px] border-[rgba(224,224,224,1)] border-solid hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="bg-white border flex min-h-8 md:min-h-10 items-center gap-2 text-[rgba(29,89,249,1)] justify-center w-24 md:w-40 px-2 py-2 md:py-3 text-xs md:text-sm rounded-[20px] border-[rgba(224,224,224,1)] border-solid hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         aria-label="Log in to your account"
       >
-        <span className="self-stretch my-auto">Log In</span>
+        <span>Log In</span>
       </button>
       <button
         onClick={handleRegister}
-        className="bg-[rgba(29,89,249,1)] border self-stretch flex min-h-10 items-center gap-2 text-white whitespace-nowrap justify-center w-[120px] my-auto px-2 py-3 rounded-[20px] border-[rgba(224,224,224,1)] border-solid hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="bg-[rgba(29,89,249,1)] border flex min-h-8 md:min-h-10 items-center gap-2 text-white whitespace-nowrap justify-center w-24 md:w-[120px] px-2 py-2 md:py-3 text-xs md:text-sm rounded-[20px] border-[rgba(224,224,224,1)] border-solid hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         aria-label="Register for a new account"
       >
-        <span className="self-stretch my-auto">Register</span>
+        <span>Register</span>
       </button>
     </div>
   );
@@ -407,16 +438,20 @@ export function Header({
   logoAlt = "QRFY Logo",
 }: HeaderProps = {}) {
   return (
-    <header className="bg-white border relative flex items-start text-sm font-bold px-10 py-2.5 border-[rgba(217,217,217,1)] border-solid max-md:px-5">
-      <div className="z-50 flex min-w-60 items-center gap-8 text-[rgba(34,14,39,1)] flex-wrap my-auto max-md:max-w-full">
-        <img
-          src={logoSrc}
-          alt={logoAlt}
-          className="aspect-[2.23] object-contain w-[134px] self-stretch shrink-0 my-auto"
-        />
-        <Navigation />
+    <header className="bg-white border relative flex flex-col md:flex-row md:items-center md:justify-between text-sm font-bold px-5 md:px-10 py-4 md:py-2.5 border-[rgba(217,217,217,1)] border-solid gap-4">
+      <div className="z-50 flex items-center gap-4 md:gap-8 text-[rgba(34,14,39,1)] flex-wrap">
+        <Link to="/" aria-label="Home" className="flex-shrink-0">
+          <img
+            src={logoSrc}
+            alt={logoAlt}
+            className="aspect-[2.23] object-contain w-[100px] md:w-[134px]"
+          />
+        </Link>
+        <div className="hidden lg:block">
+          <Navigation />
+        </div>
       </div>
-      <div className="absolute z-50 flex min-w-60 items-center gap-3 right-10 bottom-5">
+      <div className="z-50 flex items-center gap-3 md:flex-shrink-0">
         <AuthButtons onLogin={onLogin} onRegister={onRegister} />
       </div>
     </header>

@@ -239,7 +239,7 @@ export function Hero() {
               Enter your Website
             </label>
             <input
-              className="w-1/2 border border-gray-300 rounded-lg px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full md:w-3/4 lg:w-1/2 border border-gray-300 rounded-lg px-3 md:px-4 py-2 md:py-3 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="E.g. https://www.myweb.com/"
               value={websiteUrl}
               onChange={(e) => setWebsiteUrl(e.target.value)}
@@ -253,7 +253,7 @@ export function Hero() {
               Enter your text
             </label>
             <textarea
-              className="w-1/2 border border-gray-300 rounded-lg px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full md:w-3/4 lg:w-1/2 border border-gray-300 rounded-lg px-3 md:px-4 py-2 md:py-3 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Write your message here..."
               rows={1}
               value={textContent}
@@ -270,7 +270,7 @@ export function Hero() {
             <input
               type="file"
               accept="application/pdf"
-              className="w-1/2 border border-gray-300 rounded-lg px-4 py-3 text-base"
+              className="w-full md:w-3/4 lg:w-1/2 border border-gray-300 rounded-lg px-3 md:px-4 py-2 md:py-3 text-sm md:text-base"
             />
           </>
         );
@@ -283,7 +283,7 @@ export function Hero() {
             <input
               type="file"
               accept="image/*"
-              className="w-1/2 border border-gray-300 rounded-lg px-4 py-3 text-base"
+              className="w-full md:w-3/4 lg:w-1/2 border border-gray-300 rounded-lg px-3 md:px-4 py-2 md:py-3 text-sm md:text-base"
             />
           </>
         );
@@ -294,15 +294,15 @@ export function Hero() {
               Fill in your contact details
             </label>
             <input
-              className="w-1/2 border border-gray-300 rounded-lg px-4 py-2.5 text-base mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full md:w-3/4 lg:w-1/2 border border-gray-300 rounded-lg px-3 md:px-4 py-2 md:py-2.5 text-sm md:text-base mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Name"
             />
             <input
-              className="w-1/2 border border-gray-300 rounded-lg px-4 py-2.5 text-base mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full md:w-3/4 lg:w-1/2 border border-gray-300 rounded-lg px-3 md:px-4 py-2 md:py-2.5 text-sm md:text-base mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Phone"
             />
             <input
-              className="w-1/2 border border-gray-300 rounded-lg px-4 py-2.5 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full md:w-3/4 lg:w-1/2 border border-gray-300 rounded-lg px-3 md:px-4 py-2 md:py-2.5 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="Email"
             />
           </>
@@ -314,7 +314,7 @@ export function Hero() {
               Paste your video link
             </label>
             <input
-              className="w-1/2 border border-gray-300 rounded-lg px-4 py-3 text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full md:w-3/4 lg:w-1/2 border border-gray-300 rounded-lg px-3 md:px-4 py-2 md:py-3 text-sm md:text-base focus:outline-none focus:ring-2 focus:ring-blue-500"
               placeholder="E.g. https://youtube.com/..."
             />
           </>
@@ -596,99 +596,26 @@ export function Hero() {
 
   return (
     <section
-      className="w-full px-4 md:px-8 lg:px-16 py-16"
+      className="w-full px-4 md:px-8 lg:px-16 py-8 md:py-16"
       style={{ backgroundColor: "#F3F3FF" }}
     >
       <div
-        className="mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-4 overflow-hidden"
+        className="mx-auto bg-white rounded-xl shadow-sm border border-gray-200 p-3 md:p-4 overflow-auto max-w-[980px] w-full"
         style={{
-          width: "980px",
-          height: "560px",
-          flexShrink: 0,
-          aspectRatio: "88/49",
+          minHeight: "400px",
         }}
       >
-        {/* Main Tabs */}
-        <div className="flex flex-nowrap gap-3 mb-6 pb-4 border-b border-gray-200 overflow-x-auto">
-          {tabs.map((tab) => (
-            <button
-              key={tab}
-              onClick={() => setActiveTab(tab)}
-              className={`flex items-center gap-2 px-6 py-3 rounded text-base font-medium transition-all whitespace-nowrap flex-1 justify-center ${
-                activeTab === tab
-                  ? "bg-gray-100 text-blue-600"
-                  : "text-blue-600 hover:bg-gray-50"
-              }`}
-            >
-              <svg
-                className="w-5 h-5"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
-              >
-                {tab === "Website" && (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m-9 9a9 9 0 019-9"
-                  />
-                )}
-                {tab === "Text" && (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
-                  />
-                )}
-                {tab === "PDF" && (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"
-                  />
-                )}
-                {tab === "Images" && (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"
-                  />
-                )}
-                {tab === "vCard Plus" && (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                  />
-                )}
-                {tab === "Video" && (
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"
-                  />
-                )}
-              </svg>
-              <span>{tab}</span>
-            </button>
-          ))}
-        </div>
+
 
         {/* Content area with Step 1 & 2 on left, Step 3 on right */}
         <div
-          className="grid grid-cols-1 lg:grid-cols-3 gap-3 p-4"
+          className="grid grid-cols-1 lg:grid-cols-3 gap-4 md:gap-6 p-2 md:p-4"
         >
           {/* Left Column - Step 1 and Step 2 */}
-          <div className="lg:col-span-2 space-y-6">
+          <div className="lg:col-span-2 space-y-4 md:space-y-6">
             {/* Step 1: Complete the content */}
-            <div className="space-y-4">
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-900 mb-1">
+            <div className="space-y-3 md:space-y-4">
+              <h3 className="flex items-center gap-2 text-xs md:text-sm font-semibold text-gray-900 mb-1">
                 <span className="flex items-center justify-center w-5 h-5 bg-gray-900 text-white rounded text-xs font-bold">
                   1
                 </span>
@@ -698,8 +625,8 @@ export function Hero() {
             </div>
 
             {/* Step 2: Design your QR */}
-            <div className="space-y-4">
-              <h3 className="flex items-center gap-2 text-sm font-semibold text-gray-900 mb-1">
+            <div className="space-y-3 md:space-y-4">
+              <h3 className="flex items-center gap-2 text-xs md:text-sm font-semibold text-gray-900 mb-1">
                 <span className="flex items-center justify-center w-5 h-5 bg-gray-900 text-white rounded text-xs font-bold">
                   2
                 </span>
@@ -707,12 +634,12 @@ export function Hero() {
               </h3>
 
               {/* Design Sub-tabs */}
-              <div className="flex gap-1 mb-2 overflow-x-auto">
+              <div className="flex gap-1 mb-2 overflow-x-auto pb-2">
                 {designTabs.map((tab) => (
                   <button
                     key={tab}
                     onClick={() => setActiveDesignTab(tab)}
-                    className={`px-2 py-1 text-xs font-medium rounded transition-all whitespace-nowrap ${
+                    className={`px-2 py-1 text-xs font-medium rounded transition-all whitespace-nowrap flex-shrink-0 ${
                       activeDesignTab === tab
                         ? "bg-blue-50 text-blue-600"
                         : "text-gray-600 hover:text-gray-900 hover:bg-gray-50"
@@ -724,15 +651,15 @@ export function Hero() {
               </div>
 
               {/* Design Options Grid */}
-              <div className="bg-gray-50 rounded p-2">
+              <div className="bg-gray-50 rounded p-2 overflow-x-auto">
                 {renderDesignOptions()}
               </div>
             </div>
           </div>
 
           {/* Right Column - Step 3: Download your QR */}
-          <div className="lg:col-span-1 flex flex-col overflow-hidden space-y-4">
-            <h3 className="flex items-center gap-1 text-sm font-semibold text-gray-600 mb-2 flex-shrink-0">
+          <div className="lg:col-span-1 flex flex-col overflow-hidden space-y-3 md:space-y-4">
+            <h3 className="flex items-center gap-1 text-xs md:text-sm font-semibold text-gray-600 mb-2 flex-shrink-0">
               <span className="flex items-center justify-center w-5 h-5 bg-gray-500 text-white rounded text-xs font-bold">
                 3
               </span>
@@ -740,8 +667,10 @@ export function Hero() {
             </h3>
 
             {/* QR Code Preview */}
-            <div className="flex items-center justify-center bg-gray-50 rounded p-2 mb-2 flex-1 min-h-0 overflow-hidden">
-              {renderQRWithFrame()}
+            <div className="flex items-center justify-center bg-gray-50 rounded p-2 mb-2 min-h-[200px] md:min-h-[250px] overflow-hidden">
+              <div className="scale-75 md:scale-100 origin-center">
+                {renderQRWithFrame()}
+              </div>
             </div>
 
             {/* Download Button */}
@@ -749,7 +678,7 @@ export function Hero() {
               <button
                 onClick={downloadQRCode}
                 disabled={!generatedQR}
-                className="w-full px-6 py-3 bg-transparent border border-gray-300 hover:border-gray-400 disabled:border-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-gray-700 font-medium rounded-full transition-all flex items-center justify-center gap-1 text-xs"
+                className="w-full px-4 md:px-6 py-2 md:py-3 bg-transparent border border-gray-300 hover:border-gray-400 disabled:border-gray-200 disabled:text-gray-400 disabled:cursor-not-allowed text-gray-700 font-medium rounded-full transition-all flex items-center justify-center gap-1 text-xs"
               >
                 Download QR
                 <svg
@@ -773,8 +702,7 @@ export function Hero() {
 
       {/* Google Auth Section */}
       <div
-        className="flex justify-center"
-        style={{ marginTop: "160px", marginBottom: "8px" }}
+        className="flex justify-center mt-16 md:mt-32 lg:mt-40 mb-2"
       >
         <GoogleAuthSection />
       </div>
