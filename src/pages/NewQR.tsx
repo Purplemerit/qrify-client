@@ -468,7 +468,7 @@ const NewQR = () => {
             }`}
             style={{ overflow: isDynamicCollapsed ? "hidden" : "visible" }}
           >
-            <div className="grid grid-cols-2 gap-6 p-2">
+            <div className="grid grid-cols-1 gap-4 p-2">
               {dynamicQrTypes.map((type, index) => (
                 <Card
                   key={index}
@@ -540,7 +540,7 @@ const NewQR = () => {
             }`}
             style={{ overflow: isStaticCollapsed ? "hidden" : "visible" }}
           >
-            <div className="grid grid-cols-2 gap-6 p-2">
+            <div className="grid grid-cols-1 gap-4 p-2">
               {staticQrTypes.map((type, index) => (
                 <Card
                   key={index}
