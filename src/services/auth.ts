@@ -167,16 +167,10 @@ class AuthService {
    * Get current authenticated user
    */
   async getCurrentUser(): Promise<GetMeResponse> {
-    console.log('👤 Getting current user...');
-    console.log('🍪 Cookies before /auth/me call:', document.cookie);
-    
     try {
       const response = await api.get<GetMeResponse>('/auth/me');
-      console.log('✅ getCurrentUser success:', response.data);
       return response.data;
     } catch (error) {
-      console.error('❌ getCurrentUser failed:', error);
-      console.log('🍪 Cookies after failed /auth/me call:', document.cookie);
       throw error;
     }
   }
@@ -209,15 +203,11 @@ class AuthService {
    * Check if user is authenticated
    */
   async isAuthenticated(): Promise<boolean> {
-    console.log('🔍 Checking if user is authenticated...');
-    
     try {
       // Try to fetch current user to verify authentication
       await this.getCurrentUser();
-      console.log('✅ User is authenticated');
       return true;
     } catch (error) {
-      console.log('❌ User is not authenticated:', error);
       return false;
     }
   }
@@ -230,7 +220,6 @@ class AuthService {
     // Since cookies are httpOnly, we cannot access them from JavaScript
     // This method is kept for compatibility but should be avoided
     // Always prefer the async isAuthenticated() method
-    console.warn('isAuthenticatedSync() is unreliable with httpOnly cookies. Use isAuthenticated() instead.');
     return true; // Assume authenticated and let server validate
   }
 }
