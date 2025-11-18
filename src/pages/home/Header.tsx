@@ -1,4 +1,15 @@
 import React, { useState, useRef, useEffect } from "react";
+import completeIcon from '../../../assets/header/complete.svg';
+import dynamicIcon from '../../../assets/header/dynamic.svg';
+import varietyIcon from '../../../assets/header/variety.svg';
+import limitedIcon from '../../../assets/header/limited.svg';
+import integrationIcon from '../../../assets/header/integration.svg';
+import editingIcon from '../../../assets/header/editing.svg';
+import bulkIcon from '../../../assets/header/bulk.svg';
+import customIcon from '../../../assets/header/custom.svg';
+import templatesIcon from '../../../assets/header/templates.svg';
+import eventIcon from '../../../assets/header/event.svg';
+import passwordIcon from '../../../assets/header/password.svg';
 import { Link } from "react-router-dom";
 
 // Utility function for conditional className joining
@@ -43,7 +54,7 @@ export const ResourcesList: React.FC = () => {
         {resources.map((resource) => (
           <article
             key={resource.id}
-            className="flex w-full items-start gap-3 p-3 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
+            className="flex w-full items-start gap-2 p-2 rounded-lg hover:bg-gray-50 transition-colors cursor-pointer"
           >
             <div className="w-11 h-11 bg-blue-100 rounded-lg flex items-center justify-center flex-shrink-0 mt-1">
               <svg
@@ -97,7 +108,7 @@ export const FeatureCard: React.FC<FeatureCardProps> = ({
           alt={`${title} icon`}
           className="aspect-[1] object-contain w-11 self-stretch shrink-0 my-auto rounded-lg"
         />
-        <div className="self-stretch flex flex-col w-[233px] my-auto">
+        <div className="self-stretch flex flex-col w-[300px] my-auto">
           <h3 className="text-black text-sm font-semibold">{title}</h3>
           <p className="text-[rgba(96,96,96,1)] text-[13px] font-normal mt-[11px]">
             {description}
@@ -120,84 +131,84 @@ interface Feature {
 const features: Feature[] = [
   {
     id: "static-qr",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: completeIcon,
     title: "Static QR",
     description: "Permanent and unalterable QR codes.",
     link: "/features/static-qr",
   },
   {
     id: "dynamic-qr",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: dynamicIcon,
     title: "Dynamic QR",
     description: "QR codes updatable in real times.",
     link: "/features/dynamic-qr",
   },
   {
     id: "download-formats",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: varietyIcon,
     title: "Variety of download formats.",
     description: "Expand the possibilities of use of QRs.",
     link: "/features/download-formats",
   },
   {
     id: "team-users",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: limitedIcon,
     title: "Limited contributing users",
     description: "Manage QRs as a team.",
     link: "/features/team-users",
   },
   {
     id: "analytics",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: integrationIcon,
     title: "Complete analytics",
     description: "Understand performance with detailed data.",
     link: "/features/analytics",
   },
   {
     id: "editing-management",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: editingIcon,
     title: "Editing and management of QRs",
     description: "Customize and organize your QRs.",
     link: "/features/editing-management",
   },
   {
     id: "bulk-creation",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: bulkIcon,
     title: "Bulk creation and download",
     description: "Generate and download QRs on large scale.",
     link: "/features/bulk-creation",
   },
   {
     id: "google-pixel",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: integrationIcon,
     title: "Google pixel integration",
     description: "Improve the analysis of your digital campaigns.",
     link: "/features/google-pixel",
   },
   {
     id: "custom-domain",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: customIcon,
     title: "Custom Domain",
     description: "Strengthen your brand with your own domain",
     link: "/features/custom-domain",
   },
   {
     id: "templates",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: templatesIcon,
     title: "Templates",
     description: "Save and reuse your own designs",
     link: "/features/templates",
   },
   {
     id: "event-tracking",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: eventIcon,
     title: "Event tracking",
     description: "Track interactions",
     link: "/features/event-tracking",
   },
   {
     id: "password-protection",
-    icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
+    icon: passwordIcon,
     title: "Password access protection",
     description: "Secure your codes.",
     link: "/features/password-protection",
