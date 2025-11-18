@@ -24,18 +24,6 @@ import Signup from "./pages/Signup";
 import ForgotPassword from "./pages/ForgotPassword";
 import ResetPassword from "./pages/ResetPassword";
 import EmailVerification from "./pages/EmailVerification";
-import StaticQR from "./pages/features/static-qr";
-import DynamicQR from "./pages/features/DynamicQR";
-import DownloadFormats from "./pages/features/DownloadFormats";
-import TeamUsers from "./pages/features/TeamUsers";
-import Analytics from "./pages/features/Analytics";
-import EditingManagement from "./pages/features/EditingManagement";
-import BulkCreation from "./pages/features/BulkCreation";
-import GooglePixel from "./pages/features/GooglePixel";
-import CustomDomain from "./pages/features/CustomDomain";
-import TemplatesFeature from "./pages/features/Templates";
-import EventAnalytics from "./pages/features/EventAnalytics";
-import PasswordProtection from "./pages/features/PasswordProtection";
 
 const queryClient = new QueryClient();
 

@@ -15,14 +15,13 @@ export const FAQAccordion: React.FC<FAQAccordionProps> = ({ items }) => {
   const [openItems, setOpenItems] = React.useState<Set<number>>(new Set());
 
   const toggleItem = (index: number) => {
-    // Ensure only one item is open at a time.
-    if (openItems.has(index)) {
-      // If clicked item is already open, close it.
-      setOpenItems(new Set());
+    const newOpenItems = new Set(openItems);
+    if (newOpenItems.has(index)) {
+      newOpenItems.delete(index);
     } else {
-      // Open only the clicked item and close others.
-      setOpenItems(new Set([index]));
+      newOpenItems.add(index);
     }
+    setOpenItems(newOpenItems);
   };
 
   return (
@@ -30,40 +29,24 @@ export const FAQAccordion: React.FC<FAQAccordionProps> = ({ items }) => {
       {items.map((item, index) => (
         <div
           key={index}
-          className="w-full shrink-0 px-0 py-2 border-b-[#E0E0E0] border-b border-solid max-sm:py-3"
+          className="flex w-full h-16 items-center gap-2 shrink-0 justify-between px-0 py-2 border-b-[#E0E0E0] border-b border-solid max-md:relative max-md:w-full max-md:left-0 max-md:top-0 max-sm:h-auto max-sm:px-0 max-sm:py-3"
         >
-          <div className="flex items-center justify-between">
-            <button
-              onClick={() => toggleItem(index)}
-              className="flex w-full items-center justify-between text-left"
-              aria-expanded={openItems.has(index)}
-              aria-controls={`faq-content-${index}`}
-            >
-              <div className="text-[#220E27] text-base font-semibold relative max-sm:text-sm">
-                {item.question}
-              </div>
-              <ChevronDown
-                className={`w-8 h-8 aspect-[1/1] relative max-sm:w-6 max-sm:h-6 transition-transform duration-200 ${
-                  openItems.has(index) ? "rotate-180" : ""
-                }`}
-                style={{ color: "#220E27" }}
-              />
-            </button>
-          </div>
-
-          {/* Answer panel */}
-          {item.answer && (
-            <div
-              id={`faq-content-${index}`}
-              role="region"
-              aria-labelledby={`faq-question-${index}`}
-              className={`mt-3 text-gray-600 transition-max-h duration-200 overflow-hidden ${
-                openItems.has(index) ? "max-h-96" : "max-h-0"
-              }`}
-            >
-              <div className="text-sm leading-relaxed">{item.answer}</div>
+          <button
+            onClick={() => toggleItem(index)}
+            className="flex w-full items-center justify-between text-left"
+            aria-expanded={openItems.has(index)}
+            aria-controls={`faq-content-${index}`}
+          >
+            <div className="text-[#220E27] text-base font-semibold relative max-sm:text-sm">
+              {item.question}
             </div>
-          )}
+            <ChevronDown
+              className={`w-8 h-8 aspect-[1/1] relative max-sm:w-6 max-sm:h-6 transition-transform duration-200 ${
+                openItems.has(index) ? "rotate-180" : ""
+              }`}
+              style={{ color: "#220E27" }}
+            />
+          </button>
         </div>
       ))}
     </div>
@@ -75,7 +58,7 @@ const faqItems = [
   {
     question: "What is a QR Code ?",
     answer:
-      "The term “QR” stands for “quick response” and refers to instant access to the information contained in the Code. It is, in short, the evolution of the barcode, made up of patterns of black and white pixels. Denso Wave, a Japanese subsidiary of Toyota Denso, developed them in order to mark the components of their cars and thus speed up logistics in their production. Currently, it has gained great popularity, due to its versatility and accessibility, thanks to the functions of smart phones.",
+      "A QR Code is a two-dimensional barcode that can store various types of information and can be quickly read by smartphones and other devices.",
   },
   {
     question: "Know the benefits of using QR",
