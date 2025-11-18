@@ -88,6 +88,12 @@ const reviewsData = [
     rating: 5.0,
     reviewText:
       "Created the QR code in blink of a second. I created for My Road Safety Website address, for easy login to my followers. Thanks QRFY",
+    author: {
+      name: "Zara Smith",
+      avatar:
+        "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/c2a656a65437dec0d353c491a54c29a29d4563ea?placeholderIfAbsent=true",
+      date: "July 21, 2025",
+    },
   },
   {
     id: 2,
@@ -106,6 +112,12 @@ const reviewsData = [
     rating: 5.0,
     reviewText:
       "Created the QR code in blink of a second. I created for My Road Safety Website address, for easy login to my followers. Thanks QRFY",
+    author: {
+      name: "John Doe",
+      avatar:
+        "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/c2a656a65437dec0d353c491a54c29a29d4563ea?placeholderIfAbsent=true",
+      date: "July 21, 2025",
+    },
   },
 ];
 

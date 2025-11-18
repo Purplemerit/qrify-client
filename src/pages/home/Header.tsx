@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 // Utility function for conditional className joining
 const cn = (...classes: (string | undefined | null | false)[]): string => {
@@ -79,27 +80,31 @@ interface FeatureCardProps {
   icon: string;
   title: string;
   description: string;
+  link: string;
 }
 
 export const FeatureCard: React.FC<FeatureCardProps> = ({
   icon,
   title,
   description,
+  link,
 }) => {
   return (
-    <article className="flex w-full items-center gap-3 p-2">
-      <img
-        src={icon}
-        alt={`${title} icon`}
-        className="aspect-[1] object-contain w-11 self-stretch shrink-0 my-auto rounded-lg"
-      />
-      <div className="self-stretch flex flex-col w-[233px] my-auto">
-        <h3 className="text-black text-sm font-semibold">{title}</h3>
-        <p className="text-[rgba(96,96,96,1)] text-[13px] font-normal mt-[11px]">
-          {description}
-        </p>
-      </div>
-    </article>
+    <Link to={link} className="block">
+      <article className="flex w-full items-center gap-3 p-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer">
+        <img
+          src={icon}
+          alt={`${title} icon`}
+          className="aspect-[1] object-contain w-11 self-stretch shrink-0 my-auto rounded-lg"
+        />
+        <div className="self-stretch flex flex-col w-[233px] my-auto">
+          <h3 className="text-black text-sm font-semibold">{title}</h3>
+          <p className="text-[rgba(96,96,96,1)] text-[13px] font-normal mt-[11px]">
+            {description}
+          </p>
+        </div>
+      </article>
+    </Link>
   );
 };
 
@@ -109,6 +114,7 @@ interface Feature {
   icon: string;
   title: string;
   description: string;
+  link: string;
 }
 
 const features: Feature[] = [
@@ -117,72 +123,84 @@ const features: Feature[] = [
     icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
     title: "Static QR",
     description: "Permanent and unalterable QR codes.",
+    link: "/features/static-qr",
   },
   {
     id: "dynamic-qr",
     icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
     title: "Dynamic QR",
     description: "QR codes updatable in real times.",
+    link: "/features/dynamic-qr",
   },
   {
     id: "download-formats",
     icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
     title: "Variety of download formats.",
     description: "Expand the possibilities of use of QRs.",
+    link: "/features/download-formats",
   },
   {
     id: "team-users",
     icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
     title: "Limited contributing users",
     description: "Manage QRs as a team.",
+    link: "/features/team-users",
   },
   {
     id: "analytics",
     icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
     title: "Complete analytics",
     description: "Understand performance with detailed data.",
+    link: "/features/analytics",
   },
   {
     id: "editing-management",
     icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
     title: "Editing and management of QRs",
     description: "Customize and organize your QRs.",
+    link: "/features/editing-management",
   },
   {
     id: "bulk-creation",
     icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
     title: "Bulk creation and download",
     description: "Generate and download QRs on large scale.",
+    link: "/features/bulk-creation",
   },
   {
     id: "google-pixel",
     icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
     title: "Google pixel integration",
     description: "Improve the analysis of your digital campaigns.",
+    link: "/features/google-pixel",
   },
   {
     id: "custom-domain",
     icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
     title: "Custom Domain",
     description: "Strengthen your brand with your own domain",
+    link: "/features/custom-domain",
   },
   {
     id: "templates",
     icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
     title: "Templates",
     description: "Save and reuse your own designs",
+    link: "/features/templates",
   },
   {
     id: "event-tracking",
     icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
     title: "Event tracking",
     description: "Track interactions",
+    link: "/features/event-tracking",
   },
   {
     id: "password-protection",
     icon: "https://api.builder.io/api/v1/image/assets/35de5dc00516421d9aa405b4c562fade/19625bd349fa679d8147a94f0525b41e4d8a41e5?placeholderIfAbsent=true",
     title: "Password access protection",
     description: "Secure your codes.",
+    link: "/features/password-protection",
   },
 ];
 
@@ -199,6 +217,7 @@ export const FeaturesList: React.FC = () => {
             icon={feature.icon}
             title={feature.title}
             description={feature.description}
+            link={feature.link}
           />
         ))}
       </div>
@@ -209,6 +228,7 @@ export const FeaturesList: React.FC = () => {
             icon={feature.icon}
             title={feature.title}
             description={feature.description}
+            link={feature.link}
           />
         ))}
       </div>
