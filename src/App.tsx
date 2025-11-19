@@ -7,6 +7,7 @@ import { GoogleOAuthProvider } from "@react-oauth/google";
 import { GOOGLE_CLIENT_ID } from "./config/google-oauth";
 import Layout from "./components/Layout";
 import ProtectedRoute from "./components/ProtectedRoute";
+import RoleBasedRoute from "./components/RoleBasedRoute";
 import Index from "./pages/Index";
 import NewQR from "./pages/NewQR";
 import BulkQR from "./pages/BulkQR";
@@ -98,7 +99,9 @@ const App = () => (
               <Route
                 element={
                   <Layout>
-                    <NewQR />
+                    <RoleBasedRoute>
+                      <NewQR />
+                    </RoleBasedRoute>
                   </Layout>
                 }
                 path="/new-qr"
@@ -106,7 +109,9 @@ const App = () => (
               <Route
                 element={
                   <Layout>
-                    <BulkQR />
+                    <RoleBasedRoute>
+                      <BulkQR />
+                    </RoleBasedRoute>
                   </Layout>
                 }
                 path="/bulk-qr"
@@ -114,7 +119,9 @@ const App = () => (
               <Route
                 element={
                   <Layout>
-                    <MyQRCodes />
+                    <RoleBasedRoute>
+                      <MyQRCodes />
+                    </RoleBasedRoute>
                   </Layout>
                 }
                 path="/my-qr-codes"
@@ -130,7 +137,9 @@ const App = () => (
               <Route
                 element={
                   <Layout>
-                    <Stats />
+                    <RoleBasedRoute>
+                      <Stats />
+                    </RoleBasedRoute>
                   </Layout>
                 }
                 path="/stats"
@@ -138,7 +147,9 @@ const App = () => (
               <Route
                 element={
                   <Layout>
-                    <Templates />
+                    <RoleBasedRoute>
+                      <Templates />
+                    </RoleBasedRoute>
                   </Layout>
                 }
                 path="/templates"
@@ -146,7 +157,9 @@ const App = () => (
               <Route
                 element={
                   <Layout>
-                    <Settings />
+                    <RoleBasedRoute>
+                      <Settings />
+                    </RoleBasedRoute>
                   </Layout>
                 }
                 path="/settings"
@@ -154,7 +167,9 @@ const App = () => (
               <Route
                 element={
                   <Layout>
-                    <Users />
+                    <RoleBasedRoute>
+                      <Users />
+                    </RoleBasedRoute>
                   </Layout>
                 }
                 path="/users"

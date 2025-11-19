@@ -35,6 +35,8 @@ import {
   type QRDesignOptions,
   renderQRWithDesign,
 } from "@/lib/qr-design-utils";
+import { authService, User } from "@/services/auth";
+import { hasPermission } from "@/utils/roleUtils";
 
 interface QRCodeData {
   id: string;
@@ -46,6 +48,8 @@ interface QRCodeData {
   scans: number;
   created_at: string;
   slug: string;
+  owner?: string; // Email of the owner
+  isOwner?: boolean; // Whether current user owns this QR code
   dynamic: boolean;
   designOptions?: QRDesignOptions | null;
   bulk?: boolean; // Add bulk property
@@ -64,6 +68,7 @@ const MyQRCodes = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [activeTab, setActiveTab] = useState("all");
   const [viewMode, setViewMode] = useState<"list" | "card">("list");
+  const [user, setUser] = useState<User | null>(null);
   const qrRefs = useRef<{ [key: string]: SVGSVGElement | null }>({});
 
   // Filter QR codes based on search query
@@ -94,15 +99,21 @@ const MyQRCodes = () => {
   const displayedQRCodes = getFilteredByTab(filteredQRCodes);
 
   useEffect(() => {
-    const fetchQRCodes = async () => {
+    const fetchUserAndQRCodes = async () => {
       try {
+        // Load user data
+        const userResponse = await authService.getCurrentUser();
+        setUser(userResponse.user);
+
+        // Load QR codes
         const res = await api.get("/qr/my-codes");
         setQrCodes(res.data);
-      } catch (err) {
-        console.error("Failed to fetch QR codes:", err);
+      } catch (error) {
+        console.error("Failed to fetch data:", error);
       }
     };
-    fetchQRCodes();
+
+    fetchUserAndQRCodes();
   }, []);
 
   const handleDelete = async (id: string) => {
@@ -190,23 +201,40 @@ const MyQRCodes = () => {
   const handleBulkDelete = async () => {
     if (selectedQRCodes.size === 0) return;
 
+    // Filter selected QR codes to only include those owned by the current user
+    const ownedSelectedQRs = qrCodes.filter(
+      (qr) => selectedQRCodes.has(qr.id) && qr.isOwner
+    );
+
+    if (ownedSelectedQRs.length === 0) {
+      alert("You can only delete QR codes that you created.");
+      return;
+    }
+
     const message = `Are you sure you want to delete ${
-      selectedQRCodes.size
-    } QR code${selectedQRCodes.size > 1 ? "s" : ""}?`;
+      ownedSelectedQRs.length
+    } QR code${ownedSelectedQRs.length > 1 ? "s" : ""}?`;
     if (!confirm(message)) return;
 
     try {
-      // Delete selected QR codes
-      const deletePromises = Array.from(selectedQRCodes).map((id) =>
-        api.delete(`/qr/${id}`)
+      // Delete only owned QR codes
+      const deletePromises = ownedSelectedQRs.map((qr) =>
+        api.delete(`/qr/${qr.id}`)
       );
 
       await Promise.all(deletePromises);
 
-      // Update state
-      setQrCodes(qrCodes.filter((qr) => !selectedQRCodes.has(qr.id)));
+      // Update state - remove only the successfully deleted QR codes
+      const deletedIds = new Set(ownedSelectedQRs.map((qr) => qr.id));
+      setQrCodes(qrCodes.filter((qr) => !deletedIds.has(qr.id)));
       setSelectedQRCodes(new Set());
       setIsSelectionMode(false);
+
+      if (ownedSelectedQRs.length < selectedQRCodes.size) {
+        alert(
+          `Deleted ${ownedSelectedQRs.length} QR codes. Some items were not deleted because you don't own them.`
+        );
+      }
     } catch (err) {
       console.error("Failed to delete QR codes:", err);
       alert("Failed to delete some QR codes");
@@ -226,43 +254,61 @@ const MyQRCodes = () => {
               <span className="text-xs md:text-sm text-gray-600">
                 {selectedQRCodes.size} selected
               </span>
-              <Button
-                onClick={handleBulkDelete}
-                variant="destructive"
-                size="sm"
-                disabled={selectedQRCodes.size === 0}
-              >
-                <Trash2 className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
-                <span className="hidden sm:inline">Delete Selected</span>
-                <span className="sm:hidden">Delete</span>
-              </Button>
+              {user && hasPermission(user.role, "canDeleteQR") && (
+                <Button
+                  onClick={handleBulkDelete}
+                  variant="destructive"
+                  size="sm"
+                  disabled={selectedQRCodes.size === 0}
+                >
+                  <Trash2 className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                  <span className="hidden sm:inline">Delete Selected</span>
+                  <span className="sm:hidden">Delete</span>
+                </Button>
+              )}
               <Button onClick={toggleSelectionMode} variant="outline" size="sm">
                 Cancel
               </Button>
             </div>
           ) : (
             <div className="flex items-center gap-2 w-full sm:w-auto justify-end">
-              <Button onClick={toggleSelectionMode} variant="outline" size="sm">
-                Select
-              </Button>
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button size="sm">
-                    <Plus className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
-                    Create New
+              {user &&
+                hasPermission(user.role, "canDeleteQR") &&
+                qrCodes.some((qr) => qr.isOwner) && (
+                  <Button
+                    onClick={toggleSelectionMode}
+                    variant="outline"
+                    size="sm"
+                  >
+                    Select
                   </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end">
-                  <DropdownMenuItem onClick={() => navigate("/new-qr")}>
-                    <QrCode className="w-4 h-4 mr-2" />
-                    Single QR Code
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => navigate("/bulk-qr")}>
-                    <Folder className="w-4 h-4 mr-2" />
-                    Bulk QR Codes
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+                )}
+              {user &&
+                (hasPermission(user.role, "canCreateQR") ||
+                  hasPermission(user.role, "canBulkCreateQR")) && (
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button size="sm">
+                        <Plus className="w-3 h-3 md:w-4 md:h-4 mr-1 md:mr-2" />
+                        Create New
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      {user && hasPermission(user.role, "canCreateQR") && (
+                        <DropdownMenuItem onClick={() => navigate("/new-qr")}>
+                          <QrCode className="w-4 h-4 mr-2" />
+                          Single QR Code
+                        </DropdownMenuItem>
+                      )}
+                      {user && hasPermission(user.role, "canBulkCreateQR") && (
+                        <DropdownMenuItem onClick={() => navigate("/bulk-qr")}>
+                          <Folder className="w-4 h-4 mr-2" />
+                          Bulk QR Codes
+                        </DropdownMenuItem>
+                      )}
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                )}
             </div>
           )}
         </div>
@@ -377,6 +423,7 @@ const MyQRCodes = () => {
                   handleEditName={handleEditName}
                   handleDelete={handleDelete}
                   qrRefs={qrRefs}
+                  user={user}
                 />
               ) : (
                 <QRCardView
@@ -389,6 +436,7 @@ const MyQRCodes = () => {
                   handleEditName={handleEditName}
                   handleDelete={handleDelete}
                   qrRefs={qrRefs}
+                  user={user}
                 />
               )}
             </TabsContent>
@@ -410,6 +458,7 @@ const MyQRCodes = () => {
                   handleEditName={handleEditName}
                   handleDelete={handleDelete}
                   qrRefs={qrRefs}
+                  user={user}
                 />
               ) : (
                 <QRCardView
@@ -422,6 +471,7 @@ const MyQRCodes = () => {
                   handleEditName={handleEditName}
                   handleDelete={handleDelete}
                   qrRefs={qrRefs}
+                  user={user}
                 />
               )}
             </TabsContent>
@@ -443,6 +493,7 @@ const MyQRCodes = () => {
                   handleEditName={handleEditName}
                   handleDelete={handleDelete}
                   qrRefs={qrRefs}
+                  user={user}
                 />
               ) : (
                 <QRCardView
@@ -455,6 +506,7 @@ const MyQRCodes = () => {
                   handleEditName={handleEditName}
                   handleDelete={handleDelete}
                   qrRefs={qrRefs}
+                  user={user}
                 />
               )}
             </TabsContent>
@@ -476,6 +528,7 @@ const MyQRCodes = () => {
                   handleEditName={handleEditName}
                   handleDelete={handleDelete}
                   qrRefs={qrRefs}
+                  user={user}
                 />
               ) : (
                 <QRCardView
@@ -488,6 +541,7 @@ const MyQRCodes = () => {
                   handleEditName={handleEditName}
                   handleDelete={handleDelete}
                   qrRefs={qrRefs}
+                  user={user}
                 />
               )}
             </TabsContent>
@@ -535,6 +589,7 @@ const QRListView: React.FC<{
   handleEditName: (qr: QRCodeData) => void;
   handleDelete: (id: string) => void;
   qrRefs: React.MutableRefObject<{ [key: string]: SVGSVGElement | null }>;
+  user: User | null;
 }> = ({
   qrCodes,
   isSelectionMode,
@@ -550,6 +605,7 @@ const QRListView: React.FC<{
   handleEditName,
   handleDelete,
   qrRefs,
+  user,
 }) => {
   return (
     <div className="divide-y divide-gray-200">
@@ -641,6 +697,11 @@ const QRListView: React.FC<{
                   <p className="text-xs md:text-sm text-gray-500 truncate">
                     {qr.data}
                   </p>
+                  {qr.owner && !qr.isOwner && (
+                    <p className="text-xs text-blue-600">
+                      Created by: {qr.owner}
+                    </p>
+                  )}
                 </div>
               )}
             </div>
@@ -680,13 +741,19 @@ const QRListView: React.FC<{
                   <DropdownMenuItem onClick={() => handleEditName(qr)}>
                     <Edit className="w-4 h-4 mr-2" /> Edit Name
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="text-red-600"
-                    onClick={() => handleDelete(qr.id)}
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" /> Delete
-                  </DropdownMenuItem>
+                  {user &&
+                    hasPermission(user.role, "canDeleteQR") &&
+                    qr.isOwner && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="text-red-600"
+                          onClick={() => handleDelete(qr.id)}
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" /> Delete
+                        </DropdownMenuItem>
+                      </>
+                    )}
                 </DropdownMenuContent>
               </DropdownMenu>
             )}
@@ -708,6 +775,7 @@ const QRCardView: React.FC<{
   handleEditName: (qr: QRCodeData) => void;
   handleDelete: (id: string) => void;
   qrRefs: React.MutableRefObject<{ [key: string]: SVGSVGElement | null }>;
+  user: User | null;
 }> = ({
   qrCodes,
   isSelectionMode,
@@ -718,6 +786,7 @@ const QRCardView: React.FC<{
   handleEditName,
   handleDelete,
   qrRefs,
+  user,
 }) => {
   return (
     <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 2xl:grid-cols-7 gap-3 sm:gap-4 md:gap-6">
@@ -777,6 +846,11 @@ const QRCardView: React.FC<{
             >
               {qr.data}
             </p>
+            {qr.owner && !qr.isOwner && (
+              <p className="text-[10px] sm:text-xs text-blue-600 truncate">
+                Created by: {qr.owner}
+              </p>
+            )}
             <div className="flex items-center justify-between gap-1 sm:gap-2 pt-0.5 sm:pt-1">
               <Badge
                 variant={qr.status === "Active" ? "default" : "secondary"}
@@ -824,16 +898,22 @@ const QRCardView: React.FC<{
                   >
                     <Edit className="w-4 h-4 mr-2" /> Edit Name
                   </DropdownMenuItem>
-                  <DropdownMenuSeparator />
-                  <DropdownMenuItem
-                    className="text-red-600"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      handleDelete(qr.id);
-                    }}
-                  >
-                    <Trash2 className="w-4 h-4 mr-2" /> Delete
-                  </DropdownMenuItem>
+                  {user &&
+                    hasPermission(user.role, "canDeleteQR") &&
+                    qr.isOwner && (
+                      <>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem
+                          className="text-red-600"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            handleDelete(qr.id);
+                          }}
+                        >
+                          <Trash2 className="w-4 h-4 mr-2" /> Delete
+                        </DropdownMenuItem>
+                      </>
+                    )}
                 </DropdownMenuContent>
               </DropdownMenu>
             </div>

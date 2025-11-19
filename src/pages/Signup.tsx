@@ -1,9 +1,13 @@
 import React, { useState, useCallback, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useSearchParams } from "react-router-dom";
 import { authService } from "../services/auth";
+import { userApi } from "../lib/api";
 import { GoogleAuthButton } from "../components/GoogleAuthButton";
 
 export default function Signup() {
+  const [searchParams] = useSearchParams();
+  const inviteToken = searchParams.get("invite");
+
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -15,10 +19,55 @@ export default function Signup() {
   const [emailValidating, setEmailValidating] = useState(false);
   const [emailValid, setEmailValid] = useState<boolean | null>(null);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [invitationDetails, setInvitationDetails] = useState<{
+    email: string;
+    role: string;
+    inviterName: string;
+    expiresAt: string;
+  } | null>(null);
+  const [invitationLoading, setInvitationLoading] = useState(false);
+  const [invitationError, setInvitationError] = useState<string | null>(null);
   const navigate = useNavigate();
+
+  // Load invitation details if invite token is present
+  useEffect(() => {
+    if (inviteToken) {
+      loadInvitationDetails();
+    }
+  }, [inviteToken]);
+
+  const loadInvitationDetails = async () => {
+    if (!inviteToken) return;
+
+    setInvitationLoading(true);
+    setInvitationError(null);
+
+    try {
+      const details = await userApi.getInvitationDetails(inviteToken);
+      setInvitationDetails(details);
+
+      // Pre-fill email from invitation
+      setFormData((prev) => ({
+        ...prev,
+        email: details.email,
+      }));
+
+      // Skip email validation for invited users
+      setEmailValid(true);
+    } catch (error: any) {
+      setInvitationError(
+        error.response?.data?.error || "Invalid or expired invitation"
+      );
+    } finally {
+      setInvitationLoading(false);
+    }
+  };
 
   // Debounce email validation
   useEffect(() => {
+    // Skip validation for invited users
+    if (inviteToken || !formData.email) return;
+
     const timer = setTimeout(() => {
       if (formData.email && formData.email.includes("@")) {
         validateEmail(formData.email);
@@ -29,7 +78,7 @@ export default function Signup() {
     }, 800); // Wait 800ms after user stops typing
 
     return () => clearTimeout(timer);
-  }, [formData.email]);
+  }, [formData.email, inviteToken]);
 
   const validateEmail = async (email: string) => {
     setEmailValidating(true);
@@ -73,9 +122,19 @@ export default function Signup() {
     setError(null);
     setSuggestion(null);
 
-    // Check if email validation failed
-    if (emailValid === false) {
+    // Check if email validation failed (skip for invited users)
+    if (!inviteToken && emailValid === false) {
       setError(emailError || "Please enter a valid email address");
+      return;
+    }
+
+    // For invited users, check email matches invitation
+    if (
+      inviteToken &&
+      invitationDetails &&
+      formData.email !== invitationDetails.email
+    ) {
+      setError("Email must match the invitation email");
       return;
     }
 
@@ -99,6 +158,7 @@ export default function Signup() {
       const response = await authService.signup({
         email: formData.email,
         password: formData.password,
+        inviteToken: inviteToken || undefined,
       });
 
       // ...existing code...
@@ -143,11 +203,54 @@ export default function Signup() {
         {/* Signup Card */}
         <div className="bg-white rounded-xl shadow-lg p-6 mb-4">
           <h2 className="text-xl font-bold text-gray-900 mb-2">
-            Create Account
+            {inviteToken ? "Complete Your Invitation" : "Create Account"}
           </h2>
           <p className="text-gray-500 mb-5 text-sm">
-            Sign up to start creating QR codes
+            {inviteToken
+              ? "Set up your password to join the team"
+              : "Sign up to start creating QR codes"}
           </p>
+
+          {/* Invitation Info */}
+          {inviteToken && (
+            <>
+              {invitationLoading && (
+                <div className="mb-4 p-4 bg-blue-50 border border-blue-200 rounded-lg">
+                  <div className="flex items-center">
+                    <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-blue-600 mr-2"></div>
+                    <p className="text-sm text-blue-600">
+                      Loading invitation details...
+                    </p>
+                  </div>
+                </div>
+              )}
+
+              {invitationError && (
+                <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
+                  <p className="text-sm text-red-600">{invitationError}</p>
+                </div>
+              )}
+
+              {invitationDetails && (
+                <div className="mb-4 p-4 bg-green-50 border border-green-200 rounded-lg">
+                  <h3 className="font-medium text-green-800 mb-1">
+                    🎉 You're Invited!
+                  </h3>
+                  <p className="text-sm text-green-700">
+                    <strong>{invitationDetails.inviterName}</strong> invited you
+                    to join as{" "}
+                    <span className="font-semibold">
+                      {invitationDetails.role}
+                    </span>
+                  </p>
+                  <p className="text-xs text-green-600 mt-1">
+                    Expires:{" "}
+                    {new Date(invitationDetails.expiresAt).toLocaleDateString()}
+                  </p>
+                </div>
+              )}
+            </>
+          )}
 
           {error && (
             <div className="mb-4 p-4 bg-red-50 border border-red-200 rounded-lg">
@@ -181,10 +284,11 @@ export default function Signup() {
                       : emailValid === false
                       ? "border-red-500 focus:ring-red-600"
                       : "border-gray-300 focus:ring-blue-600"
-                  }`}
+                  } ${inviteToken ? "bg-gray-100 cursor-not-allowed" : ""}`}
                   placeholder="Enter your email"
                   required
-                  disabled={loading}
+                  disabled={loading || !!inviteToken}
+                  readOnly={!!inviteToken}
                 />
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3 pointer-events-none">
                   {emailValidating && (
@@ -321,7 +425,13 @@ export default function Signup() {
               disabled={loading}
               className="w-full px-6 py-4 bg-blue-600 text-white rounded-xl font-semibold hover:bg-blue-700 focus:outline-none focus:ring-4 focus:ring-blue-200 transition-all duration-200 disabled:bg-blue-400 disabled:cursor-not-allowed transform hover:translate-y-[-1px] hover:shadow-lg disabled:transform-none disabled:shadow-none mt-8"
             >
-              {loading ? "Creating Account..." : "Create Account"}
+              {loading
+                ? inviteToken
+                  ? "Setting up account..."
+                  : "Creating Account..."
+                : inviteToken
+                ? "Join Team"
+                : "Create Account"}
             </button>
           </form>
 

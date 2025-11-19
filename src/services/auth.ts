@@ -15,6 +15,7 @@ export interface User {
 export interface SignupRequest {
   email: string;
   password: string;
+  inviteToken?: string;
 }
 
 export interface SignupResponse {

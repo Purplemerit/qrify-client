@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { authService } from "../services/auth";
+import { getAccessibleNavItems } from "../utils/roleUtils";
 
 import {
   Sidebar,
@@ -30,15 +31,15 @@ import {
 
 export { SidebarTrigger };
 
-const mainItems = [
-  { title: "New QR", url: "/new-qr", icon: Plus },
-  { title: "Bulk QR generation", url: "/bulk-qr", icon: Layers },
-  { title: "My QR codes", url: "/my-qr-codes", icon: QrCode },
-  { title: "Stats", url: "/stats", icon: BarChart3 },
-  { title: "Templates", url: "/templates", icon: Grid3X3 },
-  { title: "Settings", url: "/settings", icon: Settings },
-  { title: "Users", url: "/users", icon: Users },
-];
+const iconMap = {
+  "/new-qr": Plus,
+  "/bulk-qr": Layers,
+  "/my-qr-codes": QrCode,
+  "/stats": BarChart3,
+  "/templates": Grid3X3,
+  "/settings": Settings,
+  "/users": Users,
+};
 
 const bottomItems = [{ title: "Contact", url: "/contact", icon: Phone }];
 
@@ -46,6 +47,7 @@ interface AppSidebarProps {
   user?: {
     email: string;
     id: string;
+    role: string;
   } | null;
 }
 
@@ -53,6 +55,14 @@ export function AppSidebar({ user }: AppSidebarProps = {}) {
   const { open, isMobile, setOpenMobile, toggleSidebar, state } = useSidebar();
   const location = useLocation();
   const currentPath = location.pathname;
+
+  // Get accessible navigation items based on user role
+  const mainItems = user
+    ? getAccessibleNavItems(user.role).map((item) => ({
+        ...item,
+        icon: iconMap[item.url as keyof typeof iconMap] || QrCode,
+      }))
+    : [];
 
   const handleMenuItemClick = () => {
     if (isMobile) {

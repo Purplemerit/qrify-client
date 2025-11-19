@@ -6,6 +6,7 @@ export interface QRTemplate {
   name: string;
   description?: string;
   designOptions: QRDesignOptions;
+  owner?: string; // Email of the owner
   createdAt: Date;
   updatedAt?: Date;
 }
@@ -27,6 +28,7 @@ interface ApiTemplate {
   name: string;
   description?: string;
   designOptions: QRDesignOptions;
+  owner?: string;
   createdAt: string;
   updatedAt?: string;
 }
