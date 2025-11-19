@@ -1,4 +1,7 @@
+import { useNavigate } from "react-router-dom";
+
 export function HowToCreate() {
+  const navigate = useNavigate();
   const steps = [
     {
       image: "/howto1.PNG",
@@ -22,14 +25,14 @@ export function HowToCreate() {
 
   return (
     <section className="text-center px-4">
-      <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold mb-2">
+      <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4">
         QR Code Generator: Create your Free QR Code
       </h2>
       <p className="text-gray-500 mb-8 text-sm sm:text-base max-w-2xl mx-auto">
         Customize it with your color, shape and logo in 3 simple steps.
       </p>
 
-      <h3 className="text-3xl sm:text-4xl font-light mb-12">
+      <h3 className="text-2xl sm:text-3xl font-semibold mb-12">
         How to create a QR code?
       </h3>
 
@@ -62,7 +65,10 @@ export function HowToCreate() {
       </div>
 
       <div className="mt-10 sm:mt-12">
-        <button className="px-6 sm:px-8 py-3 sm:py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full transition-colors text-sm sm:text-base">
+        <button
+          onClick={() => navigate("/new-qr")}
+          className="px-6 sm:px-8 py-3 sm:py-3.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-full transition-colors text-sm sm:text-base"
+        >
           Create QR Code
         </button>
       </div>

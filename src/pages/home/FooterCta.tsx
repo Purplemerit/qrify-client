@@ -227,13 +227,9 @@ export function FooterCta() {
     <main className="bg-[rgba(247,247,247,1)] flex flex-col overflow-hidden items-center justify-center px-5 md:px-10 lg:px-20 py-16 md:py-24 lg:py-[126px]">
       <div className="flex w-full max-w-[836px] flex-col items-center">
         <header className="text-center px-4">
-          <h1 className="text-[rgba(34,14,39,1)] text-2xl md:text-3xl lg:text-[40px] font-bold">
+          <h2 className="text-[rgba(34,14,39,1)] text-2xl md:text-3xl lg:text-[40px] font-bold">
             Do not leave with doubt
-          </h1>
-          <p className="text-[rgba(88,91,112,1)] text-sm md:text-base font-semibold leading-5 md:leading-6 text-center max-w-[573px] mx-auto mt-3 md:mt-4">
-            In this section you will find the basic concepts and the necessary
-            steps to start enjoying the benefits of using QR.
-          </p>
+          </h2>
         </header>
 
         <TabNavigation

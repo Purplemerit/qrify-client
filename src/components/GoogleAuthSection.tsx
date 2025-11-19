@@ -4,11 +4,11 @@ import { RatingSection } from "./ui/rating-section";
 
 export function GoogleAuthSection() {
   return (
-    <section className="flex items-center justify-between w-full max-w-4xl px-6 py-4">
+    <section className="w-full max-w-4xl px-4 md:px-6 py-4 flex flex-col md:flex-row items-center md:items-center justify-between gap-4 md:gap-8">
       {/* Left side - Google Logo and Rating */}
-      <div className="flex items-center gap-10">
+      <div className="flex items-center gap-4 md:gap-10">
         {/* Google Logo */}
-        <div className="w-32 h-10 flex-shrink-0">
+        <div className="w-28 h-8 md:w-32 md:h-10 flex-shrink-0">
           <svg
             width="120"
             height="40"
@@ -48,12 +48,12 @@ export function GoogleAuthSection() {
       </div>
 
       {/* Right side - CTA Button and Credit Card Text */}
-      <div className="flex items-center gap-8">
+      <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 md:gap-8 text-center sm:text-left">
         {/* CTA Button */}
         <CTAButton showDropdown={true}>Create your free account</CTAButton>
 
         {/* Credit Card Text */}
-        <div className="text-gray-400 text-sm font-medium whitespace-nowrap">
+        <div className="text-gray-400 text-xs sm:text-sm font-medium">
           No credit card required on signup
         </div>
       </div>

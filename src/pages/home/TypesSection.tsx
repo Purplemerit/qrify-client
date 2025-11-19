@@ -15,7 +15,7 @@ export function TypesSection({ onTypeSelect, activeType }: TypesSectionProps) {
   ];
   return (
     <section className="text-center">
-      <h2 className="text-3xl font-bold mb-2">
+      <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4">
         Generate different types of QR Codes
       </h2>
       <p className="text-gray-500 mb-6">

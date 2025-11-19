@@ -97,9 +97,9 @@ export function FaqAndIllustration() {
     >
       <div className="w-full h-auto relative">
         <header className="text-center mb-12 max-md:mb-8">
-          <h1 className="w-full text-[#220E27] text-[40px] font-bold mb-6 max-md:text-[32px] max-md:mb-5 max-sm:text-[28px] max-sm:leading-[1.2]">
+          <h2 className="w-full text-[#220E27] text-[40px] font-bold mb-6 max-md:text-[32px] max-md:mb-5 max-sm:text-[28px] max-sm:leading-[1.2]">
             Everything you need to know to get started
-          </h1>
+          </h2>
           <p className="w-full text-[#585B70] text-center text-base font-semibold leading-6 max-md:mb-10 max-sm:text-sm max-sm:leading-5">
             In this section you will find the basic concepts and the necessary
             steps to start enjoying the benefits of using QR.
@@ -111,7 +111,7 @@ export function FaqAndIllustration() {
             <img
               src="/faqimage.png"
               alt="QR Code illustration showing mobile phone scanning"
-              className="w-[394px] h-[562px] shrink-0 aspect-[197/281] max-md:w-[300px] max-md:h-[428px] max-sm:w-[250px] max-sm:h-[357px]"
+              className="w-full max-w-[394px] h-auto aspect-[197/281] max-md:max-w-[300px] max-sm:max-w-[250px]"
             />
           </div>
 
