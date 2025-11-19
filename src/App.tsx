@@ -84,14 +84,7 @@ const App = () => (
               path="/features/password-protection"
               element={<PasswordProtection />}
             />
-            <Route
-                element={
-                  <Layout>
-                    <NewQR />
-                  </Layout>
-                }
-                path="/new-qr"
-              />
+            
 
             {/* Protected routes */}
             <Route element={<ProtectedRoute />}>
@@ -103,7 +96,14 @@ const App = () => (
                 }
                 path="/dashboard"
               />
-              
+              <Route
+                element={
+                  <Layout>
+                    <NewQR />
+                  </Layout>
+                }
+                path="/new-qr"
+              />
               <Route
                 element={
                   <Layout>
