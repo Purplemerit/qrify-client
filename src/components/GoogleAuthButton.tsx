@@ -23,14 +23,11 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
 
   const login = useGoogleLogin({
     onSuccess: async (tokenResponse) => {
-      console.group("🔄 Google OAuth Success Flow");
-      console.log("Token Response:", tokenResponse);
       try {
         if (!tokenResponse.access_token) {
           throw new Error("No access token received from Google");
         }
 
-        console.log("✅ Access token received, fetching user info...");
         // Exchange access token for user info to get an ID token equivalent
         const userInfoResponse = await fetch(
           `https://www.googleapis.com/oauth2/v2/userinfo?access_token=${tokenResponse.access_token}`
@@ -43,7 +40,6 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
         }
 
         const userInfo = await userInfoResponse.json();
-        console.log("✅ User info received:", userInfo);
 
         if (!userInfo.email) {
           throw new Error("Could not retrieve email from Google");
@@ -64,19 +60,15 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
           picture: userInfo.picture,
         };
 
-        console.log("🔄 Creating mock credential for server...");
         const mockCredentialResponse = {
           credential: btoa(JSON.stringify(mockPayload)),
           select_by: "user" as const,
         };
 
-        console.log("🚀 Sending to server authentication...");
         const result = await googleAuthService.authenticateWithGoogle(
           mockCredentialResponse
         );
 
-        console.log("✅ Server authentication successful:", result);
-        console.groupEnd();
         if (onSuccess) {
           onSuccess(result);
         } else {
@@ -84,9 +76,7 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
           navigate("/my-qr-codes");
         }
       } catch (error) {
-        console.groupEnd();
-        console.error("❌ Google OAuth Error:", error);
-        debugger; // Debug Google OAuth errors
+        console.error("Google OAuth Error:", error);
         const authError =
           error instanceof Error
             ? error
@@ -98,7 +88,6 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
     },
     onError: (error) => {
       console.error("Google Login Error:", error);
-      debugger; // Debug Google login errors
       const authError = new Error(
         `Google authentication failed: ${error.error || "Unknown error"}`
       );
@@ -111,10 +100,6 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
 
   // Don't render if Google Client ID is not available
   if (!GOOGLE_CLIENT_ID) {
-    console.error("Google Client ID not configured for GoogleAuthButton");
-    if (import.meta.env.PROD) {
-      debugger; // Production debugging: Google Auth Button not configured
-    }
     return (
       <button
         disabled
