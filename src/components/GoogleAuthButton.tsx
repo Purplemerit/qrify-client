@@ -76,6 +76,11 @@ export const GoogleAuthButton: React.FC<GoogleAuthButtonProps> = ({
         );
 
         console.log("✅ Server authentication successful:", result);
+
+        // Verify cookies were set
+        console.log("🍪 Checking cookies after Google OAuth...");
+        console.log("Document cookies:", document.cookie);
+
         console.groupEnd();
         if (onSuccess) {
           onSuccess(result);
