@@ -85,6 +85,7 @@ const App = () => (
               path="/features/password-protection"
               element={<PasswordProtection />}
             />
+            
 
             {/* Protected routes */}
             <Route element={<ProtectedRoute />}>

@@ -20,7 +20,7 @@ export default function App() {
     <div className="min-h-screen bg-gray-50 text-gray-900 font-sans">
       <Header />
       <Hero />
-      <main className="max-w-6xl mx-auto px-6 py-16 space-y-24">
+      <main className="max-w-6xl mx-auto px-4 md:px-6 py-16 space-y-24">
         <HowToCreate />
         <TypesSection
           onTypeSelect={setActiveShowcaseType}
@@ -32,7 +32,7 @@ export default function App() {
       <Discover />
       <FaqAndIllustration />
       <Reviews />
-      <main className="max-w-6xl mx-auto px-6 py-16 space-y-24">
+      <main className="max-w-6xl mx-auto px-4 md:px-6 py-16 space-y-24">
         <Collections />
       </main>
       <FooterCta />

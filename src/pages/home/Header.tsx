@@ -407,14 +407,14 @@ export const AuthButtons: React.FC<AuthButtonsProps> = ({
     <div className="flex items-center gap-2 md:gap-3">
       <button
         onClick={handleLogin}
-        className="bg-white border flex min-h-8 md:min-h-10 items-center gap-2 text-[rgba(29,89,249,1)] justify-center w-24 md:w-40 px-2 py-2 md:py-3 text-xs md:text-sm rounded-[20px] border-[rgba(224,224,224,1)] border-solid hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="bg-white border flex min-h-8 md:min-h-10 items-center gap-2 text-[rgba(29,89,249,1)] justify-center w-auto md:w-40 px-3 md:px-2 py-2 md:py-3 text-xs md:text-sm rounded-[20px] border-[rgba(224,224,224,1)] border-solid hover:bg-gray-50 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         aria-label="Log in to your account"
       >
         <span>Log In</span>
       </button>
       <button
         onClick={handleRegister}
-        className="bg-[rgba(29,89,249,1)] border flex min-h-8 md:min-h-10 items-center gap-2 text-white whitespace-nowrap justify-center w-24 md:w-[120px] px-2 py-2 md:py-3 text-xs md:text-sm rounded-[20px] border-[rgba(224,224,224,1)] border-solid hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
+        className="bg-[rgba(29,89,249,1)] border flex min-h-8 md:min-h-10 items-center gap-2 text-white whitespace-nowrap justify-center w-auto md:w-[120px] px-3 md:px-2 py-2 md:py-3 text-xs md:text-sm rounded-[20px] border-[rgba(224,224,224,1)] border-solid hover:bg-blue-600 transition-colors focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
         aria-label="Register for a new account"
       >
         <span>Register</span>
@@ -437,23 +437,106 @@ export function Header({
   logoSrc = "/logo.png",
   logoAlt = "QRFY Logo",
 }: HeaderProps = {}) {
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [mobileOpenDropdown, setMobileOpenDropdown] = useState<string | null>(
+    null
+  );
   return (
-    <header className="bg-white border relative flex flex-col md:flex-row md:items-center md:justify-between text-sm font-bold px-5 md:px-10 py-4 md:py-2.5 border-[rgba(217,217,217,1)] border-solid gap-4">
-      <div className="z-50 flex items-center gap-4 md:gap-8 text-[rgba(34,14,39,1)] flex-wrap">
+    <header className="bg-white border relative flex items-center justify-between text-sm font-bold px-4 md:px-10 py-3 md:py-2.5 border-[rgba(217,217,217,1)] border-solid">
+      <div className="z-50 flex items-center gap-4 md:gap-8 text-[rgba(34,14,39,1)] flex-1 min-w-0">
         <Link to="/" aria-label="Home" className="flex-shrink-0">
           <img
             src={logoSrc}
             alt={logoAlt}
-            className="aspect-[2.23] object-contain w-[100px] md:w-[134px]"
+            className="aspect-[2.23] object-contain w-20 md:w-[134px]"
           />
         </Link>
+        {/* (Mobile toggle moved to right group) */}
         <div className="hidden lg:block">
           <Navigation />
         </div>
       </div>
       <div className="z-50 flex items-center gap-3 md:flex-shrink-0">
-        <AuthButtons onLogin={onLogin} onRegister={onRegister} />
+        <div className="hidden sm:flex">
+          <AuthButtons onLogin={onLogin} onRegister={onRegister} />
+        </div>
+        {/* Mobile menu toggle - visible on small screens (moved to right side) */}
+        <button
+          onClick={() => setIsMobileOpen(true)}
+          className="ml-2 lg:hidden p-2 rounded-md hover:bg-gray-100 transition-colors"
+          aria-label="Open menu"
+        >
+          <svg
+            className="w-6 h-6"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
       </div>
+
+      {/* Mobile menu panel */}
+      {isMobileOpen && (
+        <div className="fixed inset-0 z-50 bg-white overflow-auto">
+          <div className="max-w-md mx-auto p-6">
+            <div className="flex items-center justify-between mb-6">
+              <Link to="/" onClick={() => setIsMobileOpen(false)}>
+                <img src={logoSrc} alt={logoAlt} className="h-10 object-contain" />
+              </Link>
+              <button
+                onClick={() => setIsMobileOpen(false)}
+                aria-label="Close menu"
+                className="p-2 rounded-md hover:bg-gray-100 transition-colors"
+              >
+                <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <nav className="space-y-3">
+              {defaultItems.map((item, idx) => (
+                <div key={idx}>
+                  <button
+                    onClick={() => {
+                      if (item.hasDropdown) {
+                        setMobileOpenDropdown(mobileOpenDropdown === item.label ? null : item.label);
+                      } else {
+                        setIsMobileOpen(false);
+                        // navigate if needed
+                        if (item.label === "FAQ") window.location.href = "#faq";
+                      }
+                    }}
+                    className="w-full text-left flex items-center justify-between py-3 px-2 rounded hover:bg-gray-50 transition-colors font-semibold"
+                    aria-expanded={item.hasDropdown ? mobileOpenDropdown === item.label : undefined}
+                  >
+                    <span>{item.label}</span>
+                    {item.hasDropdown && (
+                      <svg className={`w-5 h-5 transform transition-transform ${mobileOpenDropdown === item.label ? "rotate-180" : ""}`} viewBox="0 0 20 20" fill="currentColor">
+                        <path fillRule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z" clipRule="evenodd" />
+                      </svg>
+                    )}
+                  </button>
+
+                  {/* Dropdown content for mobile */}
+                  {item.hasDropdown && mobileOpenDropdown === item.label && (
+                    <div className="mt-2 pl-3">
+                      {item.label === "Products" && <FeaturesList />}
+                      {item.label === "Resources" && <ResourcesList />}
+                    </div>
+                  )}
+                </div>
+              ))}
+            </nav>
+
+            <div className="mt-6">
+              <AuthButtons onLogin={() => { setIsMobileOpen(false); if (onLogin) onLogin(); }} onRegister={() => { setIsMobileOpen(false); if (onRegister) onRegister(); }} />
+            </div>
+          </div>
+        </div>
+      )}
     </header>
   );
 }

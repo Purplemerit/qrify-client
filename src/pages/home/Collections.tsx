@@ -1,7 +1,7 @@
 export function Collections() {
   return (
     <section className="text-center px-4">
-      <h2 className="text-2xl md:text-3xl font-bold mb-4 md:mb-6">
+      <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-4 md:mb-6">
         Explore our extensive collection of QR codes
       </h2>
       <p className="text-gray-500 mb-6 md:mb-8 text-sm md:text-base">
@@ -10,11 +10,7 @@ export function Collections() {
       </p>
 
       <div
-        className="overflow-hidden relative rounded-2xl md:rounded-[28px]"
-        style={{
-          height: "250px",
-          minHeight: "200px",
-        }}
+        className="overflow-hidden relative rounded-2xl md:rounded-[28px] h-52 sm:h-64"
       >
         <img
           src="/qrs-for-events-x2-B_KNjck6.webp"

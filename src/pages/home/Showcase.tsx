@@ -73,15 +73,15 @@ export function Showcase({ activeType }: ShowcaseProps) {
     <section className="py-8">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
         {/* Left Section - Dynamic Content */}
-        <div className="lg:col-span-3">
-          <h3 className="text-2xl font-bold mb-4">
+        <div className="lg:col-span-3 text-center lg:text-left">
+          <h3 className="text-2xl md:text-3xl font-semibold mb-4">
             {showcaseContent[activeType].title}
           </h3>
           <p className="text-gray-600 mb-6">
             {showcaseContent[activeType].description}
           </p>
 
-          <div className="mt-6">
+          <div className="mt-6 flex justify-center lg:justify-start">
             <button className="min-w-[220px] h-10 px-6 flex items-center justify-center whitespace-nowrap bg-blue-600 text-white rounded-full hover:bg-blue-700 transition-colors">
               {showcaseContent[activeType].buttonText}
             </button>
@@ -90,9 +90,9 @@ export function Showcase({ activeType }: ShowcaseProps) {
 
         {/* Center Section - Phone Mock */}
         <div className="lg:col-span-6 flex items-center justify-center">
-          <div className="relative w-72 h-[32rem] flex items-center justify-center">
+          <div className="relative w-64 h-[26rem] sm:w-72 sm:h-[32rem] flex items-center justify-center">
             {/* Mockup overlay positioned on phone screen - adjusted to fit iPhone 15 screen area */}
-            <div className="absolute top-[4%] left-1/2 -translate-x-1/2 w-[216px] h-[420px] flex items-center justify-center overflow-hidden rounded-[28px] z-10">
+            <div className="absolute top-[12%] left-1/2 -translate-x-1/2 w-[70%] h-[74%] flex items-center justify-center overflow-hidden rounded-[26px] z-10">
               <img
                 src={selectedMockup}
                 alt="Mockup preview"

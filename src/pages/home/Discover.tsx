@@ -31,7 +31,7 @@ export function Discover() {
       <p className="text-blue-600 font-semibold text-sm mb-3 uppercase tracking-wide">
         QR CODES ON
       </p>
-      <h2 className="text-3xl md:text-4xl font-normal text-gray-900 mb-12">
+      <h2 className="text-3xl md:text-4xl font-semibold text-gray-900 mb-12">
         Discover how to use QR codes to boost your marketing strategy
       </h2>
 
