@@ -163,4 +163,95 @@ export const statsApi = {
   }
 };
 
+// User Management API
+export const userApi = {
+  // Get all users
+  getUsers: async () => {
+    try {
+      const response = await api.get('/users');
+      return response.data;
+    } catch (error) {
+      console.error('👥 Get users error:', error);
+      throw error;
+    }
+  },
+
+  // Invite a user
+  inviteUser: async (email: string, role: 'admin' | 'editor' | 'viewer') => {
+    try {
+      const response = await api.post('/users/invite', { email, role });
+      return response.data;
+    } catch (error) {
+      console.error('📧 Invite user error:', error);
+      throw error;
+    }
+  },
+
+  // Get pending invitations
+  getInvitations: async () => {
+    try {
+      const response = await api.get('/users/invitations');
+      return response.data;
+    } catch (error) {
+      console.error('📋 Get invitations error:', error);
+      throw error;
+    }
+  },
+
+  // Resend invitation
+  resendInvitation: async (invitationId: string) => {
+    try {
+      const response = await api.post(`/users/invitations/${invitationId}/resend`);
+      return response.data;
+    } catch (error) {
+      console.error('🔄 Resend invitation error:', error);
+      throw error;
+    }
+  },
+
+  // Cancel invitation
+  cancelInvitation: async (invitationId: string) => {
+    try {
+      const response = await api.delete(`/users/invitations/${invitationId}`);
+      return response.data;
+    } catch (error) {
+      console.error('❌ Cancel invitation error:', error);
+      throw error;
+    }
+  },
+
+  // Update user role
+  updateUserRole: async (userId: string, role: 'admin' | 'editor' | 'viewer') => {
+    try {
+      const response = await api.put(`/users/${userId}/role`, { role });
+      return response.data;
+    } catch (error) {
+      console.error('🔧 Update user role error:', error);
+      throw error;
+    }
+  },
+
+  // Remove user
+  removeUser: async (userId: string) => {
+    try {
+      const response = await api.delete(`/users/${userId}`);
+      return response.data;
+    } catch (error) {
+      console.error('🗑️ Remove user error:', error);
+      throw error;
+    }
+  },
+
+  // Get invitation details
+  getInvitationDetails: async (token: string) => {
+    try {
+      const response = await api.get(`/auth/invitation/${token}`);
+      return response.data;
+    } catch (error) {
+      console.error('🔍 Get invitation details error:', error);
+      throw error;
+    }
+  }
+};
+
 export default api;
