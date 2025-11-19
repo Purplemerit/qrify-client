@@ -357,13 +357,33 @@ const Users = () => {
                   </div>
 
                   <div className="text-center">
-                    <Badge
-                      className={`text-xs ${getRoleBadgeColor(
-                        user.role as UserRole
-                      )}`}
-                    >
-                      {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
-                    </Badge>
+                    <div className="flex items-center gap-2">
+                      <Badge
+                        className={`text-xs ${getRoleBadgeColor(
+                          user.role as UserRole
+                        )}`}
+                      >
+                        {user.role.charAt(0).toUpperCase() + user.role.slice(1)}
+                      </Badge>
+                      {currentUser?.role === "admin" &&
+                        user.id !== currentUser.id && (
+                          <Select
+                            value={user.role}
+                            onValueChange={(newRole: UserRole) =>
+                              handleUpdateRole(user.id, newRole)
+                            }
+                          >
+                            <SelectTrigger className="w-[100px] h-6 text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="admin">Admin</SelectItem>
+                              <SelectItem value="editor">Editor</SelectItem>
+                              <SelectItem value="viewer">Viewer</SelectItem>
+                            </SelectContent>
+                          </Select>
+                        )}
+                    </div>
                     <p className="text-xs text-muted-foreground mt-1">Role</p>
                   </div>
 
@@ -391,19 +411,6 @@ const Users = () => {
                       <DropdownMenuItem>
                         <Mail className="w-4 h-4 mr-2" />
                         Send Message
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() =>
-                          handleUpdateRole(
-                            user.id,
-                            user.id === currentUser?.id
-                              ? (user.role as UserRole)
-                              : "viewer"
-                          )
-                        }
-                        disabled={user.id === currentUser?.id}
-                      >
-                        Edit Role
                       </DropdownMenuItem>
                       <DropdownMenuItem>View Activity</DropdownMenuItem>
                       <DropdownMenuSeparator />
