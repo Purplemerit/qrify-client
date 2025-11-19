@@ -18,6 +18,8 @@ import {
 import { QRCodeSVG } from "qrcode.react";
 import QRDesignSelector from "@/components/QRDesignSelector";
 import templateStorage, { type QRTemplate } from "@/lib/template-storage";
+import { authService, User } from "@/services/auth";
+import { hasPermission } from "@/utils/roleUtils";
 
 // Enhanced QR Preview Component with Design Applied
 const QRPreview: React.FC<{
@@ -56,9 +58,20 @@ const Templates = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
+  const [user, setUser] = useState<User | null>(null);
 
-  // Load templates from API on component mount
+  // Load user data and templates on component mount
   useEffect(() => {
+    const loadUserAndTemplates = async () => {
+      try {
+        const response = await authService.getCurrentUser();
+        setUser(response.user);
+      } catch (error) {
+        console.error("Error loading user:", error);
+      }
+    };
+
+    loadUserAndTemplates();
     loadTemplates();
   }, []);
 
@@ -307,16 +320,18 @@ const Templates = () => {
           </div>
 
           {/* Create New Template Button */}
-          <div className="mb-4 md:mb-6 lg:mb-8">
-            <Button
-              onClick={() => setShowCreateForm(true)}
-              className="flex items-center justify-center gap-2 w-full sm:w-auto text-sm md:text-base"
-              disabled={loading}
-            >
-              <Plus className="h-4 w-4" />
-              Create New Template
-            </Button>
-          </div>
+          {user && hasPermission(user.role, "canCreateTemplates") && (
+            <div className="mb-4 md:mb-6 lg:mb-8">
+              <Button
+                onClick={() => setShowCreateForm(true)}
+                className="flex items-center justify-center gap-2 w-full sm:w-auto text-sm md:text-base"
+                disabled={loading}
+              >
+                <Plus className="h-4 w-4" />
+                Create New Template
+              </Button>
+            </div>
+          )}
 
           {/* Error Message */}
           {error && (
@@ -355,15 +370,18 @@ const Templates = () => {
                     No templates yet
                   </h3>
                   <p className="text-muted-foreground text-center max-w-md text-xs md:text-sm px-2">
-                    Create your first QR code template to save time when
-                    generating QR codes with consistent designs
+                    {user && hasPermission(user.role, "canCreateTemplates")
+                      ? "Create your first QR code template to save time when generating QR codes with consistent designs"
+                      : "QR code templates allow you to save time when generating QR codes with consistent designs"}
                   </p>
-                  <Button
-                    className="mt-3 md:mt-4 text-sm md:text-base"
-                    onClick={() => setShowCreateForm(true)}
-                  >
-                    Create Your First Template
-                  </Button>
+                  {user && hasPermission(user.role, "canCreateTemplates") && (
+                    <Button
+                      className="mt-3 md:mt-4 text-sm md:text-base"
+                      onClick={() => setShowCreateForm(true)}
+                    >
+                      Create Your First Template
+                    </Button>
+                  )}
                 </CardContent>
               </Card>
             ) : (
@@ -386,21 +404,30 @@ const Templates = () => {
                           <h3 className="font-semibold text-sm md:text-base text-gray-900 line-clamp-1">
                             {template.name}
                           </h3>
+                          {template.owner && (
+                            <p className="text-xs text-gray-500 mt-1">
+                              Created by: {template.owner}
+                            </p>
+                          )}
                         </div>
-                        <div className="flex justify-center">
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={(e) => {
-                              e.stopPropagation();
-                              handleDeleteTemplate(template.id);
-                            }}
-                            className="text-red-600 hover:text-red-700 text-xs w-full"
-                          >
-                            <Trash2 className="h-3 w-3 mr-1.5" />
-                            Delete
-                          </Button>
-                        </div>
+                        {user &&
+                          hasPermission(user.role, "canCreateTemplates") &&
+                          template.owner === user.email && (
+                            <div className="flex justify-center">
+                              <Button
+                                variant="outline"
+                                size="sm"
+                                onClick={(e) => {
+                                  e.stopPropagation();
+                                  handleDeleteTemplate(template.id);
+                                }}
+                                className="text-red-600 hover:text-red-700 text-xs w-full"
+                              >
+                                <Trash2 className="h-3 w-3 mr-1.5" />
+                                Delete
+                              </Button>
+                            </div>
+                          )}
                       </div>
                     </CardContent>
                   </Card>

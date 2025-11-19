@@ -9,6 +9,7 @@ interface UserProfileProps {
   user?: {
     email: string;
     id: string;
+    role: string;
   };
 }
 
@@ -142,7 +143,11 @@ interface LayoutProps {
 
 export default function Layout({ children }: LayoutProps) {
   const location = useLocation();
-  const [user, setUser] = useState<{ email: string; id: string } | null>(null);
+  const [user, setUser] = useState<{
+    email: string;
+    id: string;
+    role: string;
+  } | null>(null);
 
   // Get user data on mount
   useEffect(() => {
@@ -158,7 +163,7 @@ export default function Layout({ children }: LayoutProps) {
             // If API fails but user has token, create user object from token
             console.error("Error fetching user:", error);
             // We could decode the JWT token here if needed
-            setUser({ email: "User", id: "unknown" });
+            setUser({ email: "User", id: "unknown", role: "viewer" });
           }
         }
       } catch (error) {
