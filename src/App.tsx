@@ -40,157 +40,173 @@ import PasswordProtection from "./pages/features/PasswordProtection";
 
 const queryClient = new QueryClient();
 
-const App = () => (
-  <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID}>
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Routes>
-            {/* Public routes */}
-            <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/signup" element={<Signup />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-            <Route path="/verify-email" element={<EmailVerification />} />
-            <Route
-              path="/verify-email-change"
-              element={<EmailVerification />}
-            />
+const App = () => {
+  // Show warning if Google Client ID is not configured
+  if (!GOOGLE_CLIENT_ID && import.meta.env.PROD) {
+    console.error("Google OAuth Client ID is not configured for production!");
+  }
 
-            {/* Feature pages */}
-            <Route path="/features/static-qr" element={<StaticQR />} />
-            <Route path="/features/dynamic-qr" element={<DynamicQR />} />
-            <Route
-              path="/features/download-formats"
-              element={<DownloadFormats />}
-            />
-            <Route path="/features/team-users" element={<TeamUsers />} />
-            <Route path="/features/analytics" element={<Analytics />} />
-            <Route
-              path="/features/editing-management"
-              element={<EditingManagement />}
-            />
-            <Route path="/features/bulk-creation" element={<BulkCreation />} />
-            <Route path="/features/google-pixel" element={<GooglePixel />} />
-            <Route path="/features/custom-domain" element={<CustomDomain />} />
-            <Route path="/features/templates" element={<TemplatesFeature />} />
-            <Route
-              path="/features/event-tracking"
-              element={<EventAnalytics />}
-            />
-            <Route
-              path="/features/password-protection"
-              element={<PasswordProtection />}
-            />
+  return (
+    <GoogleOAuthProvider clientId={GOOGLE_CLIENT_ID || "dummy-client-id"}>
+      <QueryClientProvider client={queryClient}>
+        <TooltipProvider>
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Routes>
+              {/* Public routes */}
+              <Route path="/" element={<Home />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<Signup />} />
+              <Route path="/forgot-password" element={<ForgotPassword />} />
+              <Route path="/reset-password" element={<ResetPassword />} />
+              <Route path="/verify-email" element={<EmailVerification />} />
+              <Route
+                path="/verify-email-change"
+                element={<EmailVerification />}
+              />
 
-            {/* Protected routes */}
-            <Route element={<ProtectedRoute />}>
+              {/* Feature pages */}
+              <Route path="/features/static-qr" element={<StaticQR />} />
+              <Route path="/features/dynamic-qr" element={<DynamicQR />} />
               <Route
-                element={
-                  <Layout>
-                    <Index />
-                  </Layout>
-                }
-                path="/dashboard"
+                path="/features/download-formats"
+                element={<DownloadFormats />}
+              />
+              <Route path="/features/team-users" element={<TeamUsers />} />
+              <Route path="/features/analytics" element={<Analytics />} />
+              <Route
+                path="/features/editing-management"
+                element={<EditingManagement />}
               />
               <Route
-                element={
-                  <Layout>
-                    <RoleBasedRoute>
-                      <NewQR />
-                    </RoleBasedRoute>
-                  </Layout>
-                }
-                path="/new-qr"
+                path="/features/bulk-creation"
+                element={<BulkCreation />}
+              />
+              <Route path="/features/google-pixel" element={<GooglePixel />} />
+              <Route
+                path="/features/custom-domain"
+                element={<CustomDomain />}
               />
               <Route
-                element={
-                  <Layout>
-                    <RoleBasedRoute>
-                      <BulkQR />
-                    </RoleBasedRoute>
-                  </Layout>
-                }
-                path="/bulk-qr"
+                path="/features/templates"
+                element={<TemplatesFeature />}
               />
               <Route
-                element={
-                  <Layout>
-                    <RoleBasedRoute>
-                      <MyQRCodes />
-                    </RoleBasedRoute>
-                  </Layout>
-                }
-                path="/my-qr-codes"
+                path="/features/event-tracking"
+                element={<EventAnalytics />}
               />
               <Route
-                element={
-                  <Layout>
-                    <QRDetail />
-                  </Layout>
-                }
-                path="/qr/:id"
+                path="/features/password-protection"
+                element={<PasswordProtection />}
               />
-              <Route
-                element={
-                  <Layout>
-                    <RoleBasedRoute>
-                      <Stats />
-                    </RoleBasedRoute>
-                  </Layout>
-                }
-                path="/stats"
-              />
-              <Route
-                element={
-                  <Layout>
-                    <RoleBasedRoute>
-                      <Templates />
-                    </RoleBasedRoute>
-                  </Layout>
-                }
-                path="/templates"
-              />
-              <Route
-                element={
-                  <Layout>
-                    <RoleBasedRoute>
-                      <Settings />
-                    </RoleBasedRoute>
-                  </Layout>
-                }
-                path="/settings"
-              />
-              <Route
-                element={
-                  <Layout>
-                    <RoleBasedRoute>
-                      <Users />
-                    </RoleBasedRoute>
-                  </Layout>
-                }
-                path="/users"
-              />
-              <Route
-                element={
-                  <Layout>
-                    <Contact />
-                  </Layout>
-                }
-                path="/contact"
-              />
-            </Route>
 
-            {/* 404 */}
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </BrowserRouter>
-      </TooltipProvider>
-    </QueryClientProvider>
-  </GoogleOAuthProvider>
-);
+              {/* Protected routes */}
+              <Route element={<ProtectedRoute />}>
+                <Route
+                  element={
+                    <Layout>
+                      <Index />
+                    </Layout>
+                  }
+                  path="/dashboard"
+                />
+                <Route
+                  element={
+                    <Layout>
+                      <RoleBasedRoute>
+                        <NewQR />
+                      </RoleBasedRoute>
+                    </Layout>
+                  }
+                  path="/new-qr"
+                />
+                <Route
+                  element={
+                    <Layout>
+                      <RoleBasedRoute>
+                        <BulkQR />
+                      </RoleBasedRoute>
+                    </Layout>
+                  }
+                  path="/bulk-qr"
+                />
+                <Route
+                  element={
+                    <Layout>
+                      <RoleBasedRoute>
+                        <MyQRCodes />
+                      </RoleBasedRoute>
+                    </Layout>
+                  }
+                  path="/my-qr-codes"
+                />
+                <Route
+                  element={
+                    <Layout>
+                      <QRDetail />
+                    </Layout>
+                  }
+                  path="/qr/:id"
+                />
+                <Route
+                  element={
+                    <Layout>
+                      <RoleBasedRoute>
+                        <Stats />
+                      </RoleBasedRoute>
+                    </Layout>
+                  }
+                  path="/stats"
+                />
+                <Route
+                  element={
+                    <Layout>
+                      <RoleBasedRoute>
+                        <Templates />
+                      </RoleBasedRoute>
+                    </Layout>
+                  }
+                  path="/templates"
+                />
+                <Route
+                  element={
+                    <Layout>
+                      <RoleBasedRoute>
+                        <Settings />
+                      </RoleBasedRoute>
+                    </Layout>
+                  }
+                  path="/settings"
+                />
+                <Route
+                  element={
+                    <Layout>
+                      <RoleBasedRoute>
+                        <Users />
+                      </RoleBasedRoute>
+                    </Layout>
+                  }
+                  path="/users"
+                />
+                <Route
+                  element={
+                    <Layout>
+                      <Contact />
+                    </Layout>
+                  }
+                  path="/contact"
+                />
+              </Route>
+
+              {/* 404 */}
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </BrowserRouter>
+        </TooltipProvider>
+      </QueryClientProvider>
+    </GoogleOAuthProvider>
+  );
+};
 
 export default App;
