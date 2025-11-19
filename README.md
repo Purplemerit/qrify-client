@@ -1,73 +1,235 @@
-# Welcome to your Lovable project
+# QRify - Advanced QR Code Generator & Manager
 
-## Project info
+A modern, full-stack web application for creating, customizing, and managing QR codes with advanced tracking capabilities.
 
-**URL**: https://lovable.dev/projects/a688309d-efc0-4f36-a0b3-f9b80edb2b1b
+## 🚀 Features
 
-## How can I edit this code?
+### ✅ **Completed Features**
 
-There are several ways of editing your application.
+- **Dynamic & Static QR Codes** - Create trackable dynamic QRs or simple static ones
+- **Advanced QR Customization** - Frames, shapes, logos, colors, and quality levels
+- **QR Code Management** - Full CRUD operations for your QR codes
+- **Analytics Dashboard** - Comprehensive stats and scan tracking
+- **Template System** - Save and reuse custom QR designs
+- **Multi-Format Support** - Website URLs, PDFs, Images, vCards, Videos, and more
 
-**Use Lovable**
+### 🚧 **In Development**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/a688309d-efc0-4f36-a0b3-f9b80edb2b1b) and start prompting.
+- **Bulk QR Generation** - Upload CSV files to create multiple QR codes
+- **User Management** - Admin panel for user administration
+- **Enhanced Settings** - Profile management and preferences
+- **Landing Page Polish** - Hero section improvements
 
-Changes made via Lovable will be committed automatically to this repo.
+## 🛠 Tech Stack
 
-**Use your preferred IDE**
+### Frontend
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+- **React 18** with TypeScript
+- **Vite** for build tooling
+- **Tailwind CSS** for styling
+- **shadcn/ui** component library
+- **React Router** for navigation
+- **Lucide Icons** for iconography
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+### Backend
 
-Follow these steps:
+- **Node.js** with TypeScript
+- **Express.js** framework
+- **Prisma ORM** with PostgreSQL
+- **JWT** authentication
+- **QR code generation** libraries
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+### Database
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+- **PostgreSQL** (Neon.tech cloud hosting)
+- **Prisma** for database management
 
-# Step 3: Install the necessary dependencies.
-npm i
+## 📦 Installation
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
+### Prerequisites
+
+- Node.js 18+
+- npm or yarn
+- PostgreSQL database
+
+### Clone Repository
+
+```bash
+git clone https://github.com/Purplemerit/qrify-app.git
+cd qrify-app
+```
+
+### Backend Setup
+
+```bash
+cd server
+npm install
+
+# Configure environment variables
+cp .env.example .env
+# Edit .env with your database URL and JWT secret
+
+# Run database migrations
+npx prisma migrate dev
+
+# Start development server
 npm run dev
 ```
 
-**Edit a file directly in GitHub**
+### Frontend Setup
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+```bash
+cd client
+npm install
 
-**Use GitHub Codespaces**
+# Configure environment variables
+cp .env.example .env
+# Edit .env with your API URL
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+# Start development server
+npm run dev
+```
 
-## What technologies are used for this project?
+## 🔧 Environment Variables
 
-This project is built with:
+### Client `.env`
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+```env
+# API Base URL
+VITE_API_URL=http://localhost:4000
 
-## How can I deploy this project?
+# Environment
+NODE_ENV=development
+```
 
-Simply open [Lovable](https://lovable.dev/projects/a688309d-efc0-4f36-a0b3-f9b80edb2b1b) and click on Share -> Publish.
+### Server `.env`
 
-## Can I connect a custom domain to my Lovable project?
+```env
+PORT=4000
+JWT_SECRET=your_jwt_secret_here
+JWT_EXPIRES_IN=15m
+CLIENT_URL=http://localhost:8080
+NODE_ENV=development
 
-Yes, you can!
+# Database Configuration
+DATABASE_URL="postgresql://username:password@localhost:5432/qrify"
+```
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+## 📁 Project Structure
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+```
+qrify-app/
+├── client/                 # React frontend
+│   ├── src/
+│   │   ├── components/    # Reusable UI components
+│   │   ├── pages/         # Page components
+│   │   ├── lib/           # Utilities and helpers
+│   │   ├── hooks/         # Custom React hooks
+│   │   ├── services/      # API service layer
+│   │   └── types/         # TypeScript type definitions
+│   ├── public/            # Static assets
+│   └── package.json
+├── server/                # Node.js backend
+│   ├── src/
+│   │   ├── routes/        # API routes
+│   │   ├── middleware/    # Express middleware
+│   │   ├── lib/           # Utilities and helpers
+│   │   └── config/        # Configuration files
+│   ├── prisma/            # Database schema and migrations
+│   └── package.json
+└── README.md
+```
+
+## 🎯 API Endpoints
+
+### Authentication
+
+- `POST /auth/register` - User registration
+- `POST /auth/login` - User login
+- `POST /auth/logout` - User logout
+- `GET /auth/me` - Get current user
+
+### QR Codes
+
+- `GET /qr` - List user's QR codes
+- `POST /qr/url` - Create website QR code
+- `GET /qr/:id` - Get QR code details
+- `PUT /qr/:id` - Update QR code
+- `DELETE /qr/:id` - Delete QR code
+- `GET /qr/:id/image` - Get QR code image
+
+### Analytics
+
+- `GET /scan/:slug` - Redirect and track scan
+- `GET /qr/:id/stats` - Get QR code statistics
+
+### Templates
+
+- `GET /templates` - List templates (client-side storage)
+- `POST /templates` - Create template (client-side storage)
+
+## 🔑 Key Features Explained
+
+### Dynamic vs Static QR Codes
+
+- **Dynamic QRs**: Redirect through our server, allowing content updates and scan tracking
+- **Static QRs**: Contain the final URL directly, no tracking but work offline
+
+### QR Customization Options
+
+- **Frames**: 10+ decorative frames (Card, Scooter, Juice, etc.)
+- **Shapes**: Square, Rounded, Dots, Circle patterns
+- **Logos**: Custom logo integration
+- **Quality Levels**: Error correction levels for reliability
+- **Colors**: Background and foreground color customization
+
+### Template System
+
+- Save frequently used design combinations
+- Apply templates to new QR codes instantly
+- Local storage based (no server storage required)
+
+## 🚦 Development Status
+
+| Feature       | Status         | Completion |
+| ------------- | -------------- | ---------- |
+| QR Generation | ✅ Complete    | 100%       |
+| QR Management | ✅ Complete    | 100%       |
+| Analytics     | ✅ Complete    | 100%       |
+| Templates     | ✅ Complete    | 100%       |
+| Hero Section  | 🚧 In Progress | 60%        |
+| UI Polish     | 🚧 In Progress | 70%        |
+| Bulk QR       | 📋 Planned     | 20%        |
+| Settings      | 🚧 In Progress | 40%        |
+| User Admin    | 📋 Planned     | 30%        |
+
+## 🤝 Contributing
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/new-feature`
+3. Commit your changes: `git commit -am 'Add new feature'`
+4. Push to the branch: `git push origin feature/new-feature`
+5. Submit a pull request
+
+## 📝 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 👥 Team
+
+- **Developer**: Purplemerit
+- **Repository**: [qrify-client](https://github.com/Purplemerit/qrify-client)
+
+## 🔗 Links
+
+- **Live Demo**: [Coming Soon]
+- **Documentation**: [Coming Soon]
+- **Issues**: [GitHub Issues](https://github.com/Purplemerit/qrify-client/issues)
+
+## 📞 Support
+
+For support, email support@qrify.app or create an issue on GitHub.
+
+---
+
+**Built with ❤️ by Purplemerit**
