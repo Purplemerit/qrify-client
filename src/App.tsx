@@ -44,6 +44,7 @@ const App = () => {
   // Show warning if Google Client ID is not configured
   if (!GOOGLE_CLIENT_ID && import.meta.env.PROD) {
     console.error("Google OAuth Client ID is not configured for production!");
+    debugger; // Production debugging: App level Google Client ID missing
   }
 
   return (
