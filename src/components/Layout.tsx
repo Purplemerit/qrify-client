@@ -221,40 +221,42 @@ export default function Layout({ children }: LayoutProps) {
         <AppSidebar user={user} />
 
         <div className="flex-1 flex flex-col">
-          {/* Header */}
-          <header className="py-4 md:py-6 bg-white shadow-sm sticky top-0 z-10">
-            <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
-              {/* Logo for mobile */}
-              <a href="/new-qr" className="md:hidden">
-                <img
-                  src="/logo.png"
-                  alt="QRify"
-                  className="h-12 w-auto object-contain cursor-pointer"
-                />
-              </a>
+          {/* Header (hidden on some pages like /new-qr) */}
+          {location.pathname !== "/new-qr" && (
+            <header className="py-4 md:py-6 bg-white shadow-sm sticky top-0 z-10">
+              <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
+                {/* Logo for mobile */}
+                <a href="/new-qr" className="md:hidden">
+                  <img
+                    src="/logo.png"
+                    alt="QRify"
+                    className="h-12 w-auto object-contain cursor-pointer"
+                  />
+                </a>
 
-              <nav className="flex items-center gap-3 md:gap-6 text-sm text-gray-600 ml-auto">
-                <a className="hover:text-gray-900 hidden md:block">FAQ</a>
-                <div className="hidden md:flex items-center gap-2 md:gap-3">
-                  {user ? (
-                    <UserProfile user={user} />
-                  ) : (
-                    <>
-                      <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-full border text-xs md:text-sm">
-                        Log In
-                      </button>
-                      <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-blue-600 text-white text-xs md:text-sm">
-                        Register
-                      </button>
-                    </>
-                  )}
-                </div>
+                <nav className="flex items-center gap-3 md:gap-6 text-sm text-gray-600 ml-auto">
+                  <a className="hover:text-gray-900 hidden md:block">FAQ</a>
+                  <div className="hidden md:flex items-center gap-2 md:gap-3">
+                    {user ? (
+                      <UserProfile user={user} />
+                    ) : (
+                      <>
+                        <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-full border text-xs md:text-sm">
+                          Log In
+                        </button>
+                        <button className="px-3 py-1.5 md:px-4 md:py-2 rounded-full bg-blue-600 text-white text-xs md:text-sm">
+                          Register
+                        </button>
+                      </>
+                    )}
+                  </div>
 
-                {/* Mobile Hamburger Menu - Right Side */}
-                <MobileMenuButton />
-              </nav>
-            </div>
-          </header>
+                  {/* Mobile Hamburger Menu - Right Side */}
+                  <MobileMenuButton />
+                </nav>
+              </div>
+            </header>
+          )}
 
           {/* Main Content */}
           <main className="flex-1 p-4 md:p-6 overflow-x-hidden">

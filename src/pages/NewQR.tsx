@@ -33,6 +33,7 @@ import BusinessQRForm from "@/components/qr-forms/BusinessQRForm";
 import GenericQRForm from "@/components/qr-forms/GenericQRForm";
 import QRDesignComponent from "@/components/QRDesignComponent";
 import QRDesignSelector from "@/components/QRDesignSelector";
+import NewQRHeader from "@/components/new-qr/NewQRHeader";
 import {
   type QRDesignOptions,
   renderQRWithDesign,
@@ -67,6 +68,10 @@ const NewQR = () => {
   // Collapsible sections state
   const [isDynamicCollapsed, setIsDynamicCollapsed] = useState(false);
   const [isStaticCollapsed, setIsStaticCollapsed] = useState(false);
+
+  // Static form collapsible sections state - collapsed by default
+  const [isStaticQRNameExpanded, setIsStaticQRNameExpanded] = useState(false);
+  const [isStaticBasicInfoExpanded, setIsStaticBasicInfoExpanded] = useState(false);
 
   // QR Design options
   const [qrDesignOptions, setQrDesignOptions] = useState<QRDesignOptions>({
@@ -265,138 +270,7 @@ const NewQR = () => {
     }
   };
 
-  const renderStepIndicator = () => (
-    <div className="mb-6 md:mb-12 px-4 md:px-10">
-      {/* Step Indicator */}
-      <div className="flex items-center justify-center mb-6 md:mb-8 mt-4 md:mt-8">
-        <div className="flex items-center space-x-2 md:space-x-4 relative">
-          {/* Step 1 */}
-          <div
-            className="flex items-center space-x-1 md:space-x-3 cursor-pointer transition-all duration-300"
-            onClick={() => handleStepClick(1)}
-          >
-            <div
-              className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium transition-all duration-300 ${
-                currentStep === 1
-                  ? "bg-primary text-primary-foreground shadow-lg"
-                  : currentStep > 1
-                  ? "bg-green-500 text-white"
-                  : "bg-muted text-muted-foreground"
-              }`}
-            >
-              {currentStep > 1 ? "✓" : "1"}
-            </div>
-          </div>
-
-          {/* Connecting line 1 */}
-          <div
-            className={`h-px w-8 md:w-16 transition-colors duration-500 ${
-              currentStep > 1 ? "bg-green-500" : "bg-muted"
-            }`}
-          ></div>
-
-          {/* Step 2 */}
-          <div
-            className="flex items-center space-x-1 md:space-x-3 cursor-pointer transition-all duration-300"
-            onClick={() => handleStepClick(2)}
-          >
-            <div
-              className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium transition-all duration-300 ${
-                currentStep === 2
-                  ? "bg-primary text-primary-foreground shadow-lg"
-                  : currentStep > 2
-                  ? "bg-green-500 text-white"
-                  : selectedQRType
-                  ? "bg-muted text-foreground cursor-pointer"
-                  : "bg-muted text-muted-foreground cursor-not-allowed"
-              }`}
-            >
-              {currentStep > 2 ? "✓" : "2"}
-            </div>
-          </div>
-
-          {/* Connecting line 2 */}
-          <div
-            className={`h-px w-8 md:w-16 transition-colors duration-500 ${
-              currentStep > 2 ? "bg-green-500" : "bg-muted"
-            }`}
-          ></div>
-
-          {/* Step 3 */}
-          <div
-            className="flex items-center space-x-1 md:space-x-3 cursor-pointer transition-all duration-300"
-            onClick={() => handleStepClick(3)}
-          >
-            <div
-              className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium transition-all duration-300 ${
-                currentStep === 3
-                  ? "bg-primary text-primary-foreground shadow-lg"
-                  : currentStep > 3
-                  ? "bg-green-500 text-white"
-                  : generatedQR
-                  ? "bg-muted text-foreground cursor-pointer"
-                  : "bg-muted text-muted-foreground cursor-not-allowed"
-              }`}
-            >
-              {currentStep > 3 ? "✓" : "3"}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Navigation Buttons */}
-      <div className="flex justify-center">
-        {currentStep === 2 && (
-          <div className="flex items-center space-x-2 md:space-x-4">
-            <Button
-              variant="outline"
-              onClick={() => setCurrentStep(1)}
-              size="sm"
-              className="px-4 md:px-8 py-2 rounded-full border-2 hover:border-primary/50 transition-all duration-300"
-            >
-              ← Back
-            </Button>
-            <Button
-              onClick={handleNextFromStep2}
-              disabled={loading}
-              size="sm"
-              className="px-4 md:px-8 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50"
-            >
-              {loading ? (
-                <div className="flex items-center space-x-2">
-                  <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Generating...</span>
-                </div>
-              ) : (
-                "Next →"
-              )}
-            </Button>
-          </div>
-        )}
-
-        {currentStep === 3 && (
-          <div className="flex items-center space-x-2 md:space-x-4">
-            <Button
-              variant="outline"
-              onClick={() => setCurrentStep(2)}
-              size="sm"
-              className="px-4 md:px-8 py-2 rounded-full border-2 hover:border-primary/50 transition-all duration-300"
-            >
-              ← Back
-            </Button>
-            <Button
-              onClick={handleCompleteQR}
-              disabled={loading || !generatedQR?.id}
-              size="sm"
-              className="px-4 md:px-8 py-2 rounded-full transition-all duration-300 shadow-md hover:shadow-lg disabled:opacity-50"
-            >
-              {loading ? "Saving..." : "Complete"}
-            </Button>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  // Header (step indicator + navigation) will be rendered via NewQRHeader
 
   const renderStep1 = () => (
     <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 w-full px-4 md:px-10 justify-between">
@@ -581,40 +455,93 @@ const NewQR = () => {
   const renderQRForm = () => {
     if (selectedQRType === "Website") {
       if (isStaticQR) {
-        // Static website QR - simplified form
+        // Static website QR - simplified form with collapsible sections
         return (
-          <Card>
-            <CardContent className="p-6">
-              <div className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="qr-name">QR Code Name</Label>
-                  <Input
-                    id="qr-name"
-                    placeholder="My Website QR"
-                    defaultValue="Website QR"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="website-url">Website URL *</Label>
-                  <Input
-                    id="website-url"
-                    type="url"
-                    placeholder="https://example.com"
-                    required
-                  />
-                </div>
-                <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
-                  <h4 className="font-medium text-orange-800 mb-2">
-                    Static QR Code
-                  </h4>
-                  <p className="text-sm text-orange-700">
-                    This QR code will contain the URL directly and cannot be
-                    changed once created. Scanning will not be tracked.
+          <div className="space-y-6">
+            {/* QR Code Name Section */}
+            <Card>
+              <CardContent className="p-0">
+                <div
+                  className="flex items-center justify-between p-6 cursor-pointer select-none hover:bg-muted/50 transition-colors"
+                  onClick={() => setIsStaticQRNameExpanded(!isStaticQRNameExpanded)}
+                >
+                  <p className="text-base leading-7 font-semibold cursor-pointer m-0">
+                    QR Code Name
                   </p>
+                  <ChevronDown
+                    className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ${
+                      isStaticQRNameExpanded ? "rotate-180" : ""
+                    }`}
+                  />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+                <div
+                  className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                    isStaticQRNameExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <div className="px-6 pb-6">
+                    <Input
+                      id="qr-name"
+                      placeholder="My Website QR"
+                      defaultValue="Website QR"
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Basic Information Section */}
+            <Card>
+              <CardContent className="p-0">
+                <div
+                  className="flex items-center justify-between p-6 cursor-pointer select-none hover:bg-muted/50 transition-colors"
+                  onClick={() => setIsStaticBasicInfoExpanded(!isStaticBasicInfoExpanded)}
+                >
+                  <div>
+                    <p className="text-base leading-7 font-semibold cursor-pointer m-0">
+                      Basic Information
+                    </p>
+                    <p className="text-sm text-muted-foreground mt-1">
+                      Enter your website URL
+                    </p>
+                  </div>
+                  <ChevronDown
+                    className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ${
+                      isStaticBasicInfoExpanded ? "rotate-180" : ""
+                    }`}
+                  />
+                </div>
+                <div
+                  className={`transition-all duration-300 ease-in-out overflow-hidden ${
+                    isStaticBasicInfoExpanded ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
+                  }`}
+                >
+                  <div className="px-6 pb-6 space-y-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="website-url">Website URL *</Label>
+                      <Input
+                        id="website-url"
+                        type="url"
+                        placeholder="https://example.com"
+                        required
+                      />
+                    </div>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Static QR Notice */}
+            <div className="p-4 bg-orange-50 border border-orange-200 rounded-lg">
+              <h4 className="font-medium text-orange-800 mb-2">
+                Static QR Code
+              </h4>
+              <p className="text-sm text-orange-700">
+                This QR code will contain the URL directly and cannot be
+                changed once created. Scanning will not be tracked.
+              </p>
+            </div>
+          </div>
         );
       } else {
         // Dynamic website QR - full form
@@ -1106,7 +1033,22 @@ const NewQR = () => {
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
       <div className="max-w-8xl mx-auto py-4 md:py-8 px-4 md:px-6">
-        {renderStepIndicator()}
+        <NewQRHeader
+          currentStep={currentStep}
+          loading={loading}
+          hasSelectedType={!!selectedQRType}
+          hasGeneratedQR={!!generatedQR}
+          onStepClick={handleStepClick}
+          onBack={() => setCurrentStep((s) => Math.max(1, s - 1))}
+          onNext={() => {
+            if (currentStep === 1) {
+              if (selectedQRType) setCurrentStep(2);
+            } else if (currentStep === 2) {
+              handleNextFromStep2();
+            }
+          }}
+          onComplete={handleCompleteQR}
+        />
         <div className="transition-all duration-700 ease-in-out">
           {currentStep === 1 && (
             <div className="animate-fade-in">{renderStep1()}</div>
