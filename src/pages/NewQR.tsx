@@ -497,13 +497,28 @@ const NewQR = () => {
                   className="flex items-center justify-between p-6 cursor-pointer select-none hover:bg-muted/50 transition-colors"
                   onClick={() => setIsStaticBasicInfoExpanded(!isStaticBasicInfoExpanded)}
                 >
-                  <div>
-                    <p className="text-base leading-7 font-semibold cursor-pointer m-0">
-                      Basic Information
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-1">
-                      Enter your website URL
-                    </p>
+                  <div className="flex items-start gap-3">
+                    <div className="w-11 h-11 flex items-center justify-center rounded-lg flex-shrink-0" style={{ backgroundColor: '#f3f5fe' }}>
+                      <svg
+                        focusable={false}
+                        aria-hidden="true"
+                        viewBox="0 0 24 24"
+                        className="w-5 h-5"
+                      >
+                        <path
+                          d="M11 17H13V11H11V17ZM12 9C12.2833 9 12.5208 8.90417 12.7125 8.7125C12.9042 8.52083 13 8.28333 13 8C13 7.71667 12.9042 7.47917 12.7125 7.2875C12.5208 7.09583 12.2833 7 12 7C11.7167 7 11.4792 7.09583 11.2875 7.2875C11.0958 7.47917 11 7.71667 11 8C11 8.28333 11.0958 8.52083 11.2875 8.7125C11.4792 8.90417 11.7167 9 12 9ZM12 22C10.6167 22 9.31667 21.7375 8.1 21.2125C6.88333 20.6875 5.825 19.975 4.925 19.075C4.025 18.175 3.3125 17.1167 2.7875 15.9C2.2625 14.6833 2 13.3833 2 12C2 10.6167 2.2625 9.31667 2.7875 8.1C3.3125 6.88333 4.025 5.825 4.925 4.925C5.825 4.025 6.88333 3.3125 8.1 2.7875C9.31667 2.2625 10.6167 2 12 2C13.3833 2 14.6833 2.2625 15.9 2.7875C17.1167 3.3125 18.175 4.025 19.075 4.925C19.975 5.825 20.6875 6.88333 21.2125 8.1C21.7375 9.31667 22 10.6167 22 12C22 13.3833 21.7375 14.6833 21.2125 15.9C20.6875 17.1167 19.975 18.175 19.075 19.075C18.175 19.975 17.1167 20.6875 15.9 21.2125C14.6833 21.7375 13.3833 22 12 22ZM12 20C14.2333 20 16.125 19.225 17.675 17.675C19.225 16.125 20 14.2333 20 12C20 9.76667 19.225 7.875 17.675 6.325C16.125 4.775 14.2333 4 12 4C9.76667 4 7.875 4.775 6.325 6.325C4.775 7.875 4 9.76667 4 12C4 14.2333 4.775 16.125 6.325 17.675C7.875 19.225 9.76667 20 12 20Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                    </div>
+                    <div>
+                      <p className="text-base leading-7 font-semibold cursor-pointer m-0">
+                        Basic Information
+                      </p>
+                      <p className="text-sm text-muted-foreground mt-1">
+                        Enter your website URL
+                      </p>
+                    </div>
                   </div>
                   <ChevronDown
                     className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ${
@@ -592,7 +607,7 @@ const NewQR = () => {
     <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 w-full px-4 md:px-10 justify-between items-start">
       {/* Mobile Preview Area - Top */}
       <div className="lg:hidden w-full mb-6">
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl shadow-lg p-6 border-2 border-blue-100">
+        <div className="rounded-2xl shadow-lg p-6" style={{ backgroundColor: 'rgb(248, 248, 249)' }}>
           <div className="flex items-center justify-center mb-4">
             <div className="bg-white rounded-full px-4 py-1.5 shadow-sm">
               <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">
@@ -688,19 +703,20 @@ const NewQR = () => {
       </div>
 
       {/* Phone Mockup - Hidden on mobile */}
-      <div className="hidden lg:flex flex-shrink-0 flex-col items-center sticky top-24 h-fit ml-8 w-80 min-w-[320px]">
-        <div className="mb-6">
-          <h3 className="text-xl font-semibold text-center">Live Preview</h3>
-          <p className="text-sm text-muted-foreground text-center mt-2">
-            See your QR code as you create it
-          </p>
-        </div>
-        <div className="relative">
-          <img
-            src="/iphone15.png"
-            alt="iPhone 15 Mockup"
-            className="w-72 h-auto object-contain drop-shadow-lg"
-          />
+      <div className="hidden lg:flex flex-shrink-0 flex-col items-center sticky top-24 h-fit ml-8">
+        <div className="rounded-2xl shadow-lg p-8" style={{ backgroundColor: 'rgb(248, 248, 249)' }}>
+          <div className="mb-6">
+            <h3 className="text-xl font-semibold text-center">Live Preview</h3>
+            <p className="text-sm text-muted-foreground text-center mt-2">
+              See your QR code as you create it
+            </p>
+          </div>
+          <div className="relative">
+            <img
+              src="/iphone15.png"
+              alt="iPhone 15 Mockup"
+              className="w-72 h-auto object-contain drop-shadow-lg"
+            />
           {/* QR Code overlay on phone screen */}
           {loading && (
             <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
@@ -754,6 +770,7 @@ const NewQR = () => {
               </div>
             </div>
           )}
+          </div>
         </div>
       </div>
     </div>
@@ -763,9 +780,19 @@ const NewQR = () => {
     <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 w-full px-4 md:px-10 justify-between">
       {/* Mobile Preview Area - Top */}
       <div className="lg:hidden w-full mb-6">
-        <div className="bg-gradient-to-br from-purple-50 to-pink-50 rounded-2xl shadow-lg p-6 border-2 border-purple-100">
+        <div className="rounded-2xl shadow-lg p-6" style={{ backgroundColor: 'rgb(248, 248, 249)' }}>
           <div className="flex items-center justify-center mb-4">
-            <div className="bg-white rounded-full px-4 py-1.5 shadow-sm">
+            <div className="flex items-center gap-2 bg-white rounded-full px-4 py-1.5 shadow-sm">
+              <svg
+                focusable={false}
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                className="w-4 h-4"
+                style={{ fill: 'none' }}
+              >
+                <rect width="16" height="16" x="4" y="4" stroke="currentColor" strokeWidth="2" rx="1"></rect>
+                <path d="M7 11.444V7h4.444v4.444H7Zm1.111-1.11h2.222V8.11H8.111v2.222ZM7 17v-4.444h4.444V17H7Zm1.111-1.111h2.222v-2.222H8.111v2.222Zm4.445-4.445V7H17v4.444h-4.444Zm1.11-1.11h2.223V8.11h-2.222v2.222ZM15.89 17v-1.111H17V17h-1.111Zm-3.333-3.333v-1.111h1.11v1.11h-1.11Zm1.11 1.11v-1.11h1.112v1.11h-1.111Zm-1.11 1.112v-1.111h1.11v1.11h-1.11ZM13.666 17v-1.111h1.112V17h-1.111Zm1.112-1.111v-1.111h1.11v1.11h-1.11Zm0-2.222v-1.111h1.11v1.11h-1.11Zm1.11 1.11v-1.11H17v1.11h-1.111Z" fill="currentColor"></path>
+              </svg>
               <h3 className="text-xs font-bold text-gray-700 uppercase tracking-wide">
                 Final Preview
               </h3>
@@ -985,53 +1012,67 @@ const NewQR = () => {
       </div>
 
       {/* Phone Mockup - Hidden on mobile, shown on large screens */}
-      <div className="hidden lg:flex flex-shrink-0 flex-col items-center sticky top-24 h-fit ml-8 w-80">
-        <div className="mb-6">
-          <h3 className="text-xl font-semibold text-center">Final Preview</h3>
-          <p className="text-sm text-muted-foreground text-center mt-2">
-            Your customized QR code
-          </p>
-        </div>
-        <div className="relative">
-          <img
-            src="/iphone15.png"
-            alt="iPhone 15 Mockup"
-            className="w-72 h-auto object-contain drop-shadow-lg"
-          />
-          {/* Final QR Code overlay on phone screen */}
-          {generatedQR && (
-            <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
-              {renderQRWithDesign(
-                generatedQR.scanUrl ||
-                  `${
-                    import.meta.env.VITE_API_URL || "http://localhost:4000"
-                  }/scan/${generatedQR.slug}`,
-                qrDesignOptions,
-                {
-                  width: 240,
-                  height: 240,
-                }
-              )}
-              {/* Link to scan endpoint (useful in development to open from phone) */}
-              {generatedQR.scanUrl && (
-                <a
-                  href={generatedQR.scanUrl}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="mt-3 text-xs text-primary underline hover:text-primary/80 transition-colors duration-300"
-                >
-                  {isStaticQR ? "Test website" : "Test scan URL"}
-                </a>
-              )}
+      <div className="hidden lg:flex flex-shrink-0 flex-col items-center sticky top-24 h-fit ml-8">
+        <div className="rounded-2xl shadow-lg p-8" style={{ backgroundColor: 'rgb(248, 248, 249)' }}>
+          <div className="mb-6">
+            <div className="flex items-center justify-center gap-2">
+              <svg
+                focusable={false}
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                className="w-5 h-5"
+                style={{ fill: 'none' }}
+              >
+                <rect width="16" height="16" x="4" y="4" stroke="currentColor" strokeWidth="2" rx="1"></rect>
+                <path d="M7 11.444V7h4.444v4.444H7Zm1.111-1.11h2.222V8.11H8.111v2.222ZM7 17v-4.444h4.444V17H7Zm1.111-1.111h2.222v-2.222H8.111v2.222Zm4.445-4.445V7H17v4.444h-4.444Zm1.11-1.11h2.223V8.11h-2.222v2.222ZM15.89 17v-1.111H17V17h-1.111Zm-3.333-3.333v-1.111h1.11v1.11h-1.11Zm1.11 1.11v-1.11h1.112v1.11h-1.111Zm-1.11 1.112v-1.111h1.11v1.11h-1.11ZM13.666 17v-1.111h1.112V17h-1.111Zm1.112-1.111v-1.111h1.11v1.11h-1.11Zm0-2.222v-1.111h1.11v1.11h-1.11Zm1.11 1.11v-1.11H17v1.11h-1.111Z" fill="currentColor"></path>
+              </svg>
+              <h3 className="text-xl font-semibold text-center">Final Preview</h3>
             </div>
-          )}
+            <p className="text-sm text-muted-foreground text-center mt-2">
+              Your customized QR code
+            </p>
+          </div>
+          <div className="relative">
+            <img
+              src="/iphone15.png"
+              alt="iPhone 15 Mockup"
+              className="w-72 h-auto object-contain drop-shadow-lg"
+            />
+            {/* Final QR Code overlay on phone screen */}
+            {generatedQR && (
+              <div className="absolute top-[18%] left-1/2 transform -translate-x-1/2 flex flex-col items-center animate-fade-in">
+                {renderQRWithDesign(
+                  generatedQR.scanUrl ||
+                    `${
+                      import.meta.env.VITE_API_URL || "http://localhost:4000"
+                    }/scan/${generatedQR.slug}`,
+                  qrDesignOptions,
+                  {
+                    width: 240,
+                    height: 240,
+                  }
+                )}
+                {/* Link to scan endpoint (useful in development to open from phone) */}
+                {generatedQR.scanUrl && (
+                  <a
+                    href={generatedQR.scanUrl}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="mt-3 text-xs text-primary underline hover:text-primary/80 transition-colors duration-300"
+                  >
+                    {isStaticQR ? "Test website" : "Test scan URL"}
+                  </a>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+    <div className="min-h-screen bg-white">
       <div className="max-w-8xl mx-auto py-4 md:py-8 px-4 md:px-6">
         <NewQRHeader
           currentStep={currentStep}

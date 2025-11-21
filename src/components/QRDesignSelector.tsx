@@ -435,8 +435,30 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
           onClick={() => setIsFrameCollapsed(!isFrameCollapsed)}
         >
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-blue-100 to-blue-200 rounded-xl flex items-center justify-center group-hover:from-blue-200 group-hover:to-blue-300 transition-all duration-300">
-              <div className="w-8 h-8 border-2 border-blue-500 rounded group-hover:scale-110 transition-transform duration-300"></div>
+            <div className="w-11 h-11 flex items-center justify-center rounded-xl" style={{ backgroundColor: '#f3f5fe' }}>
+              <svg
+                className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv"
+                focusable={false}
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                style={{ fill: 'none' }}
+              >
+                <rect
+                  width="16"
+                  height="16"
+                  x="4"
+                  y="4"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  rx="1"
+                />
+                <path
+                  d="M7 11.444V7h4.444v4.444H7Zm1.111-1.11h2.222V8.11H8.111v2.222ZM7 17v-4.444h4.444V17H7Zm1.111-1.111h2.222v-2.222H8.111v2.222Zm4.445-4.445V7H17v4.444h-4.444Zm1.11-1.11h2.223V8.11h-2.222v2.222ZM15.89 17v-1.111H17V17h-1.111Zm-3.333-3.333v-1.111h1.11v1.11h-1.11Zm1.11 1.11v-1.11h1.112v1.11h-1.111Zm-1.11 1.112v-1.111h1.11v1.11h-1.11ZM13.666 17v-1.111h1.112V17h-1.111Zm1.112-1.111v-1.111h1.11v1.11h-1.11Zm0-2.222v-1.111h1.11v1.11h-1.11Zm1.11 1.11v-1.11H17v1.11h-1.111Z"
+                  fill="currentColor"
+                />
+              </svg>
             </div>
             <div>
               <h3 className="text-xl font-semibold text-gray-900 group-hover:text-blue-600 transition-colors duration-300">
@@ -508,13 +530,21 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
           onClick={() => setIsShapeCollapsed(!isShapeCollapsed)}
         >
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-green-100 to-green-200 rounded-xl flex items-center justify-center group-hover:from-green-200 group-hover:to-green-300 transition-all duration-300">
-              <div className="w-8 h-8 grid grid-cols-2 gap-1 group-hover:scale-110 transition-transform duration-300">
-                <div className="bg-green-500 rounded-full"></div>
-                <div className="bg-green-500"></div>
-                <div className="bg-green-500"></div>
-                <div className="bg-green-500 rounded-full"></div>
-              </div>
+            <div className="w-11 h-11 flex items-center justify-center rounded-xl" style={{ backgroundColor: '#f3f5fe' }}>
+              <svg
+                className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv"
+                focusable={false}
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                style={{ fill: 'none' }}
+              >
+                <path
+                  d="M3 11V3h8v8H3Zm2-2h4V5H5v4ZM3 21v-8h8v8H3Zm2-2h4v-4H5v4Zm8-8V3h8v8h-8Zm2-2h4V5h-4v4Zm4 12v-2h2v2h-2Zm-6-6v-2h2v2h-2Zm2 2v-2h2v2h-2Zm-2 2v-2h2v2h-2Zm2 2v-2h2v2h-2Zm2-2v-2h2v2h-2Zm0-4v-2h2v2h-2Zm2 2v-2h2v2h-2Z"
+                  fill="currentColor"
+                />
+              </svg>
             </div>
             <div>
               <h3 className="text-xl font-semibold text-gray-900 group-hover:text-green-600 transition-colors duration-300">
@@ -572,10 +602,31 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
           onClick={() => setIsLogoCollapsed(!isLogoCollapsed)}
         >
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-purple-100 to-purple-200 rounded-xl flex items-center justify-center group-hover:from-purple-200 group-hover:to-purple-300 transition-all duration-300">
-              <div className="w-8 h-8 bg-purple-500 rounded-full flex items-center justify-center group-hover:scale-110 transition-transform duration-300">
-                <div className="w-4 h-4 bg-white rounded-full"></div>
-              </div>
+            <div className="w-11 h-11 flex items-center justify-center rounded-xl" style={{ backgroundColor: '#f3f5fe' }}>
+              <svg
+                className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv"
+                focusable={false}
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                style={{ fill: 'none' }}
+              >
+                <rect
+                  width="16"
+                  height="16"
+                  x="4"
+                  y="4"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  rx="1"
+                />
+                <path
+                  d="M7 11.444V7h4.444v4.444H7Zm1.111-1.11h2.222V8.11H8.111v2.222ZM7 17v-4.444h4.444V17H7Zm1.111-1.111h2.222v-2.222H8.111v2.222Zm4.445-4.445V7H17v4.444h-4.444Zm1.11-1.11h2.223V8.11h-2.222v2.222Z"
+                  fill="currentColor"
+                />
+                <circle cx="14.778" cy="14.778" r="2.222" fill="currentColor" />
+              </svg>
             </div>
             <div>
               <h3 className="text-xl font-semibold text-gray-900 group-hover:text-purple-600 transition-colors duration-300">
@@ -645,10 +696,21 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
           onClick={() => setIsQualityCollapsed(!isQualityCollapsed)}
         >
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-orange-100 to-orange-200 rounded-xl flex items-center justify-center group-hover:from-orange-200 group-hover:to-orange-300 transition-all duration-300">
-              <div className="text-orange-500 font-bold text-xl group-hover:scale-110 transition-transform duration-300">
-                HD
-              </div>
+            <div className="w-11 h-11 flex items-center justify-center rounded-xl" style={{ backgroundColor: '#f3f5fe' }}>
+              <svg
+                className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv"
+                focusable={false}
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                style={{ fill: 'none' }}
+              >
+                <path
+                  d="M7.09 21H4.637c-.45 0-.835-.16-1.155-.48-.32-.321-.481-.706-.481-1.156v-2.455h1.636v2.455h2.455V21Zm9.82 0v-1.636h2.454v-2.455H21v2.455c0 .45-.16.835-.48 1.155-.321.32-.706.481-1.156.481h-2.455ZM12 17.318a7.379 7.379 0 0 1-4.449-1.452C6.221 14.898 5.25 13.609 4.636 12c.614-1.61 1.586-2.898 2.915-3.866A7.379 7.379 0 0 1 12 6.682c1.636 0 3.12.484 4.449 1.452 1.33.968 2.301 2.257 2.915 3.866-.614 1.61-1.586 2.898-2.915 3.866A7.379 7.379 0 0 1 12 17.318Zm0-1.636a5.87 5.87 0 0 0 3.293-.982c.996-.654 1.76-1.554 2.291-2.7-.532-1.146-1.295-2.045-2.29-2.7A5.87 5.87 0 0 0 12 8.318a5.87 5.87 0 0 0-3.293.982c-.996.655-1.76 1.554-2.291 2.7.532 1.146 1.295 2.046 2.29 2.7a5.87 5.87 0 0 0 3.294.982Zm0-.818c.79 0 1.466-.28 2.025-.839A2.76 2.76 0 0 0 14.864 12c0-.79-.28-1.466-.839-2.025A2.76 2.76 0 0 0 12 9.136c-.79 0-1.466.28-2.025.839A2.76 2.76 0 0 0 9.136 12c0 .79.28 1.466.839 2.025a2.76 2.76 0 0 0 2.025.839Zm0-1.637c-.34 0-.63-.119-.87-.358a1.183 1.183 0 0 1-.357-.869c0-.34.119-.63.358-.87.238-.238.528-.357.869-.357.34 0 .63.119.87.358.238.238.357.528.357.869 0 .34-.119.63-.358.87a1.183 1.183 0 0 1-.869.357ZM3 7.091V4.636c0-.45.16-.835.48-1.155C3.802 3.16 4.187 3 4.637 3h2.455v1.636H4.636v2.455H3Zm16.364 0V4.636h-2.455V3h2.455c.45 0 .835.16 1.155.48.32.321.481.706.481 1.156v2.455h-1.636Z"
+                  fill="currentColor"
+                />
+              </svg>
             </div>
             <div>
               <h3 className="text-xl font-semibold text-gray-900 group-hover:text-orange-600 transition-colors duration-300">
@@ -703,10 +765,21 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
           onClick={() => setIsStyleCollapsed(!isStyleCollapsed)}
         >
           <div className="flex items-center space-x-3">
-            <div className="w-12 h-12 bg-gradient-to-br from-pink-100 to-pink-200 rounded-xl flex items-center justify-center group-hover:from-pink-200 group-hover:to-pink-300 transition-all duration-300">
-              <div className="text-pink-500 text-xl group-hover:scale-110 transition-transform duration-300">
-                ✨
-              </div>
+            <div className="w-11 h-11 flex items-center justify-center rounded-xl" style={{ backgroundColor: '#f3f5fe' }}>
+              <svg
+                className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv"
+                focusable={false}
+                aria-hidden="true"
+                viewBox="0 0 24 24"
+                width="24"
+                height="24"
+                style={{ fill: 'none' }}
+              >
+                <path
+                  d="M3 21v-2h2v2H3Zm0-4v-2h2v2H3Zm0-4v-2h2v2H3Zm0-4V7h2v2H3Zm0-4V3h2v2H3Zm4 16v-2h2v2H7ZM7 5V3h2v2H7Zm4 16v-2h2v2h-2Zm4 0v-2h2v2h-2Zm4 0v-2h2v2h-2Zm0-4v-2h2v2h-2Zm2-4h-2V8c0-.833-.292-1.542-.875-2.125A2.893 2.893 0 0 0 16 5h-5V3h5c1.383 0 2.563.487 3.538 1.463C20.512 5.437 21 6.617 21 8v5Z"
+                  fill="currentColor"
+                />
+              </svg>
             </div>
             <div>
               <h3 className="text-xl font-semibold text-gray-900 group-hover:text-pink-600 transition-colors duration-300">
