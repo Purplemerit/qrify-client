@@ -1,3 +1,4 @@
+import { useState } from "react";
 import {
   Card,
   CardContent,
@@ -18,6 +19,12 @@ import {
   Download,
   RefreshCw,
   AlertCircle,
+  ChevronRight,
+  ChevronDown,
+  Calendar,
+  Edit,
+  Filter,
+  SquareCheckBig,
 } from "lucide-react";
 import { useStats } from "@/hooks/use-stats";
 
@@ -63,8 +70,144 @@ const AlertDescription = ({
   className?: string;
 }) => <div className={`text-sm ${className}`}>{children}</div>;
 
+// StatsCard Component
+interface StatsCardProps {
+  value: string;
+  label: string;
+}
+
+const StatsCard: React.FC<StatsCardProps> = ({ value, label }) => {
+  return (
+    <div className="flex-1 min-w-[200px] h-[100px] bg-white rounded-xl shadow-sm flex flex-col justify-center items-center gap-4 relative">
+      <div className="text-[#5A5B70] text-[32px] font-semibold">{value}</div>
+      <div className="text-[#5A5B70] text-xs font-semibold">{label}</div>
+    </div>
+  );
+};
+
+// AnalyticsRow Component
+interface AnalyticsRowProps {
+  title: string;
+  hasInfo?: boolean;
+  hasChevron?: boolean;
+  count?: number;
+  loading?: boolean;
+  children?: React.ReactNode;
+  isExpandable?: boolean;
+}
+
+const AnalyticsRow: React.FC<AnalyticsRowProps> = ({
+  title,
+  hasInfo = false,
+  hasChevron = true,
+  count = 0,
+  loading = false,
+  children,
+  isExpandable = false,
+}) => {
+  const [isExpanded, setIsExpanded] = useState(false);
+
+  return (
+    <div className="bg-white border-b border-gray-100 last:border-b-0">
+      <div
+        className={`flex justify-between items-center h-14 px-3 py-4 hover:bg-gray-50 transition-colors ${
+          isExpandable ? "cursor-pointer" : ""
+        }`}
+        onClick={() => isExpandable && setIsExpanded(!isExpanded)}
+      >
+        <div className="flex items-center gap-2.5">
+          <span className="text-[#5A5B70] text-xs font-semibold">{title}</span>
+          {hasInfo && (
+            <div className="flex w-4 h-4 justify-center items-center border rounded-full border-black">
+              <div className="text-black text-[8px] font-bold">i</div>
+            </div>
+          )}
+        </div>
+        <div className="flex items-center gap-3">
+          {loading ? (
+            <Skeleton className="h-4 w-12 bg-gray-200" />
+          ) : (
+            <span className="text-[#5A5B70] text-xs font-medium">
+              {count} items
+            </span>
+          )}
+          {hasChevron &&
+            (isExpanded ? (
+              <ChevronDown className="w-5 h-5 text-[#5A5B70]" />
+            ) : (
+              <ChevronRight className="w-5 h-5 text-[#5A5B70]" />
+            ))}
+        </div>
+      </div>
+      {isExpanded && children && (
+        <div className="px-3 pb-4 pt-0 bg-gray-50 border-t border-gray-100">
+          {children}
+        </div>
+      )}
+    </div>
+  );
+};
+
 const Stats = () => {
   const { data, loading, error, refetch } = useStats();
+  const [selectedView, setSelectedView] = useState("Day");
+  const [selectedChart, setSelectedChart] = useState("bar");
+  const [dateRange, setDateRange] = useState("Last 7 days");
+  const [showDatePicker, setShowDatePicker] = useState(false);
+  const [customStartDate, setCustomStartDate] = useState("");
+  const [customEndDate, setCustomEndDate] = useState("");
+  const [showTimezone, setShowTimezone] = useState(false);
+  const [timezone, setTimezone] = useState(
+    Intl.DateTimeFormat().resolvedOptions().timeZone
+  );
+  const [showFilters, setShowFilters] = useState(false);
+  const [chartFilters, setChartFilters] = useState({
+    showTotal: true,
+    showUniques: false,
+    showVisits: false,
+  });
+
+  // Calculate date range based on selection
+  const getDateRange = () => {
+    const today = new Date();
+    let daysAgo = 7;
+
+    if (dateRange === "Last 30 days") daysAgo = 30;
+    else if (dateRange === "Last 90 days") daysAgo = 90;
+
+    const startDate = new Date(today);
+    startDate.setDate(startDate.getDate() - daysAgo);
+
+    return { startDate, endDate: today };
+  };
+
+  const { startDate, endDate } =
+    customStartDate && customEndDate
+      ? {
+          startDate: new Date(customStartDate),
+          endDate: new Date(customEndDate),
+        }
+      : getDateRange();
+
+  const formatDate = (d: Date) => {
+    const month = d.toLocaleString("en", { month: "short" });
+    const day = d.getDate();
+    const year = d.getFullYear();
+    return `${month} ${day}, ${year}`;
+  };
+
+  const formatDateShort = (d: Date) => {
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  // Apply filters button handler
+  const handleApplyFilters = () => {
+    setShowFilters(false);
+    refetch();
+  };
 
   console.log("📊 Stats component state:", {
     data,
@@ -418,54 +561,47 @@ const Stats = () => {
                     Countries with the most scans
                   </CardDescription>
                 </div>
+                <Progress value={item.percentage} className="h-2 bg-gray-200" />
+                <p className="text-xs text-muted-foreground text-right mt-1 font-medium">
+                  {item.percentage}%
+                </p>
               </div>
-            </CardHeader>
-            <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6 pt-0">
-              {loading ? (
-                Array.from({ length: 5 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                  >
-                    <div className="flex items-center gap-3">
-                      <Skeleton className="h-8 w-8 rounded bg-gray-200" />
-                      <Skeleton className="h-4 w-24 bg-gray-200" />
-                    </div>
-                    <Skeleton className="h-4 w-16 bg-gray-200" />
-                  </div>
-                ))
-              ) : data?.topLocations && data.topLocations.length > 0 ? (
-                data.topLocations.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200"
-                  >
-                    <div className="flex items-center gap-2 md:gap-3">
-                      {item.flag ? (
-                        <span className="text-base md:text-xl bg-white rounded-full p-1 shadow-sm">
-                          {item.flag}
-                        </span>
-                      ) : (
-                        <div className="w-6 h-6 md:w-8 md:h-8 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center shadow-sm">
-                          <span className="text-xs md:text-sm text-gray-500">
-                            🌍
-                          </span>
-                        </div>
-                      )}
-                      <div className="flex flex-col">
-                        <span className="text-xs md:text-sm font-medium text-gray-800">
-                          {item.country}
-                        </span>
-                        {item.city && (
-                          <span className="text-xs text-muted-foreground">
-                            {item.city}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                    <span className="text-xs md:text-sm text-muted-foreground font-medium">
-                      {item.scans} scans
+            ))}
+          </div>
+        </AnalyticsRow>
+
+        <AnalyticsRow
+          title="Scan by country"
+          hasInfo
+          count={data?.topLocations?.length || 0}
+          loading={loading}
+          isExpandable={!!data?.topLocations && data.topLocations.length > 0}
+        >
+          <div className="space-y-2 mt-3">
+            {data?.topLocations?.map((item, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-purple-300 transition-all duration-300"
+              >
+                <div className="flex items-center gap-3">
+                  {item.flag ? (
+                    <span className="text-xl bg-white rounded-full p-1 shadow-sm">
+                      {item.flag}
                     </span>
+                  ) : (
+                    <div className="w-8 h-8 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center shadow-sm">
+                      <span className="text-sm text-gray-500">🌍</span>
+                    </div>
+                  )}
+                  <div className="flex flex-col">
+                    <span className="text-sm font-medium text-gray-800">
+                      {item.country}
+                    </span>
+                    {item.city && (
+                      <span className="text-xs text-muted-foreground">
+                        {item.city}
+                      </span>
+                    )}
                   </div>
                 ))
               ) : (
@@ -494,64 +630,161 @@ const Stats = () => {
                     Latest QR code interactions
                   </CardDescription>
                 </div>
+                <span className="text-sm text-muted-foreground font-medium">
+                  {item.scans} scans
+                </span>
               </div>
-            </CardHeader>
-            <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6 pt-0">
-              {loading ? (
-                Array.from({ length: 5 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="space-y-2 p-3 bg-gray-50 rounded-lg"
-                  >
-                    <div className="flex items-center justify-between">
-                      <Skeleton className="h-4 w-32 bg-gray-200" />
-                      <Skeleton className="h-3 w-20 bg-gray-100" />
-                    </div>
-                    <Skeleton className="h-3 w-40 bg-gray-100" />
-                  </div>
-                ))
-              ) : data?.recentActivity && data.recentActivity.length > 0 ? (
-                data.recentActivity.map((item, index) => (
-                  <div
-                    key={index}
-                    className="space-y-1.5 md:space-y-2 p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200"
-                  >
-                    <div className="flex items-center justify-between">
-                      <p className="text-xs md:text-sm font-medium text-gray-800">
-                        {item.action}
-                      </p>
-                      <p className="text-xs text-muted-foreground bg-white px-2 py-0.5 md:py-1 rounded-full shadow-sm">
-                        {item.time}
-                      </p>
-                    </div>
-                    <div className="text-xs text-muted-foreground">
-                      <span className="font-medium text-gray-700">
-                        {item.qr}
+            ))}
+          </div>
+        </AnalyticsRow>
+
+        <AnalyticsRow
+          title="Scan by region/city"
+          hasInfo
+          count={data?.topLocations?.filter((l) => l.city)?.length || 0}
+          loading={loading}
+          isExpandable={
+            !!data?.topLocations?.filter((l) => l.city) &&
+            data.topLocations.filter((l) => l.city).length > 0
+          }
+        >
+          <div className="space-y-2 mt-3">
+            {data?.topLocations
+              ?.filter((l) => l.city)
+              ?.map((item, index) => (
+                <div
+                  key={index}
+                  className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-green-300 transition-all duration-300"
+                >
+                  <div className="flex items-center gap-3">
+                    {item.flag ? (
+                      <span className="text-xl bg-white rounded-full p-1 shadow-sm">
+                        {item.flag}
                       </span>
-                      {item.location && <span> • {item.location}</span>}
-                      {item.city && item.country && (
-                        <span>
-                          {" "}
-                          • {item.city}, {item.country}
-                        </span>
-                      )}
-                      {!item.location && !item.city && (
-                        <span> • Location unknown</span>
-                      )}
+                    ) : (
+                      <div className="w-8 h-8 bg-gradient-to-br from-gray-200 to-gray-300 rounded-full flex items-center justify-center shadow-sm">
+                        <span className="text-sm text-gray-500">🏙️</span>
+                      </div>
+                    )}
+                    <div className="flex flex-col">
+                      <span className="text-sm font-medium text-gray-800">
+                        {item.city}
+                      </span>
+                      <span className="text-xs text-muted-foreground">
+                        {item.country}
+                      </span>
                     </div>
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200">
-                  <BarChart3 className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-600 font-medium">
-                    No recent activity
+                  <span className="text-sm text-muted-foreground font-medium">
+                    {item.scans} scans
+                  </span>
+                </div>
+              ))}
+          </div>
+        </AnalyticsRow>
+
+        <AnalyticsRow
+          title="Scans by browser"
+          hasChevron={false}
+          count={0}
+          loading={loading}
+        />
+
+        <AnalyticsRow
+          title="Scans by user language"
+          hasChevron={false}
+          count={0}
+          loading={loading}
+        />
+
+        <AnalyticsRow
+          title="Scans by QR name"
+          hasChevron={false}
+          count={data?.topPerformingQrCodes?.length || 0}
+          loading={loading}
+          isExpandable={
+            !!data?.topPerformingQrCodes && data.topPerformingQrCodes.length > 0
+          }
+        >
+          <div className="space-y-2 mt-3">
+            {data?.topPerformingQrCodes?.map((item, index) => (
+              <div
+                key={index}
+                className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 transition-all duration-300"
+              >
+                <div className="space-y-1">
+                  <p className="text-sm font-medium text-gray-800">
+                    {item.name}
+                  </p>
+                  <p className="text-xs text-muted-foreground">
+                    {item.scans} scans
                   </p>
                 </div>
-              )}
-            </CardContent>
-          </Card>
-        </div>
+                <Badge
+                  variant={
+                    item.change.startsWith("+") ? "default" : "secondary"
+                  }
+                  className={`text-xs font-medium shadow-sm ${
+                    item.change.startsWith("+")
+                      ? "bg-green-100 text-green-800 border-green-200"
+                      : "bg-gray-100 text-gray-600 border-gray-200"
+                  }`}
+                >
+                  {item.change}
+                </Badge>
+              </div>
+            ))}
+          </div>
+        </AnalyticsRow>
+
+        <AnalyticsRow
+          title="Scans by time of day"
+          hasChevron={false}
+          count={data?.recentActivity?.length || 0}
+          loading={loading}
+          isExpandable={
+            !!data?.recentActivity && data.recentActivity.length > 0
+          }
+        >
+          <div className="space-y-2 mt-3">
+            {data?.recentActivity?.map((item, index) => (
+              <div
+                key={index}
+                className="space-y-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-orange-300 transition-all duration-300"
+              >
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium text-gray-800">
+                    {item.action}
+                  </p>
+                  <p className="text-xs text-muted-foreground bg-gray-100 px-2 py-1 rounded-full shadow-sm">
+                    {item.time}
+                  </p>
+                </div>
+                <div className="text-xs text-muted-foreground">
+                  <span className="font-medium text-gray-700">{item.qr}</span>
+                  {item.location && <span> • {item.location}</span>}
+                  {item.city && item.country && (
+                    <span>
+                      {" "}
+                      • {item.city}, {item.country}
+                    </span>
+                  )}
+                  {!item.location && !item.city && (
+                    <span> • Location unknown</span>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        </AnalyticsRow>
+
+        <AnalyticsRow
+          title="Events"
+          hasInfo
+          hasChevron={false}
+          count={data?.overview?.totalScans?.value || 0}
+          loading={loading}
+        />
       </div>
     </div>
   );
