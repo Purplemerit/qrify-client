@@ -90,12 +90,12 @@ export function AppSidebar({ user }: AppSidebarProps = {}) {
   const getNavCls = ({ isActive }: { isActive: boolean }) =>
     `flex items-center gap-3 px-3 py-3 rounded-lg transition-colors font-semibold text-base group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2 ${
       isActive
-        ? "bg-primary text-primary-foreground shadow-sm"
-        : "text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+        ? "shadow-sm"
+        : "text-sidebar-foreground"
     }`;
 
   return (
-    <Sidebar collapsible="icon">
+    <Sidebar collapsible="icon" className="bg-white border-r border-gray-200">
       <SidebarContent className="flex flex-col overflow-y-auto scrollbar-hide">
         {/* Logo */}
         <div className="p-2 border-b">
@@ -141,20 +141,25 @@ export function AppSidebar({ user }: AppSidebarProps = {}) {
                         to={item.url}
                         className={getNavCls({ isActive: active })}
                         onClick={handleMenuItemClick}
+                        style={active ? { backgroundColor: '#f3f5fe' } : {}}
+                        onMouseEnter={(e) => {
+                          if (!active) {
+                            e.currentTarget.style.backgroundColor = '#f3f5fe';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!active) {
+                            e.currentTarget.style.backgroundColor = '';
+                          }
+                        }}
                       >
                         <item.icon
-                          className={`w-5 h-5 ${
-                            active
-                              ? "text-primary-foreground"
-                              : "text-sidebar-foreground"
-                          }`}
+                          className="w-5 h-5"
+                          style={{ color: active ? '#1d59f9' : '' }}
                         />
                         <span
-                          className={`font-semibold text-base group-data-[collapsible=icon]:hidden ${
-                            active
-                              ? "text-primary-foreground"
-                              : "text-sidebar-foreground"
-                          }`}
+                          className="font-semibold text-base group-data-[collapsible=icon]:hidden"
+                          style={{ color: active ? '#1d59f9' : '' }}
                         >
                           {item.title}
                         </span>
@@ -180,20 +185,25 @@ export function AppSidebar({ user }: AppSidebarProps = {}) {
                         to={item.url}
                         className={getNavCls({ isActive: active })}
                         onClick={handleMenuItemClick}
+                        style={active ? { backgroundColor: '#f3f5fe' } : {}}
+                        onMouseEnter={(e) => {
+                          if (!active) {
+                            e.currentTarget.style.backgroundColor = '#f3f5fe';
+                          }
+                        }}
+                        onMouseLeave={(e) => {
+                          if (!active) {
+                            e.currentTarget.style.backgroundColor = '';
+                          }
+                        }}
                       >
                         <item.icon
-                          className={`w-5 h-5 ${
-                            active
-                              ? "text-primary-foreground"
-                              : "text-sidebar-foreground"
-                          }`}
+                          className="w-5 h-5"
+                          style={{ color: active ? '#1d59f9' : '' }}
                         />
                         <span
-                          className={`font-semibold text-base group-data-[collapsible=icon]:hidden ${
-                            active
-                              ? "text-primary-foreground"
-                              : "text-sidebar-foreground"
-                          }`}
+                          className="font-semibold text-base group-data-[collapsible=icon]:hidden"
+                          style={{ color: active ? '#1d59f9' : '' }}
                         >
                           {item.title}
                         </span>
@@ -229,7 +239,13 @@ export function AppSidebar({ user }: AppSidebarProps = {}) {
                     <SidebarMenuButton asChild className="h-auto p-0">
                       <button
                         onClick={handleLogout}
-                        className="flex items-center gap-3 px-3 py-3 rounded-lg transition-colors font-semibold text-base w-full text-sidebar-foreground hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+                        className="flex items-center gap-3 px-3 py-3 rounded-lg transition-colors font-semibold text-base w-full text-sidebar-foreground"
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#f3f5fe';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = '';
+                        }}
                       >
                         <LogOut className="w-5 h-5 text-sidebar-foreground" />
                         <span className="font-semibold text-base group-data-[collapsible=icon]:hidden">

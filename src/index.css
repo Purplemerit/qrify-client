@@ -235,4 +235,25 @@
     transform: translateY(-2px);
     box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
   }
+
+  /* Totals cards adjustments for larger screens */
+  @media (min-width: 660px) {
+    .Totals-Total {
+      height: 100px;
+      margin-bottom: 0px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      -webkit-box-pack: center;
+      justify-content: center;
+      box-shadow: rgba(34, 14, 39, 0.05) 0px 1px 4px 1px;
+      overflow: hidden;
+    }
+    .Totals-Total .p-6 {
+      padding: 0.75rem !important;
+    }
+    .Totals-Total .pt-0 {
+      padding-top: 0 !important;
+    }
+  }
 }

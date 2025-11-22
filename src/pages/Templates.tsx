@@ -27,7 +27,7 @@ const QRPreview: React.FC<{
   size?: number;
 }> = ({ designOptions, size = 120 }) => {
   return (
-    <div className="flex justify-center p-4 bg-gray-50 rounded-lg">
+    <div className="flex justify-center p-4 border border-black rounded-lg">
       {renderQRWithDesign(
         "https://example.com/template-preview",
         designOptions,
@@ -310,28 +310,24 @@ const Templates = () => {
       {!showCreateForm ? (
         // Templates List View
         <>
-          <div className="mb-4 md:mb-8">
-            <h1 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-1 md:mb-2">
-              QR Code Templates
-            </h1>
-            <p className="text-muted-foreground text-xs md:text-sm lg:text-base">
-              Create and manage your custom QR code design templates
-            </p>
-          </div>
-
-          {/* Create New Template Button */}
-          {user && hasPermission(user.role, "canCreateTemplates") && (
-            <div className="mb-4 md:mb-6 lg:mb-8">
+          <div className="mb-4 md:mb-8 flex items-center justify-between">
+            <div>
+              <h1 className="text-xl md:text-2xl lg:text-3xl font-semibold mb-1 md:mb-2">
+                QR Code Templates
+              </h1>
+            </div>
+            {user && hasPermission(user.role, "canCreateTemplates") && (
               <Button
                 onClick={() => setShowCreateForm(true)}
-                className="flex items-center justify-center gap-2 w-full sm:w-auto text-sm md:text-base"
+                className="inline-flex items-center justify-center bg-[rgb(29,89,249)] hover:bg-[rgb(29,89,249)]/90 text-white font-bold text-lg rounded-[28px] whitespace-nowrap transition-all duration-200 ease-in-out shadow-none border-0"
+                style={{ lineHeight: '1.75', padding: '4px 10px' }}
                 disabled={loading}
               >
-                <Plus className="h-4 w-4" />
-                Create New Template
+                <Plus className="w-4 h-4 mr-1" />
+                Create Template
               </Button>
-            </div>
-          )}
+            )}
+          </div>
 
           {/* Error Message */}
           {error && (
@@ -362,24 +358,21 @@ const Templates = () => {
             </h2>
             {templates.length === 0 ? (
               <Card>
-                <CardContent className="flex flex-col items-center justify-center py-8 md:py-12 px-4">
-                  <div className="w-12 h-12 md:w-16 md:h-16 bg-muted rounded-lg flex items-center justify-center mb-3 md:mb-4">
-                    <Plus className="h-6 w-6 md:h-8 md:w-8 text-muted-foreground" />
+                <CardContent className="flex items-center justify-center py-8 md:py-12 px-4 gap-3">
+                  <div className="w-8 h-8 bg-muted rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Plus className="h-5 w-5 text-muted-foreground" />
                   </div>
-                  <h3 className="text-base md:text-lg font-medium mb-2">
-                    No templates yet
-                  </h3>
-                  <p className="text-muted-foreground text-center max-w-md text-xs md:text-sm px-2">
+                  <p className="text-muted-foreground text-sm">
                     {user && hasPermission(user.role, "canCreateTemplates")
-                      ? "Create your first QR code template to save time when generating QR codes with consistent designs"
+                      ? "Here you can manage your templates"
                       : "QR code templates allow you to save time when generating QR codes with consistent designs"}
                   </p>
                   {user && hasPermission(user.role, "canCreateTemplates") && (
                     <Button
-                      className="mt-3 md:mt-4 text-sm md:text-base"
+                      className="text-sm border border-[rgb(29,89,249)] text-[rgb(29,89,249)] bg-transparent hover:bg-[rgb(29,89,249)]/10 h-8 px-3 whitespace-nowrap flex-shrink-0"
                       onClick={() => setShowCreateForm(true)}
                     >
-                      Create Your First Template
+                      Create template
                     </Button>
                   )}
                 </CardContent>
@@ -438,7 +431,7 @@ const Templates = () => {
         </>
       ) : (
         // Create Template Editor View - Two Column Layout
-        <div className="min-h-screen flex flex-col lg:flex-row bg-gray-50 -m-3 md:-m-6">
+        <div className="min-h-screen flex flex-col lg:flex-row bg-white -m-3 md:-m-6">
           {/* Left Sidebar - Scrollable Selection Panel */}
           <div className="w-full lg:w-1/2 overflow-y-auto border-b lg:border-b-0 lg:border-r border-gray-200 bg-white">
             <div className="p-4 md:p-6">
@@ -588,7 +581,7 @@ const Templates = () => {
           </div>
 
           {/* Right Panel - Fixed Preview Area */}
-          <div className="hidden lg:flex lg:w-1/2 bg-gradient-to-br from-blue-50 to-indigo-100">
+          <div className="hidden lg:flex lg:w-1/2">
             <div className="h-full w-full flex flex-col justify-center items-center p-6 lg:p-8">
               <div className="text-center mb-6 lg:mb-8">
                 <h2 className="text-xl lg:text-2xl font-bold text-gray-800 mb-2">
