@@ -86,7 +86,7 @@ const Stats = () => {
             </p>
           </div>{" "}
           <div className="max-w-2xl mx-auto px-2">
-            <Alert variant="destructive" className="shadow-lg border border-transparent">
+            <Alert variant="destructive" className="shadow-lg border border-gray-200">
               <AlertCircle className="h-4 w-4 md:h-5 md:w-5" />
               <AlertTitle className="text-sm md:text-base">
                 Error loading statistics
@@ -96,7 +96,7 @@ const Stats = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="bg-white border border-transparent text-xs md:text-sm"
+                  className="bg-white border border-gray-200 text-xs md:text-sm"
                   onClick={refetch}
                 >
                   <RefreshCw className="h-3 w-3 md:h-4 md:w-4 mr-2" />
@@ -127,7 +127,7 @@ const Stats = () => {
             size="sm"
             onClick={refetch}
             disabled={loading}
-            className="bg-white/80 border border-transparent shadow-md px-4 md:px-6"
+            className="bg-white/80 border border-gray-200 shadow-md px-4 md:px-6"
           >
             <RefreshCw className="h-4 w-4 mr-2" />
             Refresh
@@ -136,7 +136,7 @@ const Stats = () => {
 
         {/* Overview Stats */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
-          <Card className="Totals-Total bg-white/80 backdrop-blur-sm border border-transparent shadow-lg">
+          <Card className="Totals-Total bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
             <CardHeader className="flex flex-col items-center justify-center space-y-0 pb-2 md:pb-2 p-3 md:pt-6 md:px-6 md:pb-2">
               {loading ? (
                 <Skeleton className="h-6 md:h-8 w-12 md:w-16 bg-gray-200" />
@@ -167,7 +167,7 @@ const Stats = () => {
             </CardContent>
           </Card>
 
-          <Card className="Totals-Total bg-white/80 backdrop-blur-sm border border-transparent shadow-lg">
+          <Card className="Totals-Total bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
             <CardHeader className="flex flex-col items-center justify-center space-y-0 pb-2 md:pb-2 p-3 md:pt-6 md:px-6 md:pb-2">
               {loading ? (
                 <Skeleton className="h-6 md:h-8 w-12 md:w-16 bg-gray-200" />
@@ -198,7 +198,7 @@ const Stats = () => {
             </CardContent>
           </Card>
 
-          <Card className="Totals-Total bg-white/80 backdrop-blur-sm border border-transparent shadow-lg">
+          <Card className="Totals-Total bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
             <CardHeader className="flex flex-col items-center justify-center space-y-0 pb-2 md:pb-2 p-3 md:pt-6 md:px-6 md:pb-2">
               {loading ? (
                 <Skeleton className="h-6 md:h-8 w-12 md:w-16 bg-gray-200" />
@@ -230,7 +230,7 @@ const Stats = () => {
             </CardContent>
           </Card>
 
-          <Card className="Totals-Total bg-white/80 backdrop-blur-sm border border-transparent shadow-lg">
+          <Card className="Totals-Total bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
             <CardHeader className="flex flex-col items-center justify-center space-y-0 pb-2 md:pb-2 p-3 md:pt-6 md:px-6 md:pb-2">
               {loading ? (
                 <Skeleton className="h-6 md:h-8 w-12 md:w-16 bg-gray-200" />
@@ -264,7 +264,7 @@ const Stats = () => {
 
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
           {/* Top Performing QR Codes */}
-          <Card className="bg-white/80 backdrop-blur-sm border border-transparent shadow-lg">
+          <Card className="bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
             <CardHeader className="pb-3 md:pb-4 p-4 md:p-6">
               <div className="flex items-center space-x-2 md:space-x-3">
                 <div className="p-1.5 md:p-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
@@ -299,7 +299,7 @@ const Stats = () => {
                 data.topPerformingQrCodes.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-transparent"
+                    className="flex items-center justify-between p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200"
                   >
                     <div className="space-y-0.5 md:space-y-1">
                       <p className="text-xs md:text-sm font-medium text-gray-800">
@@ -324,7 +324,7 @@ const Stats = () => {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-transparent">
+                <div className="text-center py-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200">
                   <QrCode className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-600 font-medium">No QR codes found</p>
                   <p className="text-sm text-muted-foreground">
@@ -336,7 +336,7 @@ const Stats = () => {
           </Card>
 
           {/* Device Analytics */}
-          <Card className="bg-white/80 backdrop-blur-sm border border-transparent shadow-lg">
+          <Card className="bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
             <CardHeader className="pb-3 md:pb-4 p-4 md:p-6">
               <div className="flex items-center space-x-2 md:space-x-3">
                 <div className="p-1.5 md:p-2 bg-gradient-to-br from-green-50 to-green-100 rounded-lg">
@@ -373,7 +373,7 @@ const Stats = () => {
                 data.deviceAnalytics.map((item, index) => (
                   <div
                     key={index}
-                    className="space-y-2 md:space-y-3 p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-transparent"
+                    className="space-y-2 md:space-y-3 p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200"
                   >
                     <div className="flex items-center justify-between text-xs md:text-sm">
                       <span className="font-medium text-gray-800">
@@ -393,7 +393,7 @@ const Stats = () => {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-transparent">
+                <div className="text-center py-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200">
                   <BarChart3 className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-600 font-medium">
                     No device data available
@@ -404,7 +404,7 @@ const Stats = () => {
           </Card>
 
           {/* Geographic Data */}
-          <Card className="bg-white/80 backdrop-blur-sm border border-transparent shadow-lg">
+          <Card className="bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
             <CardHeader className="pb-3 md:pb-4 p-4 md:p-6">
               <div className="flex items-center space-x-2 md:space-x-3">
                 <div className="p-1.5 md:p-2 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
@@ -438,7 +438,7 @@ const Stats = () => {
                 data.topLocations.map((item, index) => (
                   <div
                     key={index}
-                    className="flex items-center justify-between p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-transparent"
+                    className="flex items-center justify-between p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200"
                   >
                     <div className="flex items-center gap-2 md:gap-3">
                       {item.flag ? (
@@ -469,10 +469,10 @@ const Stats = () => {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-transparent">
-                  <Users className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                <div className="text-center py-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200">
+                  <BarChart3 className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-600 font-medium">
-                    No location data available
+                    No geographic data available
                   </p>
                 </div>
               )}
@@ -480,7 +480,7 @@ const Stats = () => {
           </Card>
 
           {/* Recent Activity */}
-          <Card className="bg-white/80 backdrop-blur-sm border border-transparent shadow-lg">
+          <Card className="bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
             <CardHeader className="pb-3 md:pb-4 p-4 md:p-6">
               <div className="flex items-center space-x-2 md:space-x-3">
                 <div className="p-1.5 md:p-2 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg">
@@ -514,7 +514,7 @@ const Stats = () => {
                 data.recentActivity.map((item, index) => (
                   <div
                     key={index}
-                    className="space-y-1.5 md:space-y-2 p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-transparent"
+                    className="space-y-1.5 md:space-y-2 p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200"
                   >
                     <div className="flex items-center justify-between">
                       <p className="text-xs md:text-sm font-medium text-gray-800">
@@ -542,8 +542,8 @@ const Stats = () => {
                   </div>
                 ))
               ) : (
-                <div className="text-center py-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-transparent">
-                  <Eye className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+                <div className="text-center py-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200">
+                  <BarChart3 className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                   <p className="text-gray-600 font-medium">
                     No recent activity
                   </p>
@@ -555,6 +555,6 @@ const Stats = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Stats;

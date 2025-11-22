@@ -432,10 +432,10 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
       <div className="bg-white rounded-xl border-2 border-gray-100 p-6 shadow-sm hover:shadow-lg transition-all duration-300 hover-lift group">
         <div
           className="flex items-center justify-between mb-4 cursor-pointer"
-          onClick={() => setIsFrameCollapsed(!isFrameCollapsed)}
+          onClick={() => setIsStyleCollapsed(!isStyleCollapsed)}
         >
           <div className="flex items-center space-x-3">
-            <div className="w-11 h-11 flex items-center justify-center rounded-xl" style={{ backgroundColor: '#f3f5fe' }}>
+            <div className="w-11 h-11 flex items-center justify-center rounded-xl bg-white">
               <svg
                 className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv"
                 focusable={false}
@@ -530,7 +530,7 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
           onClick={() => setIsShapeCollapsed(!isShapeCollapsed)}
         >
           <div className="flex items-center space-x-3">
-            <div className="w-11 h-11 flex items-center justify-center rounded-xl" style={{ backgroundColor: '#f3f5fe' }}>
+            <div className="w-11 h-11 flex items-center justify-center rounded-xl bg-white">
               <svg
                 className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv"
                 focusable={false}
@@ -602,7 +602,7 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
           onClick={() => setIsLogoCollapsed(!isLogoCollapsed)}
         >
           <div className="flex items-center space-x-3">
-            <div className="w-11 h-11 flex items-center justify-center rounded-xl" style={{ backgroundColor: '#f3f5fe' }}>
+            <div className="w-11 h-11 flex items-center justify-center rounded-xl bg-white">
               <svg
                 className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv"
                 focusable={false}
@@ -696,7 +696,7 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
           onClick={() => setIsQualityCollapsed(!isQualityCollapsed)}
         >
           <div className="flex items-center space-x-3">
-            <div className="w-11 h-11 flex items-center justify-center rounded-xl" style={{ backgroundColor: '#f3f5fe' }}>
+            <div className="w-11 h-11 flex items-center justify-center rounded-xl bg-white">
               <svg
                 className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv"
                 focusable={false}
@@ -765,7 +765,7 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
           onClick={() => setIsStyleCollapsed(!isStyleCollapsed)}
         >
           <div className="flex items-center space-x-3">
-            <div className="w-11 h-11 flex items-center justify-center rounded-xl" style={{ backgroundColor: '#f3f5fe' }}>
+            <div className="w-11 h-11 flex items-center justify-center rounded-xl bg-white">
               <svg
                 className="MuiSvgIcon-root MuiSvgIcon-fontSizeMedium css-vubbuv"
                 focusable={false}
