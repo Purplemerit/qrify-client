@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ChevronDown } from "lucide-react";
+import { ChevronDown, ChevronRight } from "lucide-react";
 import {
   type QRDesignOptions,
   dotStyleOptions,
@@ -119,212 +119,79 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
 
   if (compact) {
     return (
-      <div className="space-y-6">
+      <div className="space-y-3">
         {/* Compact Frame Section */}
-        <div className="space-y-3">
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-sm">
           <div
-            className="flex items-center justify-between cursor-pointer group"
+            className="flex items-center justify-between p-4 cursor-pointer h-[60px]"
             onClick={() => setIsFrameCollapsed(!isFrameCollapsed)}
           >
-            <h4 className="text-md font-medium group-hover:text-blue-600 transition-colors">
-              Frame
-            </h4>
-            <ChevronDown
-              className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ${
-                isFrameCollapsed ? "rotate-0" : "rotate-180"
+            <h4 className="text-sm font-semibold text-gray-900">Frame</h4>
+            <ChevronRight
+              className={`h-5 w-5 text-gray-400 transition-transform duration-300 ${
+                !isFrameCollapsed ? "rotate-90" : "rotate-0"
               }`}
             />
           </div>
           {!isFrameCollapsed && (
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
-              {frameOptions.map((frame) => (
-                <button
-                  key={frame.id}
-                  onClick={() => updateDesignOption("frame", frame.id)}
-                  className={`p-2 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
-                    designOptions.frame === frame.id
-                      ? "border-blue-500 bg-blue-50 shadow-md"
-                      : "border-gray-200 hover:border-blue-300 bg-white"
-                  }`}
-                >
-                  <div className="w-8 h-8 mx-auto mb-1 flex items-center justify-center bg-gray-50 rounded">
-                    {frame.icon ? (
-                      <img
-                        src={frame.icon}
-                        alt={frame.name}
-                        className="w-6 h-6 object-contain"
-                        style={{
-                          filter:
-                            "invert(46%) sepia(0%) saturate(0%) hue-rotate(212deg) brightness(94%) contrast(88%)",
-                        }}
-                      />
-                    ) : (
-                      <div className="w-6 h-6 border border-gray-400 rounded flex items-center justify-center">
-                        <div className="w-4 h-4 grid grid-cols-3 gap-[1px]">
-                          {Array.from({ length: 9 }).map((_, i) => (
-                            <div key={i} className="w-1 h-1 bg-gray-600"></div>
-                          ))}
+            <div className="p-4 pt-0 border-t border-gray-100 mt-2">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 gap-2">
+                {frameOptions.map((frame) => (
+                  <button
+                    key={frame.id}
+                    onClick={() => updateDesignOption("frame", frame.id)}
+                    className={`p-2 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
+                      designOptions.frame === frame.id
+                        ? "border-blue-500 bg-blue-50 shadow-md"
+                        : "border-gray-200 hover:border-blue-300 bg-white"
+                    }`}
+                  >
+                    <div className="w-8 h-8 mx-auto mb-1 flex items-center justify-center bg-gray-50 rounded">
+                      {frame.icon ? (
+                        <img
+                          src={frame.icon}
+                          alt={frame.name}
+                          className="w-6 h-6 object-contain"
+                          style={{
+                            filter:
+                              "invert(46%) sepia(0%) saturate(0%) hue-rotate(212deg) brightness(94%) contrast(88%)",
+                          }}
+                        />
+                      ) : (
+                        <div className="w-6 h-6 border border-gray-400 rounded flex items-center justify-center">
+                          <div className="w-4 h-4 grid grid-cols-3 gap-[1px]">
+                            {Array.from({ length: 9 }).map((_, i) => (
+                              <div key={i} className="w-1 h-1 bg-gray-600"></div>
+                            ))}
+                          </div>
                         </div>
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-xs text-gray-600">{frame.name}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Compact Shape Section */}
-        <div className="space-y-3">
-          <div
-            className="flex items-center justify-between cursor-pointer group"
-            onClick={() => setIsShapeCollapsed(!isShapeCollapsed)}
-          >
-            <h4 className="text-md font-medium group-hover:text-green-600 transition-colors">
-              Shape
-            </h4>
-            <ChevronDown
-              className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ${
-                isShapeCollapsed ? "rotate-0" : "rotate-180"
-              }`}
-            />
-          </div>
-          {!isShapeCollapsed && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {shapeOptions.map((shape) => (
-                <button
-                  key={shape.id}
-                  onClick={() => updateDesignOption("shape", shape.id)}
-                  className={`p-2 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
-                    designOptions.shape === shape.id
-                      ? "border-green-500 bg-green-50 shadow-md"
-                      : "border-gray-200 hover:border-green-300 bg-white"
-                  }`}
-                >
-                  <div className="mb-2">
-                    <div className="grid grid-cols-5 gap-1 mx-auto w-fit">
-                      {Array.from({ length: 25 }).map((_, i) =>
-                        renderShapePreview(shape.id, i)
                       )}
                     </div>
-                  </div>
-                  <span className="text-xs text-gray-600">{shape.name}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Compact Logo Section */}
-        <div className="space-y-3">
-          <div
-            className="flex items-center justify-between cursor-pointer group"
-            onClick={() => setIsLogoCollapsed(!isLogoCollapsed)}
-          >
-            <h4 className="text-md font-medium group-hover:text-purple-600 transition-colors">
-              Logo
-            </h4>
-            <ChevronDown
-              className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ${
-                isLogoCollapsed ? "rotate-0" : "rotate-180"
-              }`}
-            />
-          </div>
-          {!isLogoCollapsed && (
-            <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-2">
-              {logoOptions.map((logo) => (
-                <button
-                  key={logo.id}
-                  onClick={() => updateDesignOption("logo", logo.id)}
-                  className={`p-2 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
-                    designOptions.logo === logo.id
-                      ? "border-purple-500 bg-purple-50 shadow-md"
-                      : "border-gray-200 hover:border-purple-300 bg-white"
-                  }`}
-                >
-                  <div className="w-6 h-6 mx-auto mb-1 flex items-center justify-center">
-                    {logo.icon ? (
-                      <img
-                        src={logo.icon}
-                        alt={logo.name}
-                        className="w-4 h-4 object-contain"
-                        style={{
-                          filter:
-                            designOptions.logo === logo.id
-                              ? "invert(48%) sepia(79%) saturate(2476%) hue-rotate(249deg) brightness(95%) contrast(98%)"
-                              : "invert(46%) sepia(0%) saturate(0%) hue-rotate(212deg) brightness(94%) contrast(88%)",
-                        }}
-                      />
-                    ) : (
-                      <div className="w-4 h-4 border border-dashed border-gray-400 rounded flex items-center justify-center">
-                        <span className="text-xs text-gray-400">×</span>
-                      </div>
-                    )}
-                  </div>
-                  <span className="text-xs text-gray-600">{logo.name}</span>
-                </button>
-              ))}
-            </div>
-          )}
-        </div>
-
-        {/* Compact Quality Section */}
-        <div className="space-y-3">
-          <div
-            className="flex items-center justify-between cursor-pointer group"
-            onClick={() => setIsQualityCollapsed(!isQualityCollapsed)}
-          >
-            <h4 className="text-md font-medium group-hover:text-orange-600 transition-colors">
-              Quality
-            </h4>
-            <ChevronDown
-              className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ${
-                isQualityCollapsed ? "rotate-0" : "rotate-180"
-              }`}
-            />
-          </div>
-          {!isQualityCollapsed && (
-            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-              {qualityOptions.map((quality) => (
-                <button
-                  key={quality.id}
-                  onClick={() => updateDesignOption("level", quality.id)}
-                  className={`p-2 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
-                    designOptions.level === quality.id
-                      ? "border-orange-500 bg-orange-50 shadow-md"
-                      : "border-gray-200 hover:border-orange-300 bg-white"
-                  }`}
-                >
-                  <div className="text-xs font-semibold mb-1">
-                    {quality.name}
-                  </div>
-                  <div className="text-xs text-gray-500">
-                    {quality.description}
-                  </div>
-                </button>
-              ))}
+                    <span className="text-xs text-gray-600">{frame.name}</span>
+                  </button>
+                ))}
+              </div>
             </div>
           )}
         </div>
 
         {/* Compact QR Code Style Section */}
-        <div className="space-y-3">
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-sm">
           <div
-            className="flex items-center justify-between cursor-pointer group"
+            className="flex items-center justify-between p-4 cursor-pointer h-[60px]"
             onClick={() => setIsStyleCollapsed(!isStyleCollapsed)}
           >
-            <h4 className="text-md font-medium group-hover:text-pink-600 transition-colors">
-              QR Code Style
+            <h4 className="text-sm font-semibold text-gray-900">
+              QR code style
             </h4>
-            <ChevronDown
-              className={`h-5 w-5 text-muted-foreground transition-transform duration-300 ${
-                isStyleCollapsed ? "rotate-0" : "rotate-180"
+            <ChevronRight
+              className={`h-5 w-5 text-gray-400 transition-transform duration-300 ${
+                !isStyleCollapsed ? "rotate-90" : "rotate-0"
               }`}
             />
           </div>
           {!isStyleCollapsed && (
-            <div className="space-y-4">
+            <div className="p-4 pt-0 border-t border-gray-100 mt-2 space-y-4">
               {/* Dot Style */}
               <div>
                 <h5 className="text-sm font-medium mb-2 text-gray-700">
@@ -418,6 +285,100 @@ const QRDesignSelector: React.FC<QRDesignSelectorProps> = ({
                     </button>
                   ))}
                 </div>
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Compact Shape Section (Renamed to Corners) */}
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-sm">
+          <div
+            className="flex items-center justify-between p-4 cursor-pointer h-[60px]"
+            onClick={() => setIsShapeCollapsed(!isShapeCollapsed)}
+          >
+            <h4 className="text-sm font-semibold text-gray-900">Corners</h4>
+            <ChevronRight
+              className={`h-5 w-5 text-gray-400 transition-transform duration-300 ${
+                !isShapeCollapsed ? "rotate-90" : "rotate-0"
+              }`}
+            />
+          </div>
+          {!isShapeCollapsed && (
+            <div className="p-4 pt-0 border-t border-gray-100 mt-2">
+              <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
+                {shapeOptions.map((shape) => (
+                  <button
+                    key={shape.id}
+                    onClick={() => updateDesignOption("shape", shape.id)}
+                    className={`p-2 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
+                      designOptions.shape === shape.id
+                        ? "border-green-500 bg-green-50 shadow-md"
+                        : "border-gray-200 hover:border-green-300 bg-white"
+                    }`}
+                  >
+                    <div className="mb-2">
+                      <div className="grid grid-cols-5 gap-1 mx-auto w-fit">
+                        {Array.from({ length: 25 }).map((_, i) =>
+                          renderShapePreview(shape.id, i)
+                        )}
+                      </div>
+                    </div>
+                    <span className="text-xs text-gray-600">{shape.name}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+        </div>
+
+        {/* Compact Logo Section (Renamed to Add logo) */}
+        <div className="bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-sm">
+          <div
+            className="flex items-center justify-between p-4 cursor-pointer h-[60px]"
+            onClick={() => setIsLogoCollapsed(!isLogoCollapsed)}
+          >
+            <h4 className="text-sm font-semibold text-gray-900">Add logo</h4>
+            <ChevronRight
+              className={`h-5 w-5 text-gray-400 transition-transform duration-300 ${
+                !isLogoCollapsed ? "rotate-90" : "rotate-0"
+              }`}
+            />
+          </div>
+          {!isLogoCollapsed && (
+            <div className="p-4 pt-0 border-t border-gray-100 mt-2">
+              <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-4 gap-2">
+                {logoOptions.map((logo) => (
+                  <button
+                    key={logo.id}
+                    onClick={() => updateDesignOption("logo", logo.id)}
+                    className={`p-2 rounded-lg border-2 transition-all duration-300 text-center hover:scale-105 ${
+                      designOptions.logo === logo.id
+                        ? "border-purple-500 bg-purple-50 shadow-md"
+                        : "border-gray-200 hover:border-purple-300 bg-white"
+                    }`}
+                  >
+                    <div className="w-6 h-6 mx-auto mb-1 flex items-center justify-center">
+                      {logo.icon ? (
+                        <img
+                          src={logo.icon}
+                          alt={logo.name}
+                          className="w-4 h-4 object-contain"
+                          style={{
+                            filter:
+                              designOptions.logo === logo.id
+                                ? "invert(48%) sepia(79%) saturate(2476%) hue-rotate(249deg) brightness(95%) contrast(98%)"
+                                : "invert(46%) sepia(0%) saturate(0%) hue-rotate(212deg) brightness(94%) contrast(88%)",
+                          }}
+                        />
+                      ) : (
+                        <div className="w-4 h-4 border border-dashed border-gray-400 rounded flex items-center justify-center">
+                          <span className="text-xs text-gray-400">×</span>
+                        </div>
+                      )}
+                    </div>
+                    <span className="text-xs text-gray-600">{logo.name}</span>
+                  </button>
+                ))}
               </div>
             </div>
           )}

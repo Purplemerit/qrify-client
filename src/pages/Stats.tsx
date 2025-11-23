@@ -25,6 +25,8 @@ import {
   Edit,
   Filter,
   SquareCheckBig,
+  Info,
+  HelpCircle,
 } from "lucide-react";
 import { useStats } from "@/hooks/use-stats";
 
@@ -108,39 +110,40 @@ const AnalyticsRow: React.FC<AnalyticsRowProps> = ({
   const [isExpanded, setIsExpanded] = useState(false);
 
   return (
-    <div className="bg-white border-b border-gray-100 last:border-b-0">
+    <div className="bg-white border border-[#DDDCDE] rounded-xl mb-3 overflow-hidden transition-all duration-200 hover:shadow-sm">
       <div
-        className={`flex justify-between items-center h-14 px-3 py-4 hover:bg-gray-50 transition-colors ${
-          isExpandable ? "cursor-pointer" : ""
+        className={`flex justify-between items-center h-[72px] px-4 cursor-pointer ${
+          isExpanded ? "bg-gray-50/50" : ""
         }`}
-        onClick={() => isExpandable && setIsExpanded(!isExpanded)}
+        onClick={() => (isExpandable || children) && setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center gap-2.5">
-          <span className="text-[#5A5B70] text-xs font-semibold">{title}</span>
+        <div className="flex items-center gap-2">
+          <span className="text-[#1E1E1E] text-[13px] font-semibold">{title}</span>
           {hasInfo && (
-            <div className="flex w-4 h-4 justify-center items-center border rounded-full border-black">
-              <div className="text-black text-[8px] font-bold">i</div>
-            </div>
+            <HelpCircle className="w-4 h-4 text-[#96949C]" />
           )}
         </div>
         <div className="flex items-center gap-3">
           {loading ? (
             <Skeleton className="h-4 w-12 bg-gray-200" />
           ) : (
-            <span className="text-[#5A5B70] text-xs font-medium">
-              {count} items
-            </span>
+            count > 0 && (
+              <span className="text-[#5A5B70] text-xs font-medium">
+                {count} items
+              </span>
+            )
           )}
-          {hasChevron &&
-            (isExpanded ? (
-              <ChevronDown className="w-5 h-5 text-[#5A5B70]" />
-            ) : (
-              <ChevronRight className="w-5 h-5 text-[#5A5B70]" />
-            ))}
+          {hasChevron && (
+            <ChevronRight 
+              className={`w-5 h-5 text-[#5A5B70] transition-transform duration-200 ${
+                isExpanded ? "rotate-90" : ""
+              }`} 
+            />
+          )}
         </div>
       </div>
       {isExpanded && children && (
-        <div className="px-3 pb-4 pt-0 bg-gray-50 border-t border-gray-100">
+        <div className="px-4 pb-4 pt-2 bg-white border-t border-gray-100">
           {children}
         </div>
       )}
@@ -218,18 +221,23 @@ const Stats = () => {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-white">
+      <div className="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100">
         <div className="max-w-7xl mx-auto py-4 md:py-8 px-4 md:px-6">
           <div className="mb-6 md:mb-8 fade-in">
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-              Stats
-            </h1>
-            <p className="text-muted-foreground mt-1 md:mt-2 text-sm md:text-lg">
-              Overview of your QR code performance
-            </p>
-          </div>{" "}
-          <div className="max-w-2xl mx-auto px-2">
-            <Alert variant="destructive" className="shadow-lg border border-gray-200">
+            <div className="flex items-center justify-between">
+              <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
+                Stats
+              </h1>
+              <Button
+                variant="outline"
+                className="rounded-full border-gray-300 text-blue-600 hover:bg-blue-50"
+              >
+                Export information
+              </Button>
+            </div>
+          </div>
+          <div className="max-w-2xl mx-auto animate-slide-up px-2">
+            <Alert variant="destructive" className="shadow-lg border-red-300">
               <AlertCircle className="h-4 w-4 md:h-5 md:w-5" />
               <AlertTitle className="text-sm md:text-base">
                 Error loading statistics
@@ -239,7 +247,7 @@ const Stats = () => {
                 <Button
                   variant="outline"
                   size="sm"
-                  className="bg-white border border-gray-200 text-xs md:text-sm"
+                  className="bg-white hover:bg-gray-50 border-red-300 hover:border-red-400 text-xs md:text-sm"
                   onClick={refetch}
                 >
                   <RefreshCw className="h-3 w-3 md:h-4 md:w-4 mr-2" />
@@ -254,312 +262,517 @@ const Stats = () => {
   }
 
   return (
-    <div className="min-h-screen bg-white">
-      <div className="max-w-7xl mx-auto py-4 md:py-8 px-4 md:px-6">
-        <div className="mb-6 md:mb-8 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 fade-in">
-          <div>
-            <h1 className="text-2xl md:text-3xl font-bold bg-gradient-to-r from-gray-900 to-gray-600 bg-clip-text text-transparent">
-              Statistics
-            </h1>
-            <p className="text-muted-foreground mt-1 md:mt-2 text-sm md:text-lg">
-              Overview of your QR code performance and analytics
-            </p>
-          </div>
+    <div className="p-6 bg-white min-h-screen">
+      {/* Header */}
+      <div className="flex items-center justify-between mb-6">
+        <h1 className="text-2xl font-bold text-gray-900">Stats</h1>
+        <Button
+          variant="outline"
+          className="rounded-full border-gray-200 text-[#1D59F9] hover:bg-blue-50 font-semibold text-sm h-9 px-4"
+        >
+          Export information
+        </Button>
+      </div>
+
+      {/* Time Zone Banner */}
+      <div className="flex items-center justify-between bg-[#F3F5FE] border border-[#1D59F9] rounded-lg p-3 mb-6">
+        <div className="flex items-center gap-2">
+          <Info className="w-5 h-5 text-[#1D59F9]" />
+          <span className="text-[#1D59F9] text-sm font-medium">
+            You can set your time zone.{" "}
+            <span className="font-normal text-[#5A5B70]">
+              Current time zone: {timezone.split("/").pop()?.replace("_", " ")}
+            </span>
+          </span>
+        </div>
+        <div className="flex items-center gap-2">
           <Button
             variant="outline"
             size="sm"
-            onClick={refetch}
-            disabled={loading}
-            className="bg-white/80 border border-gray-200 shadow-md px-4 md:px-6"
+            className="bg-white border-gray-200 text-[#5A5B70] hover:bg-gray-50 h-8 text-xs font-medium rounded-md"
           >
-            <RefreshCw className="h-4 w-4 mr-2" />
-            Refresh
+            Change
+          </Button>
+          <Button
+            size="sm"
+            className="bg-[#1D59F9] hover:bg-blue-700 text-white h-8 text-xs font-medium rounded-md border-0"
+          >
+            Accept
           </Button>
         </div>
+      </div>
 
-        {/* Overview Stats */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 md:gap-4 mb-6 md:mb-8">
-          <Card className="Totals-Total bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
-            <CardHeader className="flex flex-col items-center justify-center space-y-0 pb-2 md:pb-2 p-3 md:pt-6 md:px-6 md:pb-2">
-              {loading ? (
-                <Skeleton className="h-6 md:h-8 w-12 md:w-16 bg-gray-200" />
-              ) : (
-                <CardTitle className="text-2xl md:text-3xl font-bold text-gray-900">
-                  {data?.overview.totalQrCodes.value || 0}
-                </CardTitle>
-              )}
-              {/* <div className="p-1.5 md:p-2 bg-blue-50 rounded-lg group-hover:bg-blue-100 transition-colors duration-300">
-                <QrCode className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
-              </div> */}
-              {/* <QrCode className="h-4 w-4 md:h-5 md:w-5 text-blue-600" /> */}
-            </CardHeader>
-            <CardContent className="p-3 md:p-6 pt-0">
-              {loading ? (
-                <Skeleton className="h-3 md:h-4 w-20 md:w-24 bg-gray-100" />
-              ) : (
-                <>
-                  <p className="text-xs md:text-sm font-medium text-gray-600 flex items-center justify-center gap-1">
-                    <QrCode className="h-3 w-3 md:h-4 md:w-4" />
-                    Total QR Codes
-                  </p>
-                  {/* <p className="text-xs md:text-sm text-muted-foreground">
-                    {data?.overview.totalQrCodes.change || "No data available"}
-                  </p> */}
-                </>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="Totals-Total bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
-            <CardHeader className="flex flex-col items-center justify-center space-y-0 pb-2 md:pb-2 p-3 md:pt-6 md:px-6 md:pb-2">
-              {loading ? (
-                <Skeleton className="h-6 md:h-8 w-12 md:w-16 bg-gray-200" />
-              ) : (
-                <CardTitle className="text-2xl md:text-3xl font-bold text-gray-900">
-                  {data?.overview.totalScans.value.toLocaleString() || 0}
-                </CardTitle>
-              )}
-              {/* <div className="p-1.5 md:p-2 bg-green-50 rounded-lg group-hover:bg-green-100 transition-colors duration-300">
-                <Eye className="h-4 w-4 md:h-5 md:w-5 text-green-600" />
-              </div> */}
-              {/* <Eye className="h-4 w-4 md:h-5 md:w-5 text-green-600" /> */}
-            </CardHeader>
-            <CardContent className="p-3 md:p-6 pt-0">
-              {loading ? (
-                <Skeleton className="h-3 md:h-4 w-20 md:w-24 bg-gray-100" />
-              ) : (
-                <>
-                  <p className="text-xs md:text-sm font-medium text-gray-600 flex items-center justify-center gap-1">
-                    <Eye className="h-3 w-3 md:h-4 md:w-4" />
-                    Total Scans
-                  </p>
-                  {/* <p className="text-xs md:text-sm text-muted-foreground">
-                    {data?.overview.totalScans.change || "No data available"}
-                  </p> */}
-                </>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="Totals-Total bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
-            <CardHeader className="flex flex-col items-center justify-center space-y-0 pb-2 md:pb-2 p-3 md:pt-6 md:px-6 md:pb-2">
-              {loading ? (
-                <Skeleton className="h-6 md:h-8 w-12 md:w-16 bg-gray-200" />
-              ) : (
-                <CardTitle className="text-2xl md:text-3xl font-bold text-gray-900">
-                  {data?.overview.uniqueVisitors.value.toLocaleString() || 0}
-                </CardTitle>
-              )}
-              {/* <div className="p-1.5 md:p-2 bg-purple-50 rounded-lg group-hover:bg-purple-100 transition-colors duration-300">
-                <Users className="h-4 w-4 md:h-5 md:w-5 text-purple-600" />
-              </div> */}
-              {/* <Users className="h-4 w-4 md:h-5 md:w-5 text-purple-600" /> */}
-            </CardHeader>
-            <CardContent className="p-3 md:p-6 pt-0">
-              {loading ? (
-                <Skeleton className="h-3 md:h-4 w-20 md:w-24 bg-gray-100" />
-              ) : (
-                <>
-                  <p className="text-xs md:text-sm font-medium text-gray-600 flex items-center justify-center gap-1">
-                    <Users className="h-3 w-3 md:h-4 md:w-4" />
-                    Unique Visitors
-                  </p>
-                  {/* <p className="text-xs md:text-sm text-muted-foreground">
-                    {data?.overview.uniqueVisitors.change ||
-                      "No data available"}
-                  </p> */}
-                </>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card className="Totals-Total bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
-            <CardHeader className="flex flex-col items-center justify-center space-y-0 pb-2 md:pb-2 p-3 md:pt-6 md:px-6 md:pb-2">
-              {loading ? (
-                <Skeleton className="h-6 md:h-8 w-12 md:w-16 bg-gray-200" />
-              ) : (
-                <CardTitle className="text-2xl md:text-3xl font-bold text-gray-900">
-                  {data?.overview.downloads.value || 0}
-                </CardTitle>
-              )}
-              {/* <div className="p-1.5 md:p-2 bg-orange-50 rounded-lg group-hover:bg-orange-100 transition-colors duration-300">
-                <Download className="h-4 w-4 md:h-5 md:w-5 text-orange-600" />
-              </div> */}
-              {/* <Download className="h-4 w-4 md:h-5 md:w-5 text-orange-600" /> */}
-            </CardHeader>
-            <CardContent className="p-3 md:p-6 pt-0">
-              {loading ? (
-                <Skeleton className="h-3 md:h-4 w-20 md:w-24 bg-gray-100" />
-              ) : (
-                <>
-                  <p className="text-xs md:text-sm font-medium text-gray-600 flex items-center justify-center gap-1">
-                    <Download className="h-3 w-3 md:h-4 md:w-4" />
-                    Downloads
-                  </p>
-                  {/* <p className="text-xs md:text-sm text-muted-foreground">
-                    {data?.overview.downloads.change || "No data available"}
-                  </p> */}
-                </>
-              )}
-            </CardContent>
-          </Card>
+      {/* FilterBar Component */}
+      <div className="flex gap-4 mb-6 flex-wrap items-center">
+        <div className="relative">
+          <select
+            value={dateRange}
+            onChange={(e) => {
+              setDateRange(e.target.value);
+              setCustomStartDate("");
+              setCustomEndDate("");
+            }}
+            className="w-[132px] h-[38px] px-4 py-[7px] rounded border border-[#DBD5DC] text-[#585858] text-[13px] font-semibold appearance-none bg-white cursor-pointer hover:border-[#888] transition-colors"
+          >
+            <option>Last 7 days</option>
+            <option>Last 30 days</option>
+            <option>Last 90 days</option>
+          </select>
+          <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-[#585858] pointer-events-none" />
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 lg:gap-8">
-          {/* Top Performing QR Codes */}
-          <Card className="bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
-            <CardHeader className="pb-3 md:pb-4 p-4 md:p-6">
-              <div className="flex items-center space-x-2 md:space-x-3">
-                <div className="p-1.5 md:p-2 bg-gradient-to-br from-blue-50 to-blue-100 rounded-lg">
-                  <TrendingUp className="h-4 w-4 md:h-5 md:w-5 text-blue-600" />
+        <div className="relative">
+          <button
+            onClick={() => setShowDatePicker(!showDatePicker)}
+            className="flex items-center justify-between w-[240px] h-[38px] px-3 py-[7px] rounded border border-[#DBD5DC] bg-[#F3F3F3] hover:border-[#888] transition-colors"
+          >
+            {loading ? (
+              <Skeleton className="h-4 w-32 bg-gray-200" />
+            ) : (
+              <span className="text-[#96949C] text-[13px] font-medium">
+                {formatDate(startDate)} - {formatDate(endDate)}
+              </span>
+            )}
+            <Calendar className="w-4 h-4 text-[#5A5B70]" />
+          </button>
+
+          {showDatePicker && (
+            <div className="absolute top-full mt-2 left-0 bg-white border border-[#DBD5DC] rounded-lg shadow-lg p-4 z-10 min-w-[300px]">
+              <div className="space-y-3">
+                <div>
+                  <label className="text-xs font-semibold text-gray-700 block mb-1">
+                    Start Date
+                  </label>
+                  <input
+                    type="date"
+                    value={customStartDate}
+                    onChange={(e) => setCustomStartDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-[#DBD5DC] rounded text-sm"
+                  />
                 </div>
                 <div>
-                  <CardTitle className="text-base md:text-lg font-semibold text-gray-800">
-                    Top Performing QR Codes
-                  </CardTitle>
-                  <CardDescription className="text-xs md:text-sm text-gray-600">
-                    Your most scanned QR codes this month
-                  </CardDescription>
+                  <label className="text-xs font-semibold text-gray-700 block mb-1">
+                    End Date
+                  </label>
+                  <input
+                    type="date"
+                    value={customEndDate}
+                    onChange={(e) => setCustomEndDate(e.target.value)}
+                    className="w-full px-3 py-2 border border-[#DBD5DC] rounded text-sm"
+                  />
                 </div>
-              </div>
-            </CardHeader>
-            <CardContent className="space-y-3 md:space-y-4 p-4 md:p-6 pt-0">
-              {loading ? (
-                Array.from({ length: 5 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 bg-gray-50 rounded-lg"
-                  >
-                    <div className="space-y-2">
-                      <Skeleton className="h-4 w-32 bg-gray-200" />
-                      <Skeleton className="h-3 w-16 bg-gray-100" />
-                    </div>
-                    <Skeleton className="h-6 w-12 bg-gray-200" />
-                  </div>
-                ))
-              ) : data?.topPerformingQrCodes &&
-                data.topPerformingQrCodes.length > 0 ? (
-                data.topPerformingQrCodes.map((item, index) => (
-                  <div
-                    key={index}
-                    className="flex items-center justify-between p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200"
-                  >
-                    <div className="space-y-0.5 md:space-y-1">
-                      <p className="text-xs md:text-sm font-medium text-gray-800">
-                        {item.name}
-                      </p>
-                      <p className="text-xs text-muted-foreground">
-                        {item.scans} scans
-                      </p>
-                    </div>
-                    <Badge
-                      variant={
-                        item.change.startsWith("+") ? "default" : "secondary"
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    size="sm"
+                    onClick={() => {
+                      setShowDatePicker(false);
+                      if (customStartDate && customEndDate) {
+                        setDateRange("Custom");
                       }
-                      className={`text-xs font-medium shadow-sm ${
-                        item.change.startsWith("+")
-                          ? "bg-green-100 text-green-800 border-green-200"
-                          : "bg-gray-100 text-gray-600 border-gray-200"
-                      }`}
-                    >
-                      {item.change}
-                    </Badge>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200">
-                  <QrCode className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-600 font-medium">No QR codes found</p>
-                  <p className="text-sm text-muted-foreground">
-                    Create your first QR code to see statistics
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Device Analytics */}
-          <Card className="bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
-            <CardHeader className="pb-3 md:pb-4 p-4 md:p-6">
-              <div className="flex items-center space-x-2 md:space-x-3">
-                <div className="p-1.5 md:p-2 bg-gradient-to-br from-green-50 to-green-100 rounded-lg">
-                  <BarChart3 className="h-4 w-4 md:h-5 md:w-5 text-green-600" />
-                </div>
-                <div>
-                  <CardTitle className="text-base md:text-lg font-semibold text-gray-800">
-                    Device Analytics
-                  </CardTitle>
-                  <CardDescription className="text-xs md:text-sm text-gray-600">
-                    Breakdown of scans by device type
-                  </CardDescription>
+                    }}
+                    className="flex-1"
+                  >
+                    Apply
+                  </Button>
+                  <Button
+                    size="sm"
+                    variant="outline"
+                    onClick={() => setShowDatePicker(false)}
+                    className="flex-1"
+                  >
+                    Cancel
+                  </Button>
                 </div>
               </div>
-            </CardHeader>
-            <CardContent className="space-y-3 md:space-y-5 p-4 md:p-6 pt-0">
-              {loading ? (
-                Array.from({ length: 3 }).map((_, index) => (
-                  <div
-                    key={index}
-                    className="space-y-3 p-3 bg-gray-50 rounded-lg"
-                  >
-                    <div className="flex items-center justify-between text-sm">
-                      <Skeleton className="h-4 w-16 bg-gray-200" />
-                      <Skeleton className="h-4 w-20 bg-gray-200" />
-                    </div>
-                    <Skeleton className="h-3 w-full bg-gray-100" />
-                    <div className="text-right">
-                      <Skeleton className="h-3 w-8 ml-auto bg-gray-200" />
-                    </div>
-                  </div>
-                ))
-              ) : data?.deviceAnalytics && data.deviceAnalytics.length > 0 ? (
-                data.deviceAnalytics.map((item, index) => (
-                  <div
-                    key={index}
-                    className="space-y-2 md:space-y-3 p-3 md:p-4 bg-gradient-to-r from-gray-50 to-gray-100 rounded-lg border border-gray-200"
-                  >
-                    <div className="flex items-center justify-between text-xs md:text-sm">
-                      <span className="font-medium text-gray-800">
-                        {item.device}
-                      </span>
-                      <span className="text-muted-foreground">
-                        {item.scans} scans
-                      </span>
-                    </div>
-                    <Progress
-                      value={item.percentage}
-                      className="h-2 md:h-3 bg-gray-200"
-                    />
-                    <p className="text-xs text-muted-foreground text-right font-medium">
-                      {item.percentage}%
-                    </p>
-                  </div>
-                ))
-              ) : (
-                <div className="text-center py-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200">
-                  <BarChart3 className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-600 font-medium">
-                    No device data available
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
+            </div>
+          )}
+        </div>
 
-          {/* Geographic Data */}
-          <Card className="bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
-            <CardHeader className="pb-3 md:pb-4 p-4 md:p-6">
-              <div className="flex items-center space-x-2 md:space-x-3">
-                <div className="p-1.5 md:p-2 bg-gradient-to-br from-purple-50 to-purple-100 rounded-lg">
-                  <Users className="h-4 w-4 md:h-5 md:w-5 text-purple-600" />
+        <div className="relative">
+          <button
+            onClick={() => setShowTimezone(!showTimezone)}
+            className="flex items-center gap-2 px-4 py-[7px] h-[38px] rounded border border-[#DBD5DC] hover:border-[#888] transition-colors"
+          >
+            <span className="text-[#585858] text-[13px] font-semibold">
+              Time zone: {timezone.split("/").pop()?.replace("_", " ") || "Time zone"}
+            </span>
+            <Edit className="w-3 h-3 text-[#5A5B70]" />
+          </button>
+
+          {showTimezone && (
+            <div className="absolute top-full mt-2 left-0 bg-white border border-[#DBD5DC] rounded-lg shadow-lg p-4 z-10 min-w-[250px]">
+              <div className="space-y-3">
+                <label className="text-xs font-semibold text-gray-700 block">
+                  Select Timezone
+                </label>
+                <select
+                  value={timezone}
+                  onChange={(e) => setTimezone(e.target.value)}
+                  className="w-full px-3 py-2 border border-[#DBD5DC] rounded text-sm"
+                >
+                  <option value="America/New_York">Eastern Time</option>
+                  <option value="America/Chicago">Central Time</option>
+                  <option value="America/Denver">Mountain Time</option>
+                  <option value="America/Los_Angeles">Pacific Time</option>
+                  <option value="Europe/London">London</option>
+                  <option value="Europe/Paris">Paris</option>
+                  <option value="Asia/Tokyo">Tokyo</option>
+                  <option value="Asia/Shanghai">Shanghai</option>
+                  <option value="Australia/Sydney">Sydney</option>
+                  <option value="UTC">UTC</option>
+                </select>
+                <div className="flex gap-2 pt-2">
+                  <Button
+                    size="sm"
+                    onClick={() => setShowTimezone(false)}
+                    className="flex-1"
+                  >
+                    Done
+                  </Button>
                 </div>
-                <div>
-                  <CardTitle className="text-base md:text-lg font-semibold text-gray-800">
-                    Top Locations
-                  </CardTitle>
-                  <CardDescription className="text-xs md:text-sm text-gray-600">
-                    Countries with the most scans
-                  </CardDescription>
+              </div>
+            </div>
+          )}
+        </div>
+
+        <div className="relative ml-auto">
+          <button
+            onClick={() => setShowFilters(!showFilters)}
+            className="flex items-center gap-2 px-4 py-[7px] h-[38px] rounded border border-[#DBD5DC] hover:bg-gray-50 transition-colors"
+          >
+            <Filter className="w-4 h-4 text-[#5A5B70]" />
+            <span className="text-[#585858] text-[13px] font-semibold">
+              Filter
+            </span>
+          </button>
+
+          {showFilters && (
+            <div className="absolute top-full mt-2 right-0 bg-white border border-[#DBD5DC] rounded-lg shadow-lg p-4 z-10 min-w-[200px]">
+              <div className="space-y-3">
+                <label className="text-xs font-semibold text-gray-700 block mb-2">
+                  Chart Data
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={chartFilters.showTotal}
+                    onChange={(e) =>
+                      setChartFilters({
+                        ...chartFilters,
+                        showTotal: e.target.checked,
+                      })
+                    }
+                    className="w-4 h-4 rounded"
+                  />
+                  <span className="text-sm text-gray-700">Total Scans</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={chartFilters.showUniques}
+                    onChange={(e) =>
+                      setChartFilters({
+                        ...chartFilters,
+                        showUniques: e.target.checked,
+                      })
+                    }
+                    className="w-4 h-4 rounded"
+                  />
+                  <span className="text-sm text-gray-700">Unique Visitors</span>
+                </label>
+                <label className="flex items-center gap-2 cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={chartFilters.showVisits}
+                    onChange={(e) =>
+                      setChartFilters({
+                        ...chartFilters,
+                        showVisits: e.target.checked,
+                      })
+                    }
+                    className="w-4 h-4 rounded"
+                  />
+                  <span className="text-sm text-gray-700">Visits</span>
+                </label>
+                <div className="pt-2 border-t border-gray-200">
+                  <Button
+                    size="sm"
+                    onClick={handleApplyFilters}
+                    className="w-full"
+                  >
+                    Apply Filters
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* ChartSection Component */}
+      <section className="bg-white rounded-xl border border-[#DDDCDE] p-3 mb-3">
+        <div className="bg-[#F7F7F7] rounded-lg p-1 mb-6 border border-gray-100">
+          <div className="flex items-center gap-2 px-3 py-2">
+            <span className="text-[#1E1E1E] text-[13px] font-semibold">
+              Analyzed period:
+            </span>
+            {loading ? (
+              <Skeleton className="h-4 w-40 bg-gray-200" />
+            ) : (
+              <span className="text-[#96949C] text-xs font-medium">
+                {formatDateShort(startDate)} to {formatDateShort(endDate)}
+              </span>
+            )}
+          </div>
+        </div>
+
+        <div className="flex gap-3 flex-wrap mb-6">
+          {loading ? (
+            <>
+              <Skeleton className="flex-1 min-w-[200px] h-[100px] bg-gray-200 animate-pulse rounded-xl" />
+              <Skeleton className="flex-1 min-w-[200px] h-[100px] bg-gray-200 animate-pulse rounded-xl" />
+              <Skeleton className="flex-1 min-w-[200px] h-[100px] bg-gray-200 animate-pulse rounded-xl" />
+              <Skeleton className="flex-1 min-w-[200px] h-[100px] bg-gray-200 animate-pulse rounded-xl" />
+            </>
+          ) : (
+            <>
+              <div className="flex-1 min-w-[200px] h-[100px] bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center gap-2 relative">
+                <div className="text-[#1E1E1E] text-[32px] font-medium">
+                  {data?.overview.totalQrCodes.value.toLocaleString() || "0"}
+                </div>
+                <div className="flex items-center gap-2 text-[#5A5B70] text-xs font-semibold">
+                  <QrCode className="w-4 h-4" />
+                  Total QR Codes
+                </div>
+              </div>
+              <div className="flex-1 min-w-[200px] h-[100px] bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center gap-2 relative">
+                <div className="text-[#1E1E1E] text-[32px] font-medium">
+                  {data?.overview.totalScans.value.toLocaleString() || "0"}
+                </div>
+                <div className="flex items-center gap-2 text-[#5A5B70] text-xs font-semibold">
+                  <RefreshCw className="w-4 h-4" />
+                  Total Scans
+                </div>
+              </div>
+              <div className="flex-1 min-w-[200px] h-[100px] bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center gap-2 relative">
+                <div className="text-[#1E1E1E] text-[32px] font-medium">
+                  {data?.overview.uniqueVisitors.value.toLocaleString() || "0"}
+                </div>
+                <div className="flex items-center gap-2 text-[#5A5B70] text-xs font-semibold">
+                  <Users className="w-4 h-4" />
+                  Total Unique Scans
+                </div>
+              </div>
+              <div className="flex-1 min-w-[200px] h-[100px] bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center gap-2 relative">
+                <div className="text-[#1E1E1E] text-[32px] font-medium">
+                  {data?.overview.downloads.value.toLocaleString() || "0"}
+                </div>
+                <div className="flex items-center gap-2 text-[#5A5B70] text-xs font-semibold">
+                  <Eye className="w-4 h-4" />
+                  Total visits
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+
+        <div className="flex justify-between items-center px-3 mb-12 flex-wrap gap-4">
+          <div className="flex items-center gap-6">
+            <label className="flex items-center gap-2 cursor-pointer">
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center ${chartFilters.showTotal ? 'bg-[#1D59F9]' : 'border border-gray-300'}`}>
+                {chartFilters.showTotal && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
+              </div>
+              <input
+                type="checkbox"
+                checked={chartFilters.showTotal}
+                onChange={(e) =>
+                  setChartFilters({
+                    ...chartFilters,
+                    showTotal: e.target.checked,
+                  })
+                }
+                className="hidden"
+              />
+              <span className={`text-xs font-semibold ${chartFilters.showTotal ? 'text-[#1E1E1E]' : 'text-[#5A5B70]'}`}>
+                Totals
+              </span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center ${chartFilters.showUniques ? 'bg-[#1D59F9]' : 'border border-gray-300'}`}>
+                {chartFilters.showUniques && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
+              </div>
+              <input
+                type="checkbox"
+                checked={chartFilters.showUniques}
+                onChange={(e) =>
+                  setChartFilters({
+                    ...chartFilters,
+                    showUniques: e.target.checked,
+                  })
+                }
+                className="hidden"
+              />
+              <span className={`text-xs font-semibold ${chartFilters.showUniques ? 'text-[#1E1E1E]' : 'text-[#5A5B70]'}`}>
+                Uniques
+              </span>
+            </label>
+            <label className="flex items-center gap-2 cursor-pointer">
+              <div className={`w-5 h-5 rounded-full flex items-center justify-center ${chartFilters.showVisits ? 'bg-[#1D59F9]' : 'border border-gray-300'}`}>
+                {chartFilters.showVisits && <div className="w-2.5 h-2.5 bg-white rounded-full" />}
+              </div>
+              <input
+                type="checkbox"
+                checked={chartFilters.showVisits}
+                onChange={(e) =>
+                  setChartFilters({
+                    ...chartFilters,
+                    showVisits: e.target.checked,
+                  })
+                }
+                className="hidden"
+              />
+              <span className={`text-xs font-semibold ${chartFilters.showVisits ? 'text-[#1E1E1E]' : 'text-[#5A5B70]'}`}>
+                Visits
+              </span>
+            </label>
+          </div>
+
+          <div className="flex items-center gap-4">
+            <div className="flex items-center gap-4 mr-4">
+              <button
+                onClick={() => setSelectedView("Day")}
+                className={`text-xs font-medium px-2 py-1 rounded ${
+                  selectedView === "Day" ? "bg-[#F3F5FE] text-[#1D59F9]" : "text-[#5A5B70]"
+                }`}
+              >
+                Day
+              </button>
+              <button
+                onClick={() => setSelectedView("Month")}
+                className={`text-xs font-medium px-2 py-1 rounded ${
+                  selectedView === "Month" ? "bg-[#F3F5FE] text-[#1D59F9]" : "text-[#5A5B70]"
+                }`}
+              >
+                Month
+              </button>
+              <button
+                onClick={() => setSelectedView("Year")}
+                className={`text-xs font-medium px-2 py-1 rounded ${
+                  selectedView === "Year" ? "bg-[#F3F5FE] text-[#1D59F9]" : "text-[#5A5B70]"
+                }`}
+              >
+                Year
+              </button>
+            </div>
+            <div className="flex items-center gap-2 border-l border-gray-200 pl-4">
+              <button
+                onClick={() => setSelectedChart("line")}
+                className={`p-1.5 rounded ${
+                  selectedChart === "line" ? "bg-[#F3F5FE] text-[#1D59F9]" : "text-[#5A5B70]"
+                }`}
+              >
+                <TrendingUp className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => setSelectedChart("bar")}
+                className={`p-1.5 rounded ${
+                  selectedChart === "bar"
+                    ? "bg-[#F3F5FE] text-[#1D59F9]"
+                    : "text-[#5A5B70]"
+                }`}
+              >
+                <BarChart3 className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="px-3 pb-6 relative h-[200px]">
+          <div className="absolute left-3 top-0 bottom-8 w-full border-b border-gray-100 flex flex-col justify-between pointer-events-none">
+            <div className="w-full border-t border-gray-100 border-dashed opacity-50" />
+            <div className="w-full border-t border-gray-100 border-dashed opacity-50" />
+            <div className="w-full border-t border-gray-100 border-dashed opacity-50" />
+            <div className="w-full border-t border-gray-100 border-dashed opacity-50" />
+          </div>
+          
+          {/* Y-axis label */}
+          <div className="absolute left-0 top-1/2 -translate-y-1/2 text-[10px] text-gray-400 font-medium">
+            0
+          </div>
+
+          {/* X-axis labels */}
+          <div className="absolute bottom-0 left-0 right-0 flex justify-between px-8">
+            {loading
+              ? Array.from({ length: 7 }).map((_, i) => (
+                  <Skeleton key={i} className="h-4 w-12 bg-gray-100" />
+                ))
+              : (() => {
+                  const dates = [];
+                  const days =
+                    dateRange === "Last 30 days"
+                      ? 30
+                      : dateRange === "Last 90 days"
+                      ? 90
+                      : 7;
+                  for (let i = days - 1; i >= 0; i--) {
+                    const date = new Date(endDate);
+                    date.setDate(date.getDate() - i);
+                    const day = date.getDate();
+                    const month = date.toLocaleString("en", {
+                      month: "short",
+                    });
+                    dates.push(`${month} ${day}`);
+                  }
+                  // Show only every nth date to avoid crowding
+                  const step = Math.ceil(dates.length / 8);
+                  return dates
+                    .filter(
+                      (_, index) =>
+                        index % step === 0 || index === dates.length - 1
+                    )
+                    .map((dateStr) => (
+                      <span
+                        key={dateStr}
+                        className="text-[#5A5B70] text-[10px] font-semibold"
+                      >
+                        {dateStr}
+                      </span>
+                    ));
+                })()}
+          </div>
+        </div>
+      </section>
+
+      {/* AnalyticsGrid Component - Dynamic breakdown sections */}
+      <div className="flex flex-col mb-6">
+        <AnalyticsRow
+          title="Scans by day"
+          hasChevron={true}
+          count={0}
+          loading={loading}
+        />
+
+        <AnalyticsRow
+          title="Scans by operating system"
+          count={data?.deviceAnalytics?.length || 0}
+          loading={loading}
+          isExpandable={
+            !!data?.deviceAnalytics && data.deviceAnalytics.length > 0
+          }
+        >
+          <div className="space-y-3 mt-3">
+            {data?.deviceAnalytics?.map((item, index) => (
+              <div
+                key={index}
+                className="p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 transition-all duration-300"
+              >
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-sm font-medium text-gray-800">
+                    {item.device}
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {item.scans} scans
+                  </span>
                 </div>
                 <Progress value={item.percentage} className="h-2 bg-gray-200" />
                 <p className="text-xs text-muted-foreground text-right mt-1 font-medium">
@@ -571,7 +784,7 @@ const Stats = () => {
         </AnalyticsRow>
 
         <AnalyticsRow
-          title="Scan by country"
+          title="Scans by country"
           hasInfo
           count={data?.topLocations?.length || 0}
           loading={loading}
@@ -603,32 +816,6 @@ const Stats = () => {
                       </span>
                     )}
                   </div>
-                ))
-              ) : (
-                <div className="text-center py-8 bg-gradient-to-br from-gray-50 to-gray-100 rounded-lg border border-gray-200">
-                  <BarChart3 className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                  <p className="text-gray-600 font-medium">
-                    No geographic data available
-                  </p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Recent Activity */}
-          <Card className="bg-white/80 backdrop-blur-sm border border-gray-200 shadow-lg">
-            <CardHeader className="pb-3 md:pb-4 p-4 md:p-6">
-              <div className="flex items-center space-x-2 md:space-x-3">
-                <div className="p-1.5 md:p-2 bg-gradient-to-br from-orange-50 to-orange-100 rounded-lg">
-                  <Eye className="h-4 w-4 md:h-5 md:w-5 text-orange-600" />
-                </div>
-                <div>
-                  <CardTitle className="text-base md:text-lg font-semibold text-gray-800">
-                    Recent Activity
-                  </CardTitle>
-                  <CardDescription className="text-xs md:text-sm text-gray-600">
-                    Latest QR code interactions
-                  </CardDescription>
                 </div>
                 <span className="text-sm text-muted-foreground font-medium">
                   {item.scans} scans
@@ -639,7 +826,7 @@ const Stats = () => {
         </AnalyticsRow>
 
         <AnalyticsRow
-          title="Scan by region/city"
+          title="Scans by region/city"
           hasInfo
           count={data?.topLocations?.filter((l) => l.city)?.length || 0}
           loading={loading}
@@ -685,21 +872,21 @@ const Stats = () => {
 
         <AnalyticsRow
           title="Scans by browser"
-          hasChevron={false}
+          hasChevron={true}
           count={0}
           loading={loading}
         />
 
         <AnalyticsRow
           title="Scans by user language"
-          hasChevron={false}
+          hasChevron={true}
           count={0}
           loading={loading}
         />
 
         <AnalyticsRow
           title="Scans by QR name"
-          hasChevron={false}
+          hasChevron={true}
           count={data?.topPerformingQrCodes?.length || 0}
           loading={loading}
           isExpandable={
@@ -739,7 +926,7 @@ const Stats = () => {
 
         <AnalyticsRow
           title="Scans by time of day"
-          hasChevron={false}
+          hasChevron={true}
           count={data?.recentActivity?.length || 0}
           loading={loading}
           isExpandable={
@@ -781,13 +968,13 @@ const Stats = () => {
         <AnalyticsRow
           title="Events"
           hasInfo
-          hasChevron={false}
+          hasChevron={true}
           count={data?.overview?.totalScans?.value || 0}
           loading={loading}
         />
       </div>
     </div>
   );
-}
+};
 
 export default Stats;

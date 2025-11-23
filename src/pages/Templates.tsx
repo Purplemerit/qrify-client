@@ -10,7 +10,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Plus, Eye, Trash2, Edit, X } from "lucide-react";
+import { Plus, Eye, Trash2, Edit, X, ChevronRight } from "lucide-react";
 import {
   type QRDesignOptions,
   renderQRWithDesign,
@@ -59,6 +59,7 @@ const Templates = () => {
   const [error, setError] = useState("");
   const [saving, setSaving] = useState(false);
   const [user, setUser] = useState<User | null>(null);
+  const [isTemplateNameCollapsed, setIsTemplateNameCollapsed] = useState(true);
 
   // Load user data and templates on component mount
   useEffect(() => {
@@ -369,7 +370,8 @@ const Templates = () => {
                   </p>
                   {user && hasPermission(user.role, "canCreateTemplates") && (
                     <Button
-                      className="text-sm border border-[rgb(29,89,249)] text-[rgb(29,89,249)] bg-transparent hover:bg-[rgb(29,89,249)]/10 h-8 px-3 whitespace-nowrap flex-shrink-0"
+                      variant="outline"
+                      className="text-xs h-7 px-2.5 whitespace-nowrap flex-shrink-0 rounded-full text-[rgb(29,89,249)]"
                       onClick={() => setShowCreateForm(true)}
                     >
                       Create template
@@ -434,101 +436,73 @@ const Templates = () => {
         <div className="min-h-screen flex flex-col lg:flex-row bg-white -m-3 md:-m-6">
           {/* Left Sidebar - Scrollable Selection Panel */}
           <div className="w-full lg:w-1/2 overflow-y-auto border-b lg:border-b-0 lg:border-r border-gray-200 bg-white">
-            <div className="p-4 md:p-6">
-              <div className="mb-4 md:mb-8">
-                <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-                  <div>
-                    <h1 className="text-lg md:text-xl lg:text-2xl font-semibold mb-1 md:mb-2">
-                      Create Template
-                    </h1>
-                    <p className="text-muted-foreground text-xs md:text-sm">
-                      Design your custom QR code template
-                    </p>
-                  </div>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    className="text-xs md:text-sm w-full sm:w-auto"
-                    onClick={() => {
-                      setShowCreateForm(false);
-                      setNewTemplateName("");
-                      setNewTemplateDescription("");
-                      setError("");
-                      setDesignOptions({
-                        frame: 1,
-                        shape: 1,
-                        logo: 0,
-                        level: 2,
-                        dotStyle: 1,
-                        bgColor: "#ffffff",
-                        outerBorder: 1,
-                      });
-                    }}
-                    disabled={saving}
-                  >
-                    Back to Templates
-                  </Button>
-                </div>
+            <div className="p-8 max-w-xl mx-auto">
+              <div className="mb-8">
+                <h1 className="text-xl font-bold text-gray-900">
+                  Create template
+                </h1>
               </div>
 
               {/* Error Message */}
               {error && (
-                <div className="mb-4 md:mb-6 bg-red-50 border border-red-200 rounded-lg p-3 md:p-4">
-                  <p className="text-red-600 text-xs md:text-sm">{error}</p>
+                <div className="mb-6 bg-red-50 border border-red-200 rounded-lg p-4">
+                  <p className="text-red-600 text-sm">{error}</p>
                 </div>
               )}
 
-              {/* Mobile Preview Area */}
-              <div className="lg:hidden mb-4 md:mb-6 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl p-4 md:p-6">
-                <div className="text-center">
-                  <h3 className="text-sm md:text-base font-semibold text-gray-800 mb-3">
-                    Preview
-                  </h3>
-                  <div className="bg-white rounded-xl shadow-lg p-4 inline-block">
-                    <QRPreview designOptions={designOptions} size={150} />
-                  </div>
-                  <div className="mt-3">
-                    <p className="font-medium text-gray-800 text-sm mb-1">
-                      {newTemplateName || "Untitled Template"}
-                    </p>
-                    {newTemplateDescription && (
-                      <p className="text-gray-600 text-xs">
-                        {newTemplateDescription}
-                      </p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* Template Info Form */}
-              <div className="space-y-3 md:space-y-4 mb-4 md:mb-6">
-                <div>
-                  <Label htmlFor="template-name" className="text-xs md:text-sm">
+              {/* Template Info Form - Collapsible */}
+              <div className="mb-3 bg-white rounded-xl border border-gray-200 overflow-hidden transition-all duration-200 hover:shadow-sm">
+                <div
+                  className="flex items-center justify-between p-4 cursor-pointer h-[60px]"
+                  onClick={() =>
+                    setIsTemplateNameCollapsed(!isTemplateNameCollapsed)
+                  }
+                >
+                  <h4 className="text-sm font-semibold text-gray-900">
                     Template Name
-                  </Label>
-                  <Input
-                    id="template-name"
-                    value={newTemplateName}
-                    onChange={(e) => setNewTemplateName(e.target.value)}
-                    placeholder="Enter template name..."
-                    className="mt-1 text-sm"
+                  </h4>
+                  <ChevronRight
+                    className={`h-5 w-5 text-gray-400 transition-transform duration-300 ${
+                      !isTemplateNameCollapsed ? "rotate-90" : "rotate-0"
+                    }`}
                   />
                 </div>
-                <div>
-                  <Label
-                    htmlFor="template-description"
-                    className="text-xs md:text-sm"
-                  >
-                    Description (Optional)
-                  </Label>
-                  <Input
-                    id="template-description"
-                    value={newTemplateDescription}
-                    onChange={(e) => setNewTemplateDescription(e.target.value)}
-                    placeholder="Enter template description..."
-                    className="mt-1 text-sm"
-                  />
-                </div>
+                {!isTemplateNameCollapsed && (
+                  <div className="p-4 pt-0 border-t border-gray-100 mt-2 space-y-4">
+                    <div>
+                      <Label
+                        htmlFor="template-name"
+                        className="text-sm font-medium text-gray-700 mb-1 block"
+                      >
+                        Template Name
+                      </Label>
+                      <Input
+                        id="template-name"
+                        value={newTemplateName}
+                        onChange={(e) => setNewTemplateName(e.target.value)}
+                        placeholder="Enter template name..."
+                        className="mt-1"
+                      />
+                    </div>
+                    <div>
+                      <Label
+                        htmlFor="template-description"
+                        className="text-sm font-medium text-gray-700 mb-1 block"
+                      >
+                        Description (Optional)
+                      </Label>
+                      <Input
+                        id="template-description"
+                        value={newTemplateDescription}
+                        onChange={(e) =>
+                          setNewTemplateDescription(e.target.value)
+                        }
+                        placeholder="Enter template description..."
+                        className="mt-1"
+                      />
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* Design Options */}
@@ -538,25 +512,11 @@ const Templates = () => {
                 compact
               />
 
-              {/* Save/Cancel Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 md:gap-4 pt-4 md:pt-6 border-t mt-4 md:mt-6">
+              <div className="mt-8">
                 <Button
-                  onClick={handleCreateTemplate}
-                  disabled={!newTemplateName.trim() || saving}
-                  className="flex-1 text-sm md:text-base"
-                >
-                  {saving ? (
-                    <div className="flex items-center space-x-2">
-                      <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                      <span>Saving...</span>
-                    </div>
-                  ) : (
-                    "Save Template"
-                  )}
-                </Button>
-                <Button
-                  variant="outline"
-                  className="text-sm md:text-base"
+                  variant="ghost"
+                  size="sm"
+                  className="text-gray-500 hover:text-gray-900"
                   onClick={() => {
                     setShowCreateForm(false);
                     setNewTemplateName("");
@@ -574,60 +534,32 @@ const Templates = () => {
                   }}
                   disabled={saving}
                 >
-                  Cancel
+                  Cancel / Back to Templates
                 </Button>
               </div>
             </div>
           </div>
 
           {/* Right Panel - Fixed Preview Area */}
-          <div className="hidden lg:flex lg:w-1/2">
-            <div className="h-full w-full flex flex-col justify-center items-center p-6 lg:p-8">
-              <div className="text-center mb-6 lg:mb-8">
-                <h2 className="text-xl lg:text-2xl font-bold text-gray-800 mb-2">
-                  Live Preview
+          <div className="hidden lg:flex lg:w-1/2 bg-white">
+            <div className="h-full w-full flex flex-col p-12 items-center">
+              <div className="w-full max-w-md">
+                <h2 className="text-xl font-bold text-gray-900 mb-6">
+                  Preview
                 </h2>
-                <p className="text-gray-600 text-sm lg:text-base">
-                  See how your template will look
-                </p>
-              </div>
 
-              <div className="bg-white rounded-2xl shadow-2xl p-6 lg:p-8 max-w-md">
-                <QRPreview designOptions={designOptions} size={240} />
-              </div>
+                <div className="bg-white rounded-xl border border-gray-200 p-8 flex flex-col items-center shadow-sm">
+                  <div className="mb-8">
+                    <QRPreview designOptions={designOptions} size={200} />
+                  </div>
 
-              <div className="mt-6 lg:mt-8 text-center">
-                <h3 className="font-semibold text-gray-800 mb-2 text-sm lg:text-base">
-                  {newTemplateName || "Untitled Template"}
-                </h3>
-                {newTemplateDescription && (
-                  <p className="text-gray-600 text-xs lg:text-sm">
-                    {newTemplateDescription}
-                  </p>
-                )}
-                <div className="flex gap-1.5 lg:gap-2 mt-3 lg:mt-4 justify-center flex-wrap">
-                  <Badge variant="secondary" className="text-xs">
-                    Frame {designOptions.frame}
-                  </Badge>
-                  <Badge variant="secondary" className="text-xs">
-                    Shape {designOptions.shape}
-                  </Badge>
-                  {designOptions.logo > 0 && (
-                    <Badge variant="secondary" className="text-xs">
-                      Logo {designOptions.logo}
-                    </Badge>
-                  )}
-                  {designOptions.dotStyle && designOptions.dotStyle > 1 && (
-                    <Badge variant="secondary" className="text-xs">
-                      Dot Style {designOptions.dotStyle}
-                    </Badge>
-                  )}
-                  {designOptions.outerBorder &&
-                    designOptions.outerBorder > 1 && (
-                      <Badge variant="secondary" className="text-xs">
-                        Border {designOptions.outerBorder}
-                      </Badge>
-                    )}
+                  <Button
+                    onClick={handleCreateTemplate}
+                    disabled={!newTemplateName.trim() || saving}
+                    className="w-full bg-[#1D59F9] hover:bg-blue-700 text-white h-12 rounded-full font-semibold text-base shadow-none"
+                  >
+                    {saving ? "Saving..." : "Save"}
+                  </Button>
                 </div>
               </div>
             </div>

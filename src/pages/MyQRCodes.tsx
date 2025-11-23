@@ -189,19 +189,22 @@ const MyQRCodes = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 w-4 h-4" />
           <Input placeholder="Search..." className="pl-10 border-gray-300" style={{ width: '226px' }} />
         </div>
-        <div className="bg-white border border-gray-200 rounded-lg p-6 text-center">
-          <div className="flex items-center justify-center gap-2 mb-1">
+        <div className="bg-white border border-gray-200 rounded-lg p-6">
+          <div className="flex items-center justify-center gap-3">
             <Folder className="w-8 h-8 text-gray-400" />
             <p className="text-sm text-gray-600">
               Here you can manage your folders
             </p>
+            {user && hasPermission(user.role, "canCreateQR") && (
+              <Button
+                variant="outline"
+                className="inline-flex items-center justify-center text-xs h-7 px-2.5 whitespace-nowrap rounded-full text-[rgb(29,89,249)]"
+              >
+                <Plus className="w-3.5 h-3.5 mr-1" />
+                Create folder
+              </Button>
+            )}
           </div>
-          <Button
-            variant="link"
-            className="text-blue-600 text-sm p-0 h-auto hover:underline"
-          >
-            Create folder
-          </Button>
         </div>
       </div>
 
@@ -281,8 +284,8 @@ const MyQRCodes = () => {
               </div>
               <Button
                 size="sm"
-                className="inline-flex items-center justify-center bg-[rgb(29,89,249)] hover:bg-[rgb(29,89,249)]/90 text-white font-bold text-lg rounded-[28px] px-[10px] whitespace-nowrap transition-all duration-200 ease-in-out shadow-none border-0"
-                style={{ lineHeight: '1.75' }}
+                className="inline-flex items-center justify-center h-7 bg-[rgb(29,89,249)] hover:bg-[rgb(29,89,249)]/90 text-white font-bold text-sm rounded-[28px] px-[10px] whitespace-nowrap transition-all duration-200 ease-in-out shadow-none border-0"
+                style={{ lineHeight: '1.75', width: '65.92px' }}
               >
                 Update
               </Button>
@@ -592,8 +595,12 @@ const MyQRCodes = () => {
                   : "Create your first QR code to get started"}
               </p>
               {!searchQuery && (
-                <Button onClick={() => navigate("/new-qr")}>
-                  <Plus className="w-4 h-4 mr-2" />
+                <Button
+                  variant="outline"
+                  onClick={() => navigate("/new-qr")}
+                  className="inline-flex items-center justify-center text-xs h-7 px-2.5 whitespace-nowrap flex-shrink-0 rounded-full text-[rgb(29,89,249)]"
+                >
+                  <Plus className="w-3.5 h-3.5 mr-1" />
                   Create New QR Code
                 </Button>
               )}
