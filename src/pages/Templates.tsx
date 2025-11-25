@@ -306,7 +306,7 @@ const Templates = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto py-4 md:py-8 px-3 md:px-6">
+    <div className="max-w-[1600px] mx-auto py-4 md:py-8 px-3 md:px-6">
       <PreviewModal />
       {!showCreateForm ? (
         // Templates List View
@@ -441,6 +441,21 @@ const Templates = () => {
                 <h1 className="text-xl font-bold text-gray-900">
                   Create template
                 </h1>
+              </div>
+
+              {/* Mobile Preview - Visible only on small screens */}
+              <div className="lg:hidden mb-8 bg-gray-50 rounded-xl p-6 border border-gray-200 flex flex-col items-center">
+                <h3 className="text-sm font-semibold text-gray-900 mb-4">Preview</h3>
+                <div className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 mb-4">
+                  <QRPreview designOptions={designOptions} size={160} />
+                </div>
+                <Button
+                  onClick={handleCreateTemplate}
+                  disabled={!newTemplateName.trim() || saving}
+                  className="w-full bg-[#1D59F9] hover:bg-blue-700 text-white h-10 rounded-full font-semibold text-sm shadow-none"
+                >
+                  {saving ? "Saving..." : "Save Template"}
+                </Button>
               </div>
 
               {/* Error Message */}

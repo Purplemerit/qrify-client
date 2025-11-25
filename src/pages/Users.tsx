@@ -247,7 +247,7 @@ const Users = () => {
 
   if (loading) {
     return (
-      <div className="max-w-6xl mx-auto px-4 md:px-6">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-6">
         <div className="mb-6">
           <h1 className="text-2xl font-semibold">Users</h1>
           <p className="text-muted-foreground mt-1">
@@ -266,7 +266,7 @@ const Users = () => {
 
   if (!canManageUsers) {
     return (
-      <div className="max-w-6xl mx-auto px-4 md:px-6">
+      <div className="max-w-[1600px] mx-auto px-4 md:px-6">
         <div className="mb-6">
           <h1 className="text-2xl font-semibold">Users</h1>
           <p className="text-muted-foreground mt-1">
@@ -286,7 +286,7 @@ const Users = () => {
   }
 
   return (
-    <div className="max-w-6xl mx-auto px-4 md:px-6">
+    <div className="max-w-[1600px] mx-auto px-4 md:px-6">
       <div className="mb-4 md:mb-6">
         <h1 className="text-xl md:text-2xl font-semibold">Users</h1>
         <p className="text-muted-foreground mt-1 text-sm md:text-base">

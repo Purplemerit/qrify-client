@@ -221,10 +221,10 @@ export default function Layout({ children }: LayoutProps) {
         <AppSidebar user={user} />
 
         <div className="flex-1 flex flex-col">
-          {/* Header (hidden on some pages like /new-qr) */}
-          {location.pathname !== "/new-qr" && (
+          {/* Header (hidden on some pages like /new-qr and /bulk-qr) */}
+          {location.pathname !== "/new-qr" && location.pathname !== "/bulk-qr" && (
             <header className="py-4 md:py-6 bg-white shadow-sm sticky top-0 z-10">
-              <div className="max-w-7xl mx-auto px-4 md:px-6 flex items-center justify-between">
+              <div className="max-w-[1600px] mx-auto px-4 md:px-6 flex items-center justify-between">
                 {/* Logo for mobile */}
                 <a href="/new-qr" className="md:hidden">
                   <img

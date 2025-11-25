@@ -163,6 +163,7 @@ const MyQRCodes = () => {
 
   return (
     <div className="p-6 bg-white min-h-screen">
+      <div className="max-w-[1600px] mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">My QR codes</h1>
@@ -279,7 +280,7 @@ const MyQRCodes = () => {
                   />
                 </svg>
                 <span className="text-sm text-yellow-800">
-                  You are using QRFYi's free trial. 6 days remaining
+                  You are using QRFYi's free trial.
                 </span>
               </div>
               <Button
@@ -607,6 +608,7 @@ const MyQRCodes = () => {
             </div>
           )}
         </div>
+      </div>
       </div>
     </div>
   );

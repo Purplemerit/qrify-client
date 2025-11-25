@@ -81,8 +81,8 @@ interface StatsCardProps {
 const StatsCard: React.FC<StatsCardProps> = ({ value, label }) => {
   return (
     <div className="flex-1 min-w-[200px] h-[100px] bg-white rounded-xl shadow-sm flex flex-col justify-center items-center gap-4 relative">
-      <div className="text-[#5A5B70] text-[32px] font-semibold">{value}</div>
-      <div className="text-[#5A5B70] text-xs font-semibold">{label}</div>
+      <div className="text-[#5A5B70] text-[32px] font-bold">{value}</div>
+      <div className="text-[#5A5B70] text-xs font-bold">{label}</div>
     </div>
   );
 };
@@ -112,18 +112,18 @@ const AnalyticsRow: React.FC<AnalyticsRowProps> = ({
   return (
     <div className="bg-white border border-[#DDDCDE] rounded-xl mb-3 overflow-hidden transition-all duration-200 hover:shadow-sm">
       <div
-        className={`flex justify-between items-center h-[72px] px-4 cursor-pointer ${
+        className={`flex justify-between items-center min-h-[72px] py-3 px-4 cursor-pointer ${
           isExpanded ? "bg-gray-50/50" : ""
         }`}
-        onClick={() => (isExpandable || children) && setIsExpanded(!isExpanded)}
+        onClick={() => (hasChevron || isExpandable || children) && !loading && setIsExpanded(!isExpanded)}
       >
-        <div className="flex items-center gap-2">
-          <span className="text-[#1E1E1E] text-[13px] font-semibold">{title}</span>
+        <div className="flex items-center gap-2 flex-1 pr-2">
+          <span className="text-[#1E1E1E] text-[13px] font-bold leading-tight">{title}</span>
           {hasInfo && (
-            <HelpCircle className="w-4 h-4 text-[#96949C]" />
+            <HelpCircle className="w-4 h-4 text-[#96949C] flex-shrink-0" />
           )}
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 flex-shrink-0">
           {loading ? (
             <Skeleton className="h-4 w-12 bg-gray-200" />
           ) : (
@@ -142,9 +142,15 @@ const AnalyticsRow: React.FC<AnalyticsRowProps> = ({
           )}
         </div>
       </div>
-      {isExpanded && children && (
+      {isExpanded && (
         <div className="px-4 pb-4 pt-2 bg-white border-t border-gray-100">
-          {children}
+          {count > 0 && children ? (
+            children
+          ) : (
+            <div className="text-sm text-gray-500 py-2 text-center">
+              No data available yet
+            </div>
+          )}
         </div>
       )}
     </div>
@@ -263,6 +269,7 @@ const Stats = () => {
 
   return (
     <div className="p-6 bg-white min-h-screen">
+      <div className="max-w-[1600px] mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-2xl font-bold text-gray-900">Stats</h1>
@@ -337,7 +344,7 @@ const Stats = () => {
           </button>
 
           {showDatePicker && (
-            <div className="absolute top-full mt-2 left-0 bg-white border border-[#DBD5DC] rounded-lg shadow-lg p-4 z-10 min-w-[300px]">
+            <div className="absolute top-full mt-2 left-0 bg-white border border-[#DBD5DC] rounded-lg shadow-lg p-4 z-10 w-[300px] max-w-[calc(100vw-32px)]">
               <div className="space-y-3">
                 <div>
                   <label className="text-xs font-semibold text-gray-700 block mb-1">
@@ -537,37 +544,37 @@ const Stats = () => {
           ) : (
             <>
               <div className="flex-1 min-w-[200px] h-[100px] bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center gap-2 relative">
-                <div className="text-[#1E1E1E] text-[32px] font-medium">
+                <div className="text-[#1E1E1E] text-[32px] font-bold">
                   {data?.overview.totalQrCodes.value.toLocaleString() || "0"}
                 </div>
-                <div className="flex items-center gap-2 text-[#5A5B70] text-xs font-semibold">
+                <div className="flex items-center gap-2 text-[#5A5B70] text-xs font-bold">
                   <QrCode className="w-4 h-4" />
                   Total QR Codes
                 </div>
               </div>
               <div className="flex-1 min-w-[200px] h-[100px] bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center gap-2 relative">
-                <div className="text-[#1E1E1E] text-[32px] font-medium">
+                <div className="text-[#1E1E1E] text-[32px] font-bold">
                   {data?.overview.totalScans.value.toLocaleString() || "0"}
                 </div>
-                <div className="flex items-center gap-2 text-[#5A5B70] text-xs font-semibold">
+                <div className="flex items-center gap-2 text-[#5A5B70] text-xs font-bold">
                   <RefreshCw className="w-4 h-4" />
                   Total Scans
                 </div>
               </div>
               <div className="flex-1 min-w-[200px] h-[100px] bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center gap-2 relative">
-                <div className="text-[#1E1E1E] text-[32px] font-medium">
+                <div className="text-[#1E1E1E] text-[32px] font-bold">
                   {data?.overview.uniqueVisitors.value.toLocaleString() || "0"}
                 </div>
-                <div className="flex items-center gap-2 text-[#5A5B70] text-xs font-semibold">
+                <div className="flex items-center gap-2 text-[#5A5B70] text-xs font-bold">
                   <Users className="w-4 h-4" />
                   Total Unique Scans
                 </div>
               </div>
               <div className="flex-1 min-w-[200px] h-[100px] bg-white rounded-xl shadow-sm border border-gray-100 flex flex-col justify-center items-center gap-2 relative">
-                <div className="text-[#1E1E1E] text-[32px] font-medium">
+                <div className="text-[#1E1E1E] text-[32px] font-bold">
                   {data?.overview.downloads.value.toLocaleString() || "0"}
                 </div>
-                <div className="flex items-center gap-2 text-[#5A5B70] text-xs font-semibold">
+                <div className="flex items-center gap-2 text-[#5A5B70] text-xs font-bold">
                   <Eye className="w-4 h-4" />
                   Total visits
                 </div>
@@ -767,7 +774,7 @@ const Stats = () => {
                 className="p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 transition-all duration-300"
               >
                 <div className="flex items-center justify-between mb-2">
-                  <span className="text-sm font-medium text-gray-800">
+                  <span className="text-sm font-semibold text-gray-800">
                     {item.device}
                   </span>
                   <span className="text-xs text-muted-foreground">
@@ -807,7 +814,7 @@ const Stats = () => {
                     </div>
                   )}
                   <div className="flex flex-col">
-                    <span className="text-sm font-medium text-gray-800">
+                    <span className="text-sm font-semibold text-gray-800">
                       {item.country}
                     </span>
                     {item.city && (
@@ -854,7 +861,7 @@ const Stats = () => {
                       </div>
                     )}
                     <div className="flex flex-col">
-                      <span className="text-sm font-medium text-gray-800">
+                      <span className="text-sm font-semibold text-gray-800">
                         {item.city}
                       </span>
                       <span className="text-xs text-muted-foreground">
@@ -900,7 +907,7 @@ const Stats = () => {
                 className="flex items-center justify-between p-3 bg-white rounded-lg border border-gray-200 hover:border-blue-300 transition-all duration-300"
               >
                 <div className="space-y-1">
-                  <p className="text-sm font-medium text-gray-800">
+                  <p className="text-sm font-semibold text-gray-800">
                     {item.name}
                   </p>
                   <p className="text-xs text-muted-foreground">
@@ -940,7 +947,7 @@ const Stats = () => {
                 className="space-y-2 p-3 bg-white rounded-lg border border-gray-200 hover:border-orange-300 transition-all duration-300"
               >
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium text-gray-800">
+                  <p className="text-sm font-semibold text-gray-800">
                     {item.action}
                   </p>
                   <p className="text-xs text-muted-foreground bg-gray-100 px-2 py-1 rounded-full shadow-sm">
@@ -972,6 +979,7 @@ const Stats = () => {
           count={data?.overview?.totalScans?.value || 0}
           loading={loading}
         />
+      </div>
       </div>
     </div>
   );

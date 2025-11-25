@@ -8,6 +8,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import QRDesignSelector from "@/components/QRDesignSelector";
+import BulkQRHeader from "@/components/bulk-qr/BulkQRHeader";
 import templateStorage, { type QRTemplate } from "@/lib/template-storage";
 import api from "@/lib/api";
 import {
@@ -312,194 +313,7 @@ const BulkQR = () => {
  }
  };
 
- const renderStepIndicator = () => (
- <div className="mb-6 md:mb-12 px-4 md:px-10">
- {/* Step Indicator */}
- <div className="flex items-center justify-center mb-6 md:mb-8 mt-4 md:mt-8">
- <div className="flex items-center space-x-2 md:space-x-4 relative">
- {/* Step 1 */}
- <div
- className="flex items-center space-x-1 md:space-x-3 cursor-pointer "
- onClick={() => handleStepClick(1)}
- >
- <div
- className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium ${
- currentStep === 1
- ? "bg-primary text-primary-foreground shadow-lg scale-110"
- : currentStep > 1
- ? "bg-green-500 text-white shadow-md"
- : "bg-muted text-muted-foreground"
- }`}
- >
- {currentStep > 1 ? "✓" : "1"}
- </div>
- <span
- className={`text-xs md:text-sm hidden md:inline ${
- currentStep >= 1
- ? "font-medium text-foreground"
- : "text-muted-foreground"
- }`}
- >
- QR Type
- </span>
- </div>
 
- {/* Line */}
- <div
- className={`h-px w-8 md:w-16 ${
- currentStep > 1 ? "bg-green-500" : "bg-muted"
- }`}
- ></div>
-
- {/* Step 2 */}
- <div
- className="flex items-center space-x-1 md:space-x-3 cursor-pointer "
- onClick={() => handleStepClick(2)}
- >
- <div
- className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium ${
- currentStep === 2
- ? "bg-primary text-primary-foreground shadow-lg scale-110"
- : currentStep > 2
- ? "bg-green-500 text-white shadow-md"
- : "bg-muted text-muted-foreground"
- }`}
- >
- {currentStep > 2 ? "✓" : "2"}
- </div>
- <span
- className={`text-xs md:text-sm hidden md:inline ${
- currentStep >= 2
- ? "font-medium text-foreground"
- : "text-muted-foreground"
- }`}
- >
- Design
- </span>
- </div>
-
- {/* Line */}
- <div
- className={`h-px w-8 md:w-16 ${
- currentStep > 2 ? "bg-green-500" : "bg-muted"
- }`}
- ></div>
-
- {/* Step 3 */}
- <div
- className="flex items-center space-x-1 md:space-x-3 cursor-pointer "
- onClick={() => handleStepClick(3)}
- >
- <div
- className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium ${
- currentStep === 3
- ? "bg-primary text-primary-foreground shadow-lg scale-110"
- : currentStep > 3
- ? "bg-green-500 text-white shadow-md"
- : "bg-muted text-muted-foreground"
- }`}
- >
- {currentStep > 3 ? "✓" : "3"}
- </div>
- <span
- className={`text-xs md:text-sm hidden md:inline ${
- currentStep >= 3
- ? "font-medium text-foreground"
- : "text-muted-foreground"
- }`}
- >
- Upload CSV
- </span>
- </div>
-
- {/* Line */}
- <div
- className={`h-px w-8 md:w-16 ${
- currentStep > 3 ? "bg-green-500" : "bg-muted"
- }`}
- ></div>
-
- {/* Step 4 */}
- <div className="flex items-center space-x-1 md:space-x-3">
- <div
- className={`w-8 h-8 md:w-10 md:h-10 rounded-full flex items-center justify-center text-xs md:text-sm font-medium ${
- currentStep === 4
- ? "bg-primary text-primary-foreground shadow-lg scale-110"
- : "bg-muted text-muted-foreground"
- }`}
- >
- 4
- </div>
- <span
- className={`text-xs md:text-sm hidden md:inline ${
- currentStep === 4
- ? "font-medium text-foreground"
- : "text-muted-foreground"
- }`}
- >
- Results
- </span>
- </div>
- </div>
- </div>
-
- {/* Navigation Buttons */}
- <div className="flex justify-center">
- {currentStep === 2 && (
- <div className="flex items-center space-x-2 md:space-x-4">
- <Button
- variant="outline"
- onClick={() => setCurrentStep(1)}
- className="px-4 md:px-8 rounded-3xl text-sm md:text-base"
- >
- ← Back
- </Button>
- <Button
- onClick={() => setCurrentStep(3)}
- className="px-4 md:px-8 rounded-3xl text-sm md:text-base"
- >
- Next →
- </Button>
- </div>
- )}
-
- {currentStep === 3 && (
- <div className="flex items-center space-x-2 md:space-x-4">
- <Button
- variant="outline"
- onClick={() => setCurrentStep(2)}
- className="px-4 md:px-8 rounded-3xl text-sm md:text-base"
- >
- ← Back
- </Button>
- <Button
- onClick={handleGenerateBulkQR}
- disabled={csvUrls.length === 0 || loading}
- className="px-4 md:px-8 rounded-3xl text-sm md:text-base"
- >
- {loading
- ? "Generating..."
- : csvUrls.length > 0
- ? `Generate ${csvUrls.length} QR${
- csvUrls.length > 1 ? "s" : ""
- }`
- : "Generate QR Codes"}
- </Button>
- </div>
- )}
-
- {currentStep === 4 && (
- <Button
- onClick={handleCompleteAndNavigate}
- disabled={loading}
- className="px-4 md:px-8 rounded-3xl text-sm md:text-base"
- >
- {loading ? "Saving..." : "Complete & View"}
- </Button>
- )}
- </div>
- </div>
- );
 
  const renderStep1 = () => (
  <div className="flex flex-col lg:flex-row gap-6 lg:gap-12 w-full px-4 md:px-10 justify-between">
@@ -1212,13 +1026,30 @@ const BulkQR = () => {
 
  return (
  <div className="min-h-screen bg-white">
- <div className="max-w-8xl mx-auto py-4 md:py-8 px-4 md:px-6">
- {renderStepIndicator()}
+ <div className="max-w-[1600px] mx-auto py-4 md:py-8 px-4 md:px-6">
+ <BulkQRHeader
+ currentStep={currentStep}
+ loading={loading}
+ csvUrlsCount={csvUrls.length}
+ onStepClick={handleStepClick}
+ onBack={() => setCurrentStep((s) => Math.max(1, s - 1))}
+ onNext={() => setCurrentStep(3)}
+ onComplete={handleCompleteAndNavigate}
+ onGenerateBulk={handleGenerateBulkQR}
+ />
  <div className="">
- {currentStep === 1 && renderStep1()}
- {currentStep === 2 && renderStep2()}
- {currentStep === 3 && renderStep3()}
- {currentStep === 4 && renderStep4()}
+ {currentStep === 1 && (
+ <div className="animate-fade-in">{renderStep1()}</div>
+ )}
+ {currentStep === 2 && (
+ <div className="animate-slide-up">{renderStep2()}</div>
+ )}
+ {currentStep === 3 && (
+ <div className="animate-scale-in">{renderStep3()}</div>
+ )}
+ {currentStep === 4 && (
+ <div className="animate-fade-in">{renderStep4()}</div>
+ )}
  </div>
  </div>
  </div>

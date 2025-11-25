@@ -1073,7 +1073,7 @@ const NewQR = () => {
 
  return (
  <div className="min-h-screen bg-white">
- <div className="max-w-8xl mx-auto py-4 md:py-8 px-4 md:px-6">
+ <div className="max-w-[1600px] mx-auto py-4 md:py-8 px-4 md:px-6">
  <NewQRHeader
  currentStep={currentStep}
  loading={loading}
